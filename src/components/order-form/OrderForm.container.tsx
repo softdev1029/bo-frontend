@@ -1,29 +1,38 @@
-import React from 'react';
-import { connect } from 'react-redux'
+import React from "react";
+import { connect } from "react-redux";
 
-import { OrderFormContainerProps, OrderFormProps } from './OrderForm.types';
-import { isTradeLoaded } from '@/selectors/trade.selectors';
-import { WalletType } from '@/constants/balance-enums';
-import { OrderFormCalculator, CalculatorBody } from './OrderForm.Calculator';
-import _maxBy from 'lodash/maxBy';
-import _minBy from 'lodash/minBy';
-import { getBalances } from '@/selectors/balance.selectors';
-import { getAsksSelector, getBidsSelector } from '@/selectors/book.selectors';
-import { getLastPriceBySymbol } from '@/selectors/ticker.selectors';
-import { isUserLoggedIn } from '@/selectors/auth.selectors';
-import { Card, Collapsible, Icon } from '@/ui-components';
-import { OrderForm } from './OrderForm';
-import OrderFormInputControlsContainer from './OrderForm.input-controls.container';
-import { OrderType } from '@/constants/order-enums';
-import { orderValidationFn as derivativeOrderValidationFn, submitOrderFn as derivativeSubmitOrderFn } from './OrderForm.derivative.submit-order-helper';
-import { spotOrderValidationFn, spotSubmitOrderFn } from './OrderForm.spot.submit-order-helper';
-import { getSetting } from '@/selectors/ui-setting.selectors';
-import { toggleBooleanSetting } from '@/actions/ui-setting.actions';
-import { getLabelOrderType } from '@/exports/order.utils';
-import { Link } from 'react-router-dom';
-import { RoutePaths } from '@/constants/route-paths';
+import { OrderFormContainerProps, OrderFormProps } from "./OrderForm.types";
+import { isTradeLoaded } from "@/selectors/trade.selectors";
+import { WalletType } from "@/constants/balance-enums";
+import { OrderFormCalculator, CalculatorBody } from "./OrderForm.Calculator";
+import _maxBy from "lodash/maxBy";
+import _minBy from "lodash/minBy";
+import { getBalances } from "@/selectors/balance.selectors";
+import { getAsksSelector, getBidsSelector } from "@/selectors/book.selectors";
+import { getLastPriceBySymbol } from "@/selectors/ticker.selectors";
+import { isUserLoggedIn } from "@/selectors/auth.selectors";
+import { Card, Collapsible, Icon } from "@/ui-components";
+import { OrderForm } from "./OrderForm";
+import OrderFormInputControlsContainer from "./OrderForm.input-controls.container";
+import { OrderType } from "@/constants/order-enums";
+import {
+  orderValidationFn as derivativeOrderValidationFn,
+  submitOrderFn as derivativeSubmitOrderFn,
+} from "./OrderForm.derivative.submit-order-helper";
+import {
+  spotOrderValidationFn,
+  spotSubmitOrderFn,
+} from "./OrderForm.spot.submit-order-helper";
+import { getSetting } from "@/selectors/ui-setting.selectors";
+import { toggleBooleanSetting } from "@/actions/ui-setting.actions";
+import { getLabelOrderType } from "@/exports/order.utils";
+import { Link } from "react-router-dom";
+import { RoutePaths } from "@/constants/route-paths";
 
-class OrderFormContainer extends React.PureComponent<OrderFormContainerProps, Partial<OrderFormContainerProps>> {
+class OrderFormContainer extends React.PureComponent<
+  OrderFormContainerProps,
+  Partial<OrderFormContainerProps>
+> {
   constructor(props) {
     super(props);
 
@@ -47,7 +56,7 @@ class OrderFormContainer extends React.PureComponent<OrderFormContainerProps, Pa
     if (Object.keys(s).length) {
       return {
         ...prevState,
-        ...s
+        ...s,
       };
     }
 
@@ -58,51 +67,66 @@ class OrderFormContainer extends React.PureComponent<OrderFormContainerProps, Pa
     this.setState(states);
   }
 
+  onSubmitOrder(
+    { clientOrderId, tradeOptions, price, amount, type, tif, stopPrice, side },
+    onError,
+    state,
+    extraData
+  ) {
+    let { tickerPrice } = this.state;
 
-  onSubmitOrder({ clientOrderId, tradeOptions, price, amount, type, tif, stopPrice, side }, onError, state, extraData) {
-    let { tickerPrice } = this.state
+    const { price: lowestSellPrice = tickerPrice } = _minBy(
+      this.props.asks,
+      (o) => o.price
+    );
+    const { price: highestBuyPrice = tickerPrice } = _maxBy(
+      this.props.bids,
+      (o) => o.price
+    );
 
-    const { price: lowestSellPrice = tickerPrice } = _minBy(this.props.asks, (o) => o.price);
-    const { price: highestBuyPrice = tickerPrice } = _maxBy(this.props.bids, (o) => o.price);
-
-    const { 
-      orderValidationFn, 
-      dispatch, 
+    const {
+      orderValidationFn,
+      dispatch,
       submitOrderFn,
       executedLongCash,
       executedLongPosition,
-      leverage 
+      leverage,
     } = this.props;
 
     const validParams = {
-      clientOrderId, 
-      tif, 
-      tradeOptions, 
-      lowestSellPrice, 
-      highestBuyPrice, 
-      side, 
-      stopPrice: +stopPrice, 
-      price: +price, 
-      amount: +amount, 
-      type, 
+      clientOrderId,
+      tif,
+      tradeOptions,
+      lowestSellPrice,
+      highestBuyPrice,
+      side,
+      stopPrice: +stopPrice,
+      price: +price,
+      amount: +amount,
+      type,
       onError,
       executedLongCash,
       executedLongPosition,
-      leverage 
+      leverage,
     };
 
     if (orderValidationFn(validParams, this.props)) {
-      submitOrderFn({
-        clientOrderId,
-        tradeOptions,
-        type,
-        side,
-        tif,
-        stopPrice: +stopPrice,
-        price: +price,
-        amount: +amount,
-        dispatch,
-      }, this.props, state, extraData)
+      submitOrderFn(
+        {
+          clientOrderId,
+          tradeOptions,
+          type,
+          side,
+          tif,
+          stopPrice: +stopPrice,
+          price: +price,
+          amount: +amount,
+          dispatch,
+        },
+        this.props,
+        state,
+        extraData
+      );
     }
   }
 
@@ -113,42 +137,61 @@ class OrderFormContainer extends React.PureComponent<OrderFormContainerProps, Pa
   closeCalculator() {
     const { dispatch } = this.props;
 
-    dispatch(toggleBooleanSetting({
-      key: 'open_calculator_overlay',
-      persist: false
-    }));
+    dispatch(
+      toggleBooleanSetting({
+        key: "open_calculator_overlay",
+        persist: false,
+      })
+    );
   }
 
   render() {
     const { isLoggedIn } = this.props;
-    if(!isLoggedIn) {
+    if (!isLoggedIn) {
       return (
         <div className="orderform__login">
           <div className="orderform__login__logo">
             <Link to="/">
-              <span>bit</span>
-              <span>24</span>
+              <span>b</span>
+              <span>o</span>
             </Link>
           </div>
           <div className="orderform__login__socials">
             <Link to="/">
-              <Icon id="discord" cssmodule="fab"/>
+              <Icon id="discord" cssmodule="fab" />
             </Link>
             <Link to="/">
-              <Icon id="telegram-plane" cssmodule="fab"/>
+              <Icon id="telegram-plane" cssmodule="fab" />
             </Link>
             <Link to="/">
-              <Icon id="twitter" cssmodule="fab"/>
+              <Icon id="twitter" cssmodule="fab" />
             </Link>
           </div>
-          <Link to={RoutePaths.LOGIN} className="orderform__login__btn">Log in</Link>
-          <Link to={RoutePaths.REGISTER} className="orderform__register__btn">Register Now</Link>
+          <Link to={RoutePaths.LOGIN} className="orderform__login__btn">
+            Log in
+          </Link>
+          <Link to={RoutePaths.REGISTER} className="orderform__register__btn">
+            Register Now
+          </Link>
         </div>
       );
     }
 
-    const { maxLeverage, isAuthenticated, showCalculator, pair, tickerPrice, balances, wallet, orderTypes, selectedType, immediateSubmit, tradingFee, mmr } = this.state;
-    
+    const {
+      maxLeverage,
+      isAuthenticated,
+      showCalculator,
+      pair,
+      tickerPrice,
+      balances,
+      wallet,
+      orderTypes,
+      selectedType,
+      immediateSubmit,
+      tradingFee,
+      mmr,
+    } = this.state;
+
     const orderFormProps = {
       maxLeverage,
       wallet,
@@ -162,7 +205,7 @@ class OrderFormContainer extends React.PureComponent<OrderFormContainerProps, Pa
       selectedType,
       immediateSubmit,
       tradingFee,
-      mmr
+      mmr,
     };
 
     return (
@@ -182,30 +225,32 @@ class OrderFormContainer extends React.PureComponent<OrderFormContainerProps, Pa
   private _isDerivative(): boolean {
     const { wallet } = this.state;
 
-    return wallet === WalletType.DERIVATIVE
+    return wallet === WalletType.DERIVATIVE;
   }
 }
 
 function _generateOrderTypeDropdownItem(type: OrderType) {
   return {
     title: getLabelOrderType(type),
-    to: `${type}`
-  }
+    to: `${type}`,
+  };
 }
 
 function _generateOrderTypeSubItem(type: OrderType) {
   return {
     label: getLabelOrderType(type),
-    value: `${type}`
-  }
+    value: `${type}`,
+  };
 }
 const orderTypes = [
-  ...[OrderType.LIMIT, OrderType.MARKET, OrderType.STOP_LMT].map(_generateOrderTypeDropdownItem), 
+  ...[OrderType.LIMIT, OrderType.MARKET, OrderType.STOP_LMT].map(
+    _generateOrderTypeDropdownItem
+  ),
   {
-    title: 'Other',
-    to: 'other',
+    title: "Other",
+    to: "other",
     dropdownOptions: [
-      OrderType.STOP_MKT, 
+      OrderType.STOP_MKT,
       OrderType.TSL,
       OrderType.TSM,
       OrderType.PEG,
@@ -216,16 +261,22 @@ const orderTypes = [
       OrderType.OCO_ICE,
       OrderType.SNIPER_MKT,
       OrderType.SNIPER_LIMIT,
-    ].map(_generateOrderTypeSubItem)
-  }
+    ].map(_generateOrderTypeSubItem),
+  },
 ];
 
 const mapStateToProps = (state, props) => {
   const { wallet } = props;
-  const orderValidFunc = wallet === WalletType.DERIVATIVE ? derivativeOrderValidationFn : spotOrderValidationFn;
-  const submitOrderFunc = wallet === WalletType.DERIVATIVE ? derivativeSubmitOrderFn : spotSubmitOrderFn;
+  const orderValidFunc =
+    wallet === WalletType.DERIVATIVE
+      ? derivativeOrderValidationFn
+      : spotOrderValidationFn;
+  const submitOrderFunc =
+    wallet === WalletType.DERIVATIVE
+      ? derivativeSubmitOrderFn
+      : spotSubmitOrderFn;
 
-  return ({
+  return {
     balances: getBalances(state),
     bids: getBidsSelector(state),
     asks: getAsksSelector(state),
@@ -243,15 +294,22 @@ const mapStateToProps = (state, props) => {
     mmr: state.user.mmr,
     orderValidationFn: orderValidFunc,
     submitOrderFn: submitOrderFunc,
-    showCalculator: wallet === WalletType.DERIVATIVE && getSetting(state)('open_calculator_overlay'),
-    immediateSubmit: wallet === WalletType.DERIVATIVE && !getSetting(state)('enabled_order_confirm_popup'),
-  });
+    showCalculator:
+      wallet === WalletType.DERIVATIVE &&
+      getSetting(state)("open_calculator_overlay"),
+    immediateSubmit:
+      wallet === WalletType.DERIVATIVE &&
+      !getSetting(state)("enabled_order_confirm_popup"),
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch,
 });
 
-const ConnectedContainer = connect(mapStateToProps, mapDispatchToProps)(OrderFormContainer);
+const ConnectedContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OrderFormContainer);
 
 export default ConnectedContainer;
