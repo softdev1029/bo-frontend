@@ -4,14 +4,14 @@ import Storage from "@/internals/Storage";
 import { WorkspaceSetting } from "@/models/workspace-setting";
 
 export const defaultWorkspace: WorkspaceSetting = {
-  chart: true,
-  contract: true,
-  balance: true,
-  market: true,
-  orderbook: true,
-  trade: true,
-  watchlist: true,
-  marketHistory: true,
+  chart: false,
+  contract: false,
+  balance: false,
+  market: false,
+  orderbook: false,
+  trade: false,
+  watchlist: false,
+  marketHistory: false,
 };
 
 export const DEFAULT_USER_SETTINGS_MAP = {
