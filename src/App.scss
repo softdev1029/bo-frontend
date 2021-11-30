@@ -1,0 +1,54 @@
+@import "~react-grid-layout/css/styles.css";
+@import "~react-resizable/css/styles.css";
+
+@import "./resources/main.scss";
+
+.react-grid-item {
+  contain: size layout;
+  border: 1px solid var(--tuna-200);
+  border-radius: var(--border-radius);
+  background: var(--tuatara-500);
+  transition: transform 200ms ease, -webkit-transform 200ms ease;
+
+  &.react-grid-item--dragging > .react-grid-item__section #chart-root,
+  &.react-grid-item--dragging ~ div > .react-grid-item__section #chart-root {
+    pointer-events: none;
+  }
+
+  & > .react-resizable-handle {
+    opacity: 0;
+    z-index: 2;
+    padding: 0 3px 3px 0;
+    box-sizing: border-box;
+    &::after {
+      border-right-color: var(--shark-700);
+      border-bottom-color: var(--shark-700);
+    }
+    .react-resizable-handle:before {
+      bottom: 2px;
+      right: 2px;
+      height: 3px;
+      width: 9px;
+    }
+
+    .react-resizable-handle:after {
+      bottom: 2px;
+      right: 2px;
+      height: 9px;
+      width: 3px;
+    }
+  }
+  &:hover > .react-resizable-handle {
+    opacity: 1;
+  }
+  & .react-grid-item__section {
+    border: 1px solid #575757;
+    border-radius: var(--border-radius);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4), -1px -1px 2px rgba(0, 0, 0, 0.4);
+    background: var(--mine-shaft) !important;
+    contain: strict;
+    height: 100%;
+    overflow: hidden;
+    padding: 1px;
+  }
+}
