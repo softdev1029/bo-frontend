@@ -152,8 +152,8 @@ class OrderFormContainer extends React.PureComponent<
         <div className="orderform__login">
           <div className="orderform__login__logo">
             <Link to="/">
-              <span>b</span>
-              <span>o</span>
+              <span></span>
+              <span></span>
             </Link>
           </div>
           <div className="orderform__login__socials">

@@ -40,8 +40,8 @@ export const Header = React.memo(
       <div className="cpn-header">
         <div className="cpn-header__logo">
           <Link to="/">
-            <span>b</span>
-            <span>o</span>
+            <span></span>
+            <span></span>
           </Link>
           {getHeaderItems(marketHeader)}
         </div>
