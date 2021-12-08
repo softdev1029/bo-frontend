@@ -4,7 +4,8 @@ const ws = "wss://testnet.binance.vision/ws";
 // wss://api.binance.com:9443/ws/$all@allTickers
 export const testurl1 = "wss://stream.binance.com:9443/ws";
 export const testurl2 = "wss://stream.binance.com:9443/ws";
-export const riskWsUrl = "ws://192.81.111.174:32026";
+// export const riskWsUrl = "ws://192.81.111.174:32026";
+export const riskWsUrl = "ws://oes-opt-dev.bit24.com";
 
 export default {
   http,
