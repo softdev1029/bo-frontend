@@ -5,7 +5,8 @@ const ws = "wss://testnet.binance.vision/ws";
 export const testurl1 = "wss://stream.binance.com:9443/ws";
 export const testurl2 = "wss://stream.binance.com:9443/ws";
 // export const riskWsUrl = "ws://192.81.111.174:32026";
-export const riskWsUrl = "ws://oes-opt-dev.bit24.com";
+export const riskWsUrl = "wss://oes-opt-dev.bit24.com";
+// export const riskWsUrl = "ws://localhost:8080";
 
 export default {
   http,

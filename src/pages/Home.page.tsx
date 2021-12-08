@@ -33,6 +33,8 @@ import {
   InstrumentRequestManner,
   InstrumentRequestType,
 } from "@/packets/instrument.packet";
+import { SingletonWSManager } from "@/internals";
+
 // import { SymbolType } from "@/constants/symbol-enums";
 
 // worker.onmessage = function (event) {
@@ -122,7 +124,9 @@ export const Home = () => {
 
           console.log("subscribe buffer:", subSender);
           console.log("subscribe reader:", SubscribeManner.read(subSender));
-          dispatch(sendWsData(1, subSender));
+
+          SingletonWSManager.send(subSender);
+          // dispatch(sendWsData(1, subSender));
         }}
       >
         test log subscriber

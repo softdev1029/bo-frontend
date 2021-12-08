@@ -7,6 +7,7 @@ import {
 import { shallowCompareObjects } from "@/exports";
 import { Observable, Subject } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 interface WSInfo {
   url: string;
@@ -25,10 +26,26 @@ class WebsocketMananger {
 
   wsEntriesSubject = new Subject();
 
+  private client: any = null;
+
   constructor(adminRiskUrl: string) {
     this.usingSockets[WebSocketKindEnum.ADMIN_RISK] = adminRiskUrl;
 
     this.usingSockets[WebSocketKindEnum.MARKET] = testurl1;
+
+    this.client = new W3CWebSocket(adminRiskUrl);
+
+    this.client.onopen = () => {
+      console.log("WebSocket Client Connected");
+    };
+
+    this.client.onmessage = (message) => {
+      console.log(message);
+    };
+  }
+
+  send(data: any) {
+    this.client.send(data);
   }
 
   hasInstance(id: number): boolean {
