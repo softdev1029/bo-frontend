@@ -34,6 +34,7 @@ class WebsocketMananger {
     this.usingSockets[WebSocketKindEnum.MARKET] = testurl1;
 
     this.client = new W3CWebSocket(adminRiskUrl);
+    this.client.binaryType = "arraybuffer";
 
     this.client.onopen = () => {
       console.log("WebSocket Client Connected");
@@ -45,7 +46,12 @@ class WebsocketMananger {
   }
 
   send(data: any) {
-    this.client.send(data);
+    var len = data.length;
+    var bytearray = new Uint8Array(len);
+    for (var i = 0; i < len; ++i) {
+      bytearray[i] = data[i];
+    }
+    this.client.send(bytearray);
   }
 
   hasInstance(id: number): boolean {
