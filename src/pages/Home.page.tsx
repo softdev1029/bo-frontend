@@ -91,7 +91,7 @@ export const Home = () => {
           // client login
           const loginObj = {
             accountId: 100500,
-            username: "NAM",
+            username: "CLN",
             sendingTime: Date.now(),
           };
           const loginData = ClientLoginManner.send(loginObj);
