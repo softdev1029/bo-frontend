@@ -82,22 +82,24 @@ export const Home = () => {
   };
 
   const s$ = new Subject<string>();
-  // client login
-  const loginData = ClientLoginManner.send({
-    accountId: 100500,
-    username: "NAM",
-    sendingTime: Date.now(),
-  });
-  // console.log('sentData', sentData);
-  const readData = ClientLoginManner.read(loginData);
 
   return (
     <div className="App">
       <h3>HOME PAGE</h3>
       <button
         onClick={() => {
-          console.log("login buffer:", loginData);
-          console.log("login readed:", readData);
+          // client login
+          const loginObj = {
+            accountId: 100500,
+            username: "NAM",
+            sendingTime: Date.now(),
+          };
+          const loginData = ClientLoginManner.send(loginObj);
+
+          console.log("Sending Logon", loginObj, loginData);
+
+          SingletonWSManager.send(loginData);
+          // dispatch(sendWsData(1, loginData));
         }}
       >
         test log sender
@@ -290,16 +292,6 @@ export const Home = () => {
           send ping
         </button>
       </header>
-      <section>
-        <button
-          onClick={() => {
-            console.log(loginData);
-            dispatch(sendWsData(1, loginData));
-          }}
-        >
-          send login
-        </button>
-      </section>
       <section>
         <button
           onClick={() =>

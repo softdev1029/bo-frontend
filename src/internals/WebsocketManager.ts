@@ -5,6 +5,7 @@ import {
   WebSocketKindStateEnum,
 } from "@/constants/websocket.enums";
 import { shallowCompareObjects } from "@/exports";
+import { ClientLoginManner } from "@/packets/client-login.packet";
 import { Observable, Subject } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
@@ -41,14 +42,24 @@ class WebsocketMananger {
     };
 
     this.client.onmessage = (message) => {
-      console.log(message);
+      // console.log(message.data);
+      const bytearray = new Uint8Array(message.data);
+      const data: number[] = [];
+      for (let i = 0; i < bytearray.length; i++) {
+        data.push(bytearray[i]);
+      }
+
+      if (data[0] == "H".charCodeAt(0)) {
+        const readData = ClientLoginManner.read(data);
+        console.log("Received Logon reply", readData);
+      }
     };
   }
 
   send(data: any) {
-    var len = data.length;
-    var bytearray = new Uint8Array(len);
-    for (var i = 0; i < len; ++i) {
+    const len = data.length;
+    const bytearray = new Uint8Array(len);
+    for (let i = 0; i < len; ++i) {
       bytearray[i] = data[i];
     }
     this.client.send(bytearray);
