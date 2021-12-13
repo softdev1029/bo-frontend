@@ -11,15 +11,18 @@ export class PacketManner<T = any> {
 
   private _structure: DataByte[];
 
-  constructor(messageType: PacketHeaderMessageType, messageStructure: DataByte[]) {
+  constructor(
+    messageType: PacketHeaderMessageType,
+    messageStructure: DataByte[]
+  ) {
     this.messageType = messageType;
 
     // all messages have the same first 4 bytes
     this._structure = [
-      new DataByte('messageType', TypedData.CHAR),
-      new DataByte('typeAlias', TypedData.CHAR),
-      new DataByte('messageLength', TypedData.SHORT),
-      ...messageStructure
+      new DataByte("messageType", TypedData.CHAR),
+      new DataByte("typeAlias", TypedData.CHAR),
+      new DataByte("messageLength", TypedData.SHORT),
+      ...messageStructure,
     ];
   }
 
@@ -54,11 +57,11 @@ export class PacketManner<T = any> {
       }
     }
 
-    if(pretty) {
+    if (pretty) {
       const t = Object.assign({});
-      for(let key in result) {
-        if(result[key]) {
-          t[key] = result[key]
+      for (let key in result) {
+        if (result[key]) {
+          t[key] = result[key];
         }
       }
 

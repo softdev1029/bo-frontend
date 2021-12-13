@@ -2,11 +2,11 @@ import { PacketHeaderAnalyze } from "./PackageHeaderAnalyze";
 
 function build_string(str, length) {
   if (length === 0) {
-    return ''
+    return "";
   } else if (str.length >= length) {
-    return str.substring(0, length)
+    return str.substring(0, length);
   } else {
-    return str + ' '.repeat(length - str.length);
+    return str + " ".repeat(length - str.length);
   }
 }
 
@@ -20,7 +20,7 @@ export class PacketSender {
   private _isPackedHeader = !1;
   private _capacity = 0;
 
-  constructor(messageType, defaultLength = 100, typeAlias = '') {
+  constructor(messageType, defaultLength = 100, typeAlias = "") {
     this.reset();
 
     this.initData(defaultLength);
@@ -51,13 +51,13 @@ export class PacketSender {
     this.putByte(header);
     this.putUnsignedShort(this._length);
   }
-  
+
   putByte(b) {
     this._data[this._pos++] = b;
     this._length = this._pos;
     return this;
   }
-  
+
   putByteArray(bytes) {
     this.putShort(bytes.length);
     this.putBytes(bytes);
@@ -72,8 +72,8 @@ export class PacketSender {
   }
 
   putShort(v) {
-    this.putByte((v >> 0) & 0xFF);
-    this.putByte((v >> 8) & 0xFF);
+    this.putByte((v >> 0) & 0xff);
+    this.putByte((v >> 8) & 0xff);
     return this;
   }
 
@@ -99,7 +99,7 @@ export class PacketSender {
     var data = [];
 
     for (var k = 0; k < 8; k++) {
-      data[k] = (v & (0xff));
+      data[k] = v & 0xff;
       v = Math.floor(v / 256);
     }
 
@@ -110,7 +110,6 @@ export class PacketSender {
 
     return this;
   }
-
 
   putDouble(v) {
     var buffer = new ArrayBuffer(8);
@@ -139,8 +138,8 @@ export class PacketSender {
   }
 
   updateShortAtPos(v: number, pos: number) {
-    this._data[pos] = (v >> 0) & 0xFF;
-    this._data[pos + 1] = (v >> 8) & 0xFF;
+    this._data[pos] = (v >> 0) & 0xff;
+    this._data[pos + 1] = (v >> 8) & 0xff;
   }
 
   updateSize() {
@@ -152,8 +151,7 @@ export class PacketSender {
   }
 
   private _stringConvertToByteArray(strData) {
-    if (strData == null)
-      return null;
+    if (strData == null) return null;
 
     var arrData = new Uint8Array(strData.length);
     for (var i = 0; i < strData.length; i++) {
@@ -163,7 +161,5 @@ export class PacketSender {
     return arrData;
   }
 
-  clean() {
-
-  }
+  clean() {}
 }
