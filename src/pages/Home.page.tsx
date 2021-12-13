@@ -102,10 +102,10 @@ export const Home = () => {
           // dispatch(sendWsData(1, loginData));
         }}
       >
-        test log sender
+        Sending Logon ...
       </button>
       <br />
-      <button
+      {/* <button
         onClick={() => {
           const params = {
             type: SubscribeManner.messageType,
@@ -132,7 +132,7 @@ export const Home = () => {
         }}
       >
         test log subscriber
-      </button>
+      </button> */}
       <button
         onClick={() => {
           const params = {
@@ -149,13 +149,15 @@ export const Home = () => {
             "instrument request reader:",
             InstrumentRequestManner.read(subSender)
           );
-          dispatch(sendWsData(2, subSender));
+
+          SingletonWSManager.send(subSender);
+          // dispatch(sendWsData(2, subSender));
         }}
       >
-        test request instrument
+        Sending Instrument Request ...
       </button>
       <br />
-      <button
+      {/* <button
         onClick={() => {
           const params = {
             type: TradesManner.messageType,
@@ -176,7 +178,7 @@ export const Home = () => {
       >
         test log trades
       </button>
-      <br />
+      <br /> */}
       <button
         onClick={() => {
           const lastOrderId = Date.now();
@@ -205,12 +207,13 @@ export const Home = () => {
             TransactionManner.read(order, true)
           );
 
-          dispatch(sendWsData(1, order));
+          SingletonWSManager.send(order);
+          // dispatch(sendWsData(1, order));
         }}
       >
-        test new transaction
+        Sending a New Transaction ...
       </button>
-      <button
+      {/* {/* <button
         onClick={() => {
           const params = {
             type: MessageType.ORDER_CANCEL,
@@ -267,7 +270,6 @@ export const Home = () => {
       >
         cancel replace order {lastOrderId}
       </button>
-      <header>
         <button onClick={() => dispatch(requestConnectToAdminRisk())}>
           test admin risk
         </button>
@@ -291,8 +293,6 @@ export const Home = () => {
         <button onClick={() => dispatch(sendWsData(2, { event: "ping" }))}>
           send ping
         </button>
-      </header>
-      <section>
         <button
           onClick={() =>
             dispatch(
@@ -318,8 +318,7 @@ export const Home = () => {
           }
         >
           manually unsubscribe
-        </button>
-      </section>
+        </button> */}
       {email && (
         <div>
           <h1>Hello {email}</h1>

@@ -6,6 +6,8 @@ import {
 } from "@/constants/websocket.enums";
 import { shallowCompareObjects } from "@/exports";
 import { ClientLoginManner } from "@/packets/client-login.packet";
+import { InstrumentRequestManner } from "@/packets/instrument.packet";
+import { TransactionManner } from "@/packets/transaction.packet";
 import { Observable, Subject } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
@@ -52,6 +54,20 @@ class WebsocketMananger {
       if (data[0] == "H".charCodeAt(0)) {
         const readData = ClientLoginManner.read(data);
         console.log("Received Logon reply", readData);
+        alert("Received Logon reply, " + JSON.stringify(readData, null, "\t"));
+      } else if (data[0] == "Y".charCodeAt(0)) {
+        const readData = InstrumentRequestManner.read(data);
+        console.log("Received Instrument request reply", readData);
+        alert(
+          "Received Instrument request reply, " +
+            JSON.stringify(readData, null, "\t")
+        );
+      } else if (data[0] == "T".charCodeAt(0)) {
+        const readData = TransactionManner.read(data);
+        console.log("Received Transaction reply", readData);
+        alert(
+          "Received Transaction reply, " + JSON.stringify(readData, null, "\t")
+        );
       }
     };
   }
