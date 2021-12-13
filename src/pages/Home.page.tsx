@@ -85,7 +85,7 @@ export const Home = () => {
 
   const ACCOUNT_ID = 90001;
   const USER_NAME = "MTX01";
-  const SESSION_ID = "901";
+  const SESSION_ID = 901;
 
   return (
     <div className="App">
@@ -101,7 +101,12 @@ export const Home = () => {
           };
           const loginData = ClientLoginManner.send(loginObj);
 
-          console.log("Sending Logon", loginObj, loginData);
+          console.log(
+            "Sending Logon",
+            loginObj,
+            loginData,
+            ClientLoginManner.read(loginData)
+          );
 
           SingletonWSManager.send(loginData);
           // dispatch(sendWsData(1, loginData));

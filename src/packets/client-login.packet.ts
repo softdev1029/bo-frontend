@@ -5,7 +5,6 @@ import { PacketManner } from "./packet-manner";
 const CLIENT_LOGIN_STRUCTURE = [
   new DataByte("padding", TypedData.SHORT), // 4
   new DataByte("accountId", TypedData.INT), // 6
-  new DataByte("riskMaster", TypedData.CHAR), // 10
   new DataByte("twoFACode", TypedData.CHAR, 6), // 11
   new DataByte("username", TypedData.CHAR, 6), // 17
   new DataByte("sessionId", TypedData.INT), // 23
@@ -18,6 +17,7 @@ const CLIENT_LOGIN_STRUCTURE = [
   new DataByte("clientLoginKey", TypedData.INT), // 135
   new DataByte("loginStatus", TypedData.SHORT), // 139
   new DataByte("rejectReason", TypedData.SHORT), // 141
+  new DataByte("riskMaster", TypedData.CHAR), // 10
 ];
 
 export const ClientLoginManner = new PacketManner(
