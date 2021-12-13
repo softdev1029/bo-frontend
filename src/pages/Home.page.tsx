@@ -83,6 +83,10 @@ export const Home = () => {
 
   const s$ = new Subject<string>();
 
+  const ACCOUNT_ID = 90001;
+  const USER_NAME = "MTX01";
+  const SESSION_ID = "901";
+
   return (
     <div className="App">
       <h3>HOME PAGE</h3>
@@ -90,8 +94,9 @@ export const Home = () => {
         onClick={() => {
           // client login
           const loginObj = {
-            accountId: 100500,
-            username: "CLN",
+            accountId: ACCOUNT_ID,
+            username: USER_NAME,
+            sessionId: SESSION_ID,
             sendingTime: Date.now(),
           };
           const loginData = ClientLoginManner.send(loginObj);
@@ -137,7 +142,7 @@ export const Home = () => {
         onClick={() => {
           const params = {
             type: InstrumentRequestManner.messageType,
-            accountId: 100500,
+            accountId: ACCOUNT_ID,
             sendingTime: Date.now(),
             requestType: InstrumentRequestType.ALL,
             symbolType: SymbolType.SPOT,
@@ -185,7 +190,7 @@ export const Home = () => {
 
           const params = {
             type: MessageType.ORDER_NEW,
-            accountId: 100500,
+            accountId: ACCOUNT_ID,
             clientOrderId: lastOrderId,
             symbolEnum: SymbolValue.BTC,
             orderType: OrderType.LIMIT,

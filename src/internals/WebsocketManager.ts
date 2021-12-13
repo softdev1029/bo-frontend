@@ -44,7 +44,7 @@ class WebsocketMananger {
     };
 
     this.client.onmessage = (message) => {
-      // console.log(message.data);
+      console.log(message.data);
       const bytearray = new Uint8Array(message.data);
       const data: number[] = [];
       for (let i = 0; i < bytearray.length; i++) {
