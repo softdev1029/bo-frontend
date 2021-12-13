@@ -1,6 +1,6 @@
 import { PacketReader, PacketSender } from "@/internals";
-import _isObject from 'lodash/isObject';
-import _isArray from 'lodash/isArray';
+import _isObject from "lodash/isObject";
+import _isArray from "lodash/isArray";
 
 export enum TypedData {
   CHAR = 1,
@@ -8,15 +8,15 @@ export enum TypedData {
   INT,
   SHORT,
   DOUBLE,
-  CUSTOM_DATA
+  CUSTOM_DATA,
 }
 
 export interface IReadCustomData {
-  getCustomValue: (reader: PacketReader) => any
+  getCustomValue: (reader: PacketReader) => any;
 }
 
 export interface IPutCustomData {
-  putCustomValue: (values: Object | Object[], sender: PacketSender) => void
+  putCustomValue: (values: Object | Object[], sender: PacketSender) => void;
 }
 
 export class DataByte implements IReadCustomData, IPutCustomData {
@@ -27,8 +27,7 @@ export class DataByte implements IReadCustomData, IPutCustomData {
   constructor(name: string, type: TypedData, length?: number) {
     this.name = name;
     this.type = type;
-    if (length)
-      this._length = length;
+    if (length) this._length = length;
   }
 
   putValue(value: any, sender: PacketSender) {
@@ -50,18 +49,19 @@ export class DataByte implements IReadCustomData, IPutCustomData {
         break;
       }
       case TypedData.CHAR: {
-        sender.putChar(value || '', this._length);
+        sender.putChar(value || "", this._length);
         break;
       }
       case TypedData.CUSTOM_DATA: {
-        if(!_isObject(value) && !_isArray(value)) {
-          throw new Error('CUSTOM_DATA requires values represents as an object or array of object')
+        if (!_isObject(value) && !_isArray(value)) {
+          throw new Error(
+            "CUSTOM_DATA requires values represents as an object or array of object"
+          );
         }
         this.putCustomValue(value, sender);
         break;
       }
     }
-
   }
 
   getValue(reader: PacketReader): any {
@@ -82,13 +82,13 @@ export class DataByte implements IReadCustomData, IPutCustomData {
         return reader.getChar(this._length, true);
       }
       case TypedData.CUSTOM_DATA: {
-        return this.getCustomValue(reader)
+        return this.getCustomValue(reader);
       }
     }
   }
 
   length(): number {
-    switch(this.type) {
+    switch (this.type) {
       case TypedData.LONG: {
         return 8;
       }
@@ -108,6 +108,6 @@ export class DataByte implements IReadCustomData, IPutCustomData {
     }
   }
 
-  getCustomValue(reader: PacketReader) { }
-  putCustomValue(values: Object | Object[], sender: PacketSender) { }
+  getCustomValue(reader: PacketReader) {}
+  putCustomValue(values: Object | Object[], sender: PacketSender) {}
 }
