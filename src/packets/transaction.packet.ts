@@ -40,7 +40,8 @@ const TRANSACTION_MESSAGE_STRUCTURE = [
   new DataByte("execPrice", TypedData.DOUBLE), // 200
   new DataByte("seqId", TypedData.LONG), // 208
   new DataByte("takeProfitPrice", TypedData.DOUBLE), // 216
-  new DataByte("triggerType", TypedData.SHORT), // 218
+  new DataByte("triggerType", TypedData.SHORT), // 224
+  new DataByte("attributes", TypedData.CHAR, 12), // 226
 ];
 
 export const TransactionManner = new PacketManner<TransactionModel>(
