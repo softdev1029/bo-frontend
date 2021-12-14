@@ -8,6 +8,7 @@ import { shallowCompareObjects } from "@/exports";
 import { ClientLoginManner } from "@/packets/client-login.packet";
 import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
 import { InstrumentRequestManner } from "@/packets/instrument.packet";
+import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
 import { TransactionManner } from "@/packets/transaction.packet";
 import { Observable, Subject } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
@@ -74,6 +75,13 @@ class WebsocketMananger {
         console.log("Received Collateral Update Request reply", readData);
         alert(
           "Received Collateral Update Request reply, " +
+            JSON.stringify(readData, null, "\t")
+        );
+      } else if (data[0] == "e".charCodeAt(0)) {
+        const readData = OpenOrderReqManner.read(data);
+        console.log("Received Open Order Request reply", readData);
+        alert(
+          "Received Open Order Request reply, " +
             JSON.stringify(readData, null, "\t")
         );
       }

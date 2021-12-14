@@ -35,6 +35,7 @@ import {
 } from "@/packets/instrument.packet";
 import { SingletonWSManager } from "@/internals";
 import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
+import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
 
 // import { SymbolType } from "@/constants/symbol-enums";
 
@@ -227,8 +228,6 @@ export const Home = () => {
       <br />
       <button
         onClick={() => {
-          const lastOrderId = Date.now();
-
           const params = {
             account: ACCOUNT_ID,
           };
@@ -244,6 +243,25 @@ export const Home = () => {
         }}
       >
         Sending a Collateral Update Request ...
+      </button>
+      <br />
+      <button
+        onClick={() => {
+          const params = {
+            account: ACCOUNT_ID,
+          };
+          const req = OpenOrderReqManner.send(params);
+
+          console.log(
+            "sending open order request ...",
+            OpenOrderReqManner.read(req)
+          );
+
+          SingletonWSManager.send(req);
+          // dispatch(sendWsData(1, order));
+        }}
+      >
+        Sending a Open Order Request ...
       </button>
       {/* {/* <button
         onClick={() => {
