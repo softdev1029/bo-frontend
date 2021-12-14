@@ -40,4 +40,5 @@ export enum PacketHeaderMessageType {
   BOOK_30 = "U", // 30 level data
   COL_UPDATE_REQ = "f",
   OPEN_ORDER_REQ = "e",
+  RISK_UPDATE_REQ = "w",
 }
