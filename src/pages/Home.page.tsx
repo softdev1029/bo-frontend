@@ -34,6 +34,7 @@ import {
   InstrumentRequestType,
 } from "@/packets/instrument.packet";
 import { SingletonWSManager } from "@/internals";
+import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
 
 // import { SymbolType } from "@/constants/symbol-enums";
 
@@ -222,6 +223,27 @@ export const Home = () => {
         }}
       >
         Sending a New Transaction ...
+      </button>
+      <br />
+      <button
+        onClick={() => {
+          const lastOrderId = Date.now();
+
+          const params = {
+            account: ACCOUNT_ID,
+          };
+          const req = ColUpdateReqManner.send(params);
+
+          console.log(
+            "sending collateral update request ...",
+            ColUpdateReqManner.read(req)
+          );
+
+          SingletonWSManager.send(req);
+          // dispatch(sendWsData(1, order));
+        }}
+      >
+        Sending a Collateral Update Request ...
       </button>
       {/* {/* <button
         onClick={() => {

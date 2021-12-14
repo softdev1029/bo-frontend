@@ -6,6 +6,7 @@ import {
 } from "@/constants/websocket.enums";
 import { shallowCompareObjects } from "@/exports";
 import { ClientLoginManner } from "@/packets/client-login.packet";
+import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
 import { InstrumentRequestManner } from "@/packets/instrument.packet";
 import { TransactionManner } from "@/packets/transaction.packet";
 import { Observable, Subject } from "rxjs";
@@ -67,6 +68,13 @@ class WebsocketMananger {
         console.log("Received Transaction reply", readData);
         alert(
           "Received Transaction reply, " + JSON.stringify(readData, null, "\t")
+        );
+      } else if (data[0] == "f".charCodeAt(0)) {
+        const readData = ColUpdateReqManner.read(data);
+        console.log("Received Collateral Update Request reply", readData);
+        alert(
+          "Received Collateral Update Request reply, " +
+            JSON.stringify(readData, null, "\t")
         );
       }
     };
