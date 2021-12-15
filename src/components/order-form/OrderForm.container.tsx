@@ -243,9 +243,10 @@ function _generateOrderTypeSubItem(type: OrderType) {
   };
 }
 const orderTypes = [
-  ...[OrderType.LIMIT, OrderType.MARKET, OrderType.STOP_LMT].map(
+  ...[OrderType.LIMIT, OrderType.MARKET /*OrderType.STOP_LMT*/].map(
     _generateOrderTypeDropdownItem
   ),
+  /*
   {
     title: "Other",
     to: "other",
@@ -263,6 +264,7 @@ const orderTypes = [
       OrderType.SNIPER_LIMIT,
     ].map(_generateOrderTypeSubItem),
   },
+  */
 ];
 
 const mapStateToProps = (state, props) => {
