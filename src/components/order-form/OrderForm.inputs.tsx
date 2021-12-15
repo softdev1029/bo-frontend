@@ -238,7 +238,7 @@ export default class OrderFormInputs extends React.Component<
             <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
           </div>
         )}
-         */}
+        
         {shouldDisplayStopTriggerGroup(typeId) && (
           <OrderFormStopTrigger
             enabledStopTrigger={enabledStopTrigger}
@@ -258,6 +258,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
+         
         {shouldDisplayTPnSLGroups(typeId) && (
           <OrderFormCollapseArea
             title="Add Take Profit / Stop Loss"
@@ -293,6 +294,7 @@ export default class OrderFormInputs extends React.Component<
             </div>
           </OrderFormCollapseArea>
         )}
+        */}
       </div>
     );
   }
