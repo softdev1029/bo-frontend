@@ -221,6 +221,7 @@ export default class OrderFormInputs extends React.Component<
             onClick={onUpdateAmountByBalancePercent}
           />
         </div>
+        {/* 
         {shouldDisplayTIFOptions(typeId) && (
           <div className="mb-10 d-flex d-justify-content-space-between">
             <InputCheckboxInline
@@ -237,6 +238,7 @@ export default class OrderFormInputs extends React.Component<
             <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
           </div>
         )}
+         */}
         {shouldDisplayStopTriggerGroup(typeId) && (
           <OrderFormStopTrigger
             enabledStopTrigger={enabledStopTrigger}
