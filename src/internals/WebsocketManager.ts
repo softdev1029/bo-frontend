@@ -6,6 +6,7 @@ import {
 } from "@/constants/websocket.enums";
 import { shallowCompareObjects } from "@/exports";
 import { ClientLoginManner } from "@/packets/client-login.packet";
+import { ColDataManner } from "@/packets/col-data.packet";
 import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
 import { InstrumentRequestManner } from "@/packets/instrument.packet";
 import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
@@ -98,6 +99,13 @@ class WebsocketMananger {
         console.log("Received Risk User Symbol reply", readData);
         alert(
           "Received Risk User Symbol reply, " +
+            JSON.stringify(readData, null, "\t")
+        );
+      } else if (data[0] == "h".charCodeAt(0)) {
+        const readData = ColDataManner.read(data);
+        console.log("Received Collateral Data reply", readData);
+        alert(
+          "Received Collateral Data reply, " +
             JSON.stringify(readData, null, "\t")
         );
       }

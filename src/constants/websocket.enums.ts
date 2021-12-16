@@ -41,4 +41,5 @@ export enum PacketHeaderMessageType {
   COL_UPDATE_REQ = "f",
   OPEN_ORDER_REQ = "e",
   RISK_UPDATE_REQ = "w",
+  COL_DATA = "h",
 }

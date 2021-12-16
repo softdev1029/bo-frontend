@@ -38,6 +38,7 @@ import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
 import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
 import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
 import { RiskSymbolManner } from "@/packets/user-risk.packet";
+import { ColDataManner } from "@/packets/col-data.packet";
 
 // import { SymbolType } from "@/constants/symbol-enums";
 
@@ -302,6 +303,22 @@ export const Home = () => {
         }}
       >
         Sending a Risk User Symbol ...
+      </button>
+      <br />
+      <button
+        onClick={() => {
+          const params = {
+            account: ACCOUNT_ID,
+          };
+          const req = ColDataManner.send(params);
+
+          console.log("sending collateral data ...", ColDataManner.read(req));
+
+          SingletonWSManager.send(req);
+          // dispatch(sendWsData(1, order));
+        }}
+      >
+        Sending a Collateral Data ...
       </button>
       {/* {/* <button
         onClick={() => {
