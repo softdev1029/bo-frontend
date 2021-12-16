@@ -11,6 +11,7 @@ import { InstrumentRequestManner } from "@/packets/instrument.packet";
 import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
 import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
 import { TransactionManner } from "@/packets/transaction.packet";
+import { RiskSymbolManner } from "@/packets/user-risk.packet";
 import { Observable, Subject } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
@@ -90,6 +91,13 @@ class WebsocketMananger {
         console.log("Received Risk Update Request reply", readData);
         alert(
           "Received Risk Update Request reply, " +
+            JSON.stringify(readData, null, "\t")
+        );
+      } else if (data[0] == "N".charCodeAt(0)) {
+        const readData = RiskSymbolManner.read(data);
+        console.log("Received Risk User Symbol reply", readData);
+        alert(
+          "Received Risk User Symbol reply, " +
             JSON.stringify(readData, null, "\t")
         );
       }

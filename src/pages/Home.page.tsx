@@ -37,6 +37,7 @@ import { SingletonWSManager } from "@/internals";
 import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
 import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
 import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
+import { RiskSymbolManner } from "@/packets/user-risk.packet";
 
 // import { SymbolType } from "@/constants/symbol-enums";
 
@@ -282,6 +283,25 @@ export const Home = () => {
         }}
       >
         Sending a Risk Update Request ...
+      </button>
+      <br />
+      <button
+        onClick={() => {
+          const params = {
+            account: ACCOUNT_ID,
+          };
+          const req = RiskSymbolManner.send(params);
+
+          console.log(
+            "sending risk user symbol ...",
+            RiskSymbolManner.read(req)
+          );
+
+          SingletonWSManager.send(req);
+          // dispatch(sendWsData(1, order));
+        }}
+      >
+        Sending a Risk User Symbol ...
       </button>
       {/* {/* <button
         onClick={() => {
