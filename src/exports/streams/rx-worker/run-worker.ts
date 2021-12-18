@@ -61,14 +61,11 @@ export function runWorker<I, O>(
   const worker = new workerConstructor();
 
   // eslint-disable-next-line no-restricted-globals
-  const incomingMessages$ = fromEvent<WorkerMessageNotification<I>>(
-    window.self,
-    "message"
-  );
+  const i$ = fromEvent<WorkerMessageNotification<I>>(self, "message");
 
   const transferableWorker = workerIsTransferableType(worker);
 
-  return getWorkerResult(worker, incomingMessages$).subscribe(
+  return getWorkerResult(worker, i$).subscribe(
     (notification: Notification<O>) => {
       // type to workaround ts trying to compile as non-webworker context
       const workerPostMessage =
