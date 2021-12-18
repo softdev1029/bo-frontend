@@ -1,6 +1,7 @@
-# bit24-exchange-web-desktop
+# exchange-web-desktop
 
 ## Project Structure
+
 ```
 src
 ├── config
@@ -15,7 +16,7 @@ src
 │   └── ws.epic.ts // for websock lifecycle
 │   └── auth.epic.ts // for authentication or authorizaton
 │   └── storage.epic.ts // includes only 2 Actions: [Save] and [Delete] localStorage data
-│   └── ui-setting.epic.ts // [load]/[save]/[get] object or key from @/exports/defaultUISettings.ts 
+│   └── ui-setting.epic.ts // [load]/[save]/[get] object or key from @/exports/defaultUISettings.ts
 │   └── market.epic.ts // for market data, watchlist... widely used in Trading screen
 │   └── balance.epic.ts // user balance
 │   └── order.epic.ts // order
@@ -32,7 +33,7 @@ src
 │   ├── configure-store.ts // config react-redux store
 │   ├── defaultUISettings.ts
 │   ├── history.ts // react-router's history
-│   └── index.ts 
+│   └── index.ts
 ├── fakers // where I place dummy data
 ├── HOCs // React Higher order Component
 │   ├── withErrorBoundary.tsx // trace exception on view
@@ -65,14 +66,16 @@ src
 ```
 
 ## Missing features
+
 There are some missing features, we will be making on soon:
 
 - [ ] HTTP/WS Adapter (or whatever) that will be used to transform data which responsed by server to an expected format
-- [ ] Implementing fully websocket-data-flow 
+- [ ] Implementing fully websocket-data-flow
 - [ ] React-grid-layout
 - [ ] Implementing a library for arbitrary-precision decimal and non-decimal arithmetic (bigNumber.js or Math.js)
 
 ## Remark
+
 The overall flow of Gitflow is:
 
 1. A develop branch is created from master
