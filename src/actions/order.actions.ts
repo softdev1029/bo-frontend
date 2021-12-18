@@ -1,5 +1,11 @@
 import { WalletType } from "@/constants/balance-enums";
-import { MessageType, OrderSide, OrderType, TIF, TradeOption } from "@/constants/order-enums";
+import {
+  MessageType,
+  OrderSide,
+  OrderType,
+  TIF,
+  TradeOption,
+} from "@/constants/order-enums";
 import { SymbolType, SymbolValue } from "@/constants/symbol-enums";
 import { WebSocketKindEnum } from "@/constants/websocket.enums";
 import { getSymbolId } from "@/exports/ticker.utils";
@@ -7,45 +13,45 @@ import { OrderItem } from "@/models/order.model";
 import { TransactionManner } from "@/packets/transaction.packet";
 import { sendWsData } from "./ws.actions";
 
-export const ORDER_NEW = '@order/ORDER_NEW';
+export const ORDER_NEW = "@order/ORDER_NEW";
 
-export const ORDER_NEW_ACCEPTED = '@order/ORDER_NEW_ACCEPTED';
-export const ORDER_UPDATED = '@order/ORDER_UPDATED';
+export const ORDER_NEW_ACCEPTED = "@order/ORDER_NEW_ACCEPTED";
+export const ORDER_UPDATED = "@order/ORDER_UPDATED";
 
-export const ORDER_EXECUTION = '@order/ORDER_EXECUTION';
-export const EXECUTION_PARTIAL = '@order/EXECUTION_PARTIAL';
-export const ORDER_REJECTED = '@order/ORDER_REJECTED';
-export const ORDER_CANCELLED = '@order/ORDER_CANCELLED';
+export const ORDER_EXECUTION = "@order/ORDER_EXECUTION";
+export const EXECUTION_PARTIAL = "@order/EXECUTION_PARTIAL";
+export const ORDER_REJECTED = "@order/ORDER_REJECTED";
+export const ORDER_CANCELLED = "@order/ORDER_CANCELLED";
 
 export function orderUpdated(msgType: MessageType, newOrder: OrderItem) {
-  return ({
+  return {
     type: ORDER_UPDATED,
     payload: {
       msgType,
-      newOrder
-    }
-  });
+      newOrder,
+    },
+  };
 }
 
 export function newOrderAccepted(newOrder: OrderItem) {
-  return ({
+  return {
     type: ORDER_NEW_ACCEPTED,
-    payload: newOrder
-  });
+    payload: newOrder,
+  };
 }
 
 interface NewOrderParams {
-  tradeOptions?: TradeOption[],
-  clientOrderId: number,
-  type: OrderType,
-  pair: string,
-  side: OrderSide,
-  price: number,
-  amount: number,
-  stopPrice?: number,
-  tif?: TIF,
-  symbolType?: WalletType
-};
+  tradeOptions?: TradeOption[];
+  clientOrderId: number;
+  type: OrderType;
+  pair: string;
+  side: OrderSide;
+  price: number;
+  amount: number;
+  stopPrice?: number;
+  tif?: TIF;
+  symbolType?: WalletType;
+}
 
 export function submitNewOrder({
   tradeOptions,
@@ -57,9 +63,9 @@ export function submitNewOrder({
   amount,
   stopPrice,
   tif = TIF.GTC,
-  symbolType
+  symbolType,
 }: NewOrderParams) {
-  // console.log('>>>>>>>> submit new order params <<<<<<<', 
+  // console.log('>>>>>>>> submit new order params <<<<<<<',
   // { tradeOptions,
   //   clientOrderId,
   //   ordertype: type,
@@ -72,12 +78,16 @@ export function submitNewOrder({
   // });
   const symbolEnum = getSymbolId(pair) || SymbolValue.BTC;
 
+  const ACCOUNT_ID = 90001;
+  const USER_NAME = "MTX01";
+  const SESSION_ID = 901;
+
   const params = {
     orderMessageType: MessageType.ORDER_NEW,
-    accountId: 100500,
+    accountId: ACCOUNT_ID,
     clientOrderId: clientOrderId,
     symbolEnum: SymbolValue.BTC,
-    symbol: 'BTC',
+    symbol: "BTC",
     orderType: type,
     symbolType: SymbolType.SPOT,
     price: price,
@@ -86,21 +96,21 @@ export function submitNewOrder({
     tif,
     sendingTime: Date.now(),
     stopPrice,
-  }
+  };
   const order = TransactionManner.send(params);
 
   // console.log('transaction buffer:', order);
-  console.log('>>> origin data for submit new Order', TransactionManner.read(order))
-  console.log('transaction reader:', TransactionManner.read(order, true),);
+  console.log(
+    ">>> origin data for submit new Order",
+    TransactionManner.read(order)
+  );
+  console.log("transaction reader:", TransactionManner.read(order, true));
 
-  return sendWsData(WebSocketKindEnum.ORDERS, order)
+  return sendWsData(WebSocketKindEnum.ORDERS, order);
 }
 
-export function cancelOrder({
-  clientOrderId,
-  order,
-}) {
-  console.log('>>> origin order', {...order});
+export function cancelOrder({ clientOrderId, order }) {
+  console.log(">>> origin order", { ...order });
   const params = {
     ...order,
     symbolEnum: SymbolValue.BTC,
@@ -109,24 +119,24 @@ export function cancelOrder({
     side: order.side,
     sendingTime: Date.now(),
     orderId: order.clientOrderId,
-    origPrice: order.price
-  }
+    origPrice: order.price,
+  };
   const orderPacket = TransactionManner.send(params);
 
-  console.log('>>> origin data for canceling Order', {...order});
-  console.log('transaction reader:', TransactionManner.read(orderPacket, true));
+  console.log(">>> origin data for canceling Order", { ...order });
+  console.log("transaction reader:", TransactionManner.read(orderPacket, true));
 
-  return sendWsData(WebSocketKindEnum.ORDERS, orderPacket)
+  return sendWsData(WebSocketKindEnum.ORDERS, orderPacket);
 }
 
 export interface ReplaceOrderParams {
-  clientOrderId: number,
-  order: OrderItem,
-  price?: number,
-  qty?: number,
-  stopPrice?: number,
-  sl?: number,
-  tp?: number
+  clientOrderId: number;
+  order: OrderItem;
+  price?: number;
+  qty?: number;
+  stopPrice?: number;
+  sl?: number;
+  tp?: number;
 }
 
 export function replaceOrder({
@@ -136,7 +146,7 @@ export function replaceOrder({
   qty,
   stopPrice,
   sl,
-  tp
+  tp,
 }: ReplaceOrderParams) {
   const params = {
     ...order,
@@ -159,11 +169,14 @@ export function replaceOrder({
     // sendingTime: Date.now(),
     // stopPrice,
     // symbol: 'Bitcoin'
-  }
+  };
   const orderSender = TransactionManner.send(params);
 
   // console.log('transaction buffer:', order);
-  console.log('[replace order] transaction reader:', TransactionManner.read(orderSender, true),);
+  console.log(
+    "[replace order] transaction reader:",
+    TransactionManner.read(orderSender, true)
+  );
 
-  return sendWsData(WebSocketKindEnum.ORDERS, orderSender)
+  return sendWsData(WebSocketKindEnum.ORDERS, orderSender);
 }
