@@ -1,5 +1,5 @@
-import Chart from './Chart.container'
+import Chart from "./Chart.container";
 
-export { ChartSubject } from './Chart.subject';
+export { ChartSubject } from "./Chart.subject";
 
-export default Chart
+export default Chart;

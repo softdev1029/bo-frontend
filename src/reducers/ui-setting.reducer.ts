@@ -1,7 +1,14 @@
-import { OVERRIDE_UI_SETTING, TOGGLE_BOOLEAN_SETTING, TOGGLE_WORKSPACE_SETTING, TOGGLE_FAVOR_SYMBOL, UI_SET_ORDER, UPDATE_UI_SETTING } from "@/actions/ui-setting.actions";
+import {
+  OVERRIDE_UI_SETTING,
+  TOGGLE_BOOLEAN_SETTING,
+  TOGGLE_WORKSPACE_SETTING,
+  TOGGLE_FAVOR_SYMBOL,
+  UI_SET_ORDER,
+  UPDATE_UI_SETTING,
+} from "@/actions/ui-setting.actions";
 import { getDefaultUserSetting } from "@/exports";
-import _isNull from 'lodash/isNull';
-import _get from 'lodash/get';
+import _isNull from "lodash/isNull";
+import _get from "lodash/get";
 
 const initialState = getDefaultUserSetting({});
 
@@ -21,7 +28,7 @@ export const settingReducer = (state = initialState, action) => {
       let favorites = [...state.favorite_symbols];
 
       if (~favorites.indexOf(symbol)) {
-        favorites = favorites.filter(s => s !== symbol);
+        favorites = favorites.filter((s) => s !== symbol);
       } else {
         favorites = [...favorites, symbol];
       }
@@ -34,8 +41,8 @@ export const settingReducer = (state = initialState, action) => {
       const { settings } = action.payload;
       return {
         ...state,
-        ...settings
-      }
+        ...settings,
+      };
     }
     case TOGGLE_BOOLEAN_SETTING: {
       const { key } = action.payload;
@@ -43,49 +50,49 @@ export const settingReducer = (state = initialState, action) => {
 
       return {
         ...state,
-        [key]: value
-      }
+        [key]: value,
+      };
     }
     case TOGGLE_WORKSPACE_SETTING: {
       const { key } = action.payload;
-      const value = !_get(state, ['enabled_workspaces', key]);
+      const value = !_get(state, ["enabled_workspaces", key]);
 
       return {
         ...state,
         enabled_workspaces: {
-          ..._get(state, ['enabled_workspaces'], {}),
-          [key]: value
-        }
-      }
+          ..._get(state, ["enabled_workspaces"], {}),
+          [key]: value,
+        },
+      };
     }
     case UI_SET_ORDER: {
       const { section, key, direction } = action.payload;
 
-      const settingKey = 'tables_sorting'
+      const settingKey = "tables_sorting";
       const currentMap = state[settingKey];
-      const [prevKey, prevAsc] = (currentMap[section] || '-').split('-');
+      const [prevKey, prevAsc] = (currentMap[section] || "-").split("-");
       let newOrder = direction;
       // depending on the table type direction may be set explicitly or may be not
       // if not set then need to determine it here
 
       if (!newOrder && !_isNull(newOrder)) {
-        newOrder = (key !== prevKey) ? 'desc'
-          : (prevAsc !== 'desc') ? 'desc' : 'asc';
+        newOrder =
+          key !== prevKey ? "desc" : prevAsc !== "desc" ? "desc" : "asc";
 
-        if (key === prevKey && prevAsc === 'asc') {
-          newOrder = 'none';
+        if (key === prevKey && prevAsc === "asc") {
+          newOrder = "none";
         }
       }
 
-      const nextValue = `${key}-${newOrder || 'NULL'}`;
+      const nextValue = `${key}-${newOrder || "NULL"}`;
       const newSortOrder = {
         ...currentMap,
-        [section]: nextValue
+        [section]: nextValue,
       };
 
       const nextState = {
         ...state,
-        'tables_sorting': newSortOrder
+        tables_sorting: newSortOrder,
       };
 
       return nextState;

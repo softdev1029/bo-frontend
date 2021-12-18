@@ -8,25 +8,23 @@ import { mapDispatchToProps } from "./orders.map-dispatch-to-props";
 const a = (amount?: number) => ({
   id: 1,
   uuid: 1,
-  symbol: 'BTCUSDT',
-  pair: 'BTCUSDT',
+  symbol: "BTCUSDT",
+  pair: "BTCUSDT",
   tradeType: 1,
   execShares: 1,
   avgPrice: 2,
   stopPrice: 1.5,
-  ccy: 'BTC',
+  ccy: "BTC",
   orderType: OrderType.STOP_LMT,
   side: 1,
   clientOrderId: Date.now(),
   qty: amount ? amount : 2.112,
   price: 2.01,
   status: 1,
-  createdAt: Date.now()
+  createdAt: Date.now(),
 });
 
-const o = [
-  a()
-];
+const o = [a()];
 
 const mapStateToProps = (state) => ({
   orders: getStopOrdersArray(state),
@@ -34,4 +32,4 @@ const mapStateToProps = (state) => ({
   orderKind: OrderKind.STOP,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Orders)
+export default connect(mapStateToProps, mapDispatchToProps)(Orders);

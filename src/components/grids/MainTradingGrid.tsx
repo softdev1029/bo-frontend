@@ -1,50 +1,67 @@
-import React, { ReactNode } from 'react';
-import { Responsive, WidthProvider } from 'react-grid-layout';
-import { MainGridLayout, MainGridBreakPoints, COLS, GRID_ROW_HEIGHT } from './MainTradingGrid.layout-config';
-import { AppTradeType } from '@/constants/trade-type';
-import { WorkspaceSetting, WorkspaceSettingEnum } from '@/models/workspace-setting';
-import { getSetting } from '@/selectors/ui-setting.selectors';
-import { connect } from 'react-redux';
-import { shallowCompareObjects } from '@/exports';
-import { getCardToolByKey, getCardContentPaddingByKey, getCardInnerByKey, getCardNameByKey, omitWorkspace } from './MainTradingGrid.helpers';
-import { toggleWorkspaceSetting } from '@/actions/ui-setting.actions';
-import { Card } from '@/ui-components';
-import { isUserLoggedIn } from '@/selectors/auth.selectors';
+import React, { ReactNode } from "react";
+import { Responsive, WidthProvider } from "react-grid-layout";
+import {
+  MainGridLayout,
+  MainGridBreakPoints,
+  COLS,
+  GRID_ROW_HEIGHT,
+} from "./MainTradingGrid.layout-config";
+import { AppTradeType } from "@/constants/trade-type";
+import {
+  WorkspaceSetting,
+  WorkspaceSettingEnum,
+} from "@/models/workspace-setting";
+import { getSetting } from "@/selectors/ui-setting.selectors";
+import { connect } from "react-redux";
+import { shallowCompareObjects } from "@/exports";
+import {
+  getCardToolByKey,
+  getCardContentPaddingByKey,
+  getCardInnerByKey,
+  getCardNameByKey,
+  omitWorkspace,
+} from "./MainTradingGrid.helpers";
+import { toggleWorkspaceSetting } from "@/actions/ui-setting.actions";
+import { Card } from "@/ui-components";
+import { isUserLoggedIn } from "@/selectors/auth.selectors";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 interface MainTradingGridProps {
-  enabledWorkspaces: WorkspaceSetting,
-  symbol: string,
-  tradeType: AppTradeType,
-  closeElement: (key: WorkspaceSettingEnum) => void,
-  margin?: number[],
-  breakpoints: object,
-  layouts: object
+  enabledWorkspaces: WorkspaceSetting;
+  symbol: string;
+  tradeType: AppTradeType;
+  closeElement: (key: WorkspaceSettingEnum) => void;
+  margin?: number[];
+  breakpoints: object;
+  layouts: object;
 }
 
 interface MainTradingGridState {
   currentBreakpoint: string;
   mounted: boolean;
-  windowPopupMap: object,
-  gridLayout: any[],
-  dragKey: string
+  windowPopupMap: object;
+  gridLayout: any[];
+  dragKey: string;
 }
 
-class MainTradingGrid extends React.Component<Partial<MainTradingGridProps>, MainTradingGridState> {
+class MainTradingGrid extends React.Component<
+  Partial<MainTradingGridProps>,
+  MainTradingGridState
+> {
   static defaultProps = {
     breakpoints: MainGridBreakPoints,
     layouts: MainGridLayout,
     margin: [5, 5],
-  }
+  };
 
   state = {
-    currentBreakpoint: '',
+    currentBreakpoint: "",
     mounted: false,
     windowPopupMap: {},
     gridLayout: [],
-    dragKey: ''
-  }
+    dragKey: "",
+  };
 
   constructor(props) {
     super(props);
@@ -59,25 +76,23 @@ class MainTradingGrid extends React.Component<Partial<MainTradingGridProps>, Mai
   onItemUpdateSize(layout, oldItem) {
     const { dragKey } = this.state;
 
-    if (dragKey)
-      return;
+    if (dragKey) return;
 
     this.setState({
-      dragKey: oldItem.i
+      dragKey: oldItem.i,
     });
   }
 
-
   onItemUpdateSizeStop(layout, oldItem) {
     this.setState({
-      dragKey: ''
+      dragKey: "",
     });
   }
 
   setPopupMap(obj) {
     this.setState({
-      windowPopupMap: obj
-    })
+      windowPopupMap: obj,
+    });
   }
 
   onBreakpointChange(breakpoint: string) {
@@ -85,7 +100,7 @@ class MainTradingGrid extends React.Component<Partial<MainTradingGridProps>, Mai
 
     this.setState({
       currentBreakpoint: breakpoint,
-      gridLayout: this.updateLayout(enabledWorkspaces, layouts[breakpoint])
+      gridLayout: this.updateLayout(enabledWorkspaces, layouts[breakpoint]),
     });
   }
 
@@ -93,7 +108,7 @@ class MainTradingGrid extends React.Component<Partial<MainTradingGridProps>, Mai
     const { currentBreakpoint } = this.state;
     const { breakpoints, layouts, enabledWorkspaces } = this.props;
 
-    if (currentBreakpoint === '') {
+    if (currentBreakpoint === "") {
       // The very first time.
       // Compute the initial breakpoint.
       const sortedBreakpoints = Object.keys(breakpoints).sort(
@@ -117,21 +132,30 @@ class MainTradingGrid extends React.Component<Partial<MainTradingGridProps>, Mai
 
       this.setState({
         currentBreakpoint: breakpoint,
-        gridLayout: this.updateLayout(enabledWorkspaces, layouts[breakpoint])
+        gridLayout: this.updateLayout(enabledWorkspaces, layouts[breakpoint]),
       });
     }
   }
 
-  componentDidUpdate(prevProps: MainTradingGridProps, prevState: MainTradingGridState) {
+  componentDidUpdate(
+    prevProps: MainTradingGridProps,
+    prevState: MainTradingGridState
+  ) {
     if (
-      !shallowCompareObjects(prevProps.enabledWorkspaces, this.props.enabledWorkspaces) ||
+      !shallowCompareObjects(
+        prevProps.enabledWorkspaces,
+        this.props.enabledWorkspaces
+      ) ||
       !shallowCompareObjects(prevProps.layouts, this.props.layouts) ||
       prevState.currentBreakpoint !== this.state.currentBreakpoint ||
       prevState.dragKey !== this.state.dragKey
     ) {
       this.setState({
-        gridLayout: this.updateLayout(this.props.enabledWorkspaces, this.props.layouts[this.state.currentBreakpoint] || [])
-      })
+        gridLayout: this.updateLayout(
+          this.props.enabledWorkspaces,
+          this.props.layouts[this.state.currentBreakpoint] || []
+        ),
+      });
     }
   }
 
@@ -141,18 +165,20 @@ class MainTradingGrid extends React.Component<Partial<MainTradingGridProps>, Mai
   //   return this.updateLayout(enabledWorkspaces, gridLayout)
   // }
 
-  private updateLayout(enabledWorkspaces: WorkspaceSetting, layoutSetting: {
-    i: WorkspaceSettingEnum;
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-    minW: number;
-    minH: number;
-  }[] = []) {
+  private updateLayout(
+    enabledWorkspaces: WorkspaceSetting,
+    layoutSetting: {
+      i: WorkspaceSettingEnum;
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+      minW: number;
+      minH: number;
+    }[] = []
+  ) {
     const { windowPopupMap, dragKey } = this.state;
-    if (!layoutSetting.length)
-      return [];
+    if (!layoutSetting.length) return [];
 
     const layout = [];
 
@@ -161,13 +187,17 @@ class MainTradingGrid extends React.Component<Partial<MainTradingGridProps>, Mai
       const element = this.getGridElementByKey(key);
 
       if (enabledWorkspaces[key] && element) {
-        const className = dragKey === key ? 'react-grid-item--dragging' : '';
+        const className = dragKey === key ? "react-grid-item--dragging" : "";
 
         layout.push(
-          windowPopupMap[key] ? element : <div key={key} data-grid={layoutSetting[_i]} className={className}>
-            {element}
-          </div>
-        )
+          windowPopupMap[key] ? (
+            element
+          ) : (
+            <div key={key} data-grid={layoutSetting[_i]} className={className}>
+              {element}
+            </div>
+          )
+        );
       }
     }
 
@@ -201,24 +231,30 @@ class MainTradingGrid extends React.Component<Partial<MainTradingGridProps>, Mai
       </NewWindow>
       : 
      */
-    return <div className="react-grid-item__section">
-      {key === WorkspaceSettingEnum.MARKET_HISTORY ? item : <Card
-        cardIdentify={key}
-        title={title}
-        closable={true}
-        onClose={closeElement}
-        rightTool={getCardToolByKey(key)}
-        contentPadding={getCardContentPaddingByKey(key)}
-      >
-        {item}
-      </Card>}
-    </div>;
+    return (
+      <div className="react-grid-item__section">
+        {key === WorkspaceSettingEnum.MARKET_HISTORY ? (
+          item
+        ) : (
+          <Card
+            cardIdentify={key}
+            title={title}
+            closable={true}
+            onClose={closeElement}
+            rightTool={getCardToolByKey(key)}
+            contentPadding={getCardContentPaddingByKey(key)}
+          >
+            {item}
+          </Card>
+        )}
+      </div>
+    );
   }
 
   componentDidMount() {
     this.setState({
-      mounted: true
-    })
+      mounted: true,
+    });
   }
 
   render() {
@@ -246,18 +282,18 @@ class MainTradingGrid extends React.Component<Partial<MainTradingGridProps>, Mai
       >
         {this.state.gridLayout}
       </ResponsiveReactGridLayout>
-    )
+    );
   }
 }
 
 const mapStateToProps = (state) => ({
-  enabledWorkspaces: omitWorkspace(getSetting(state)('enabled_workspaces'))
+  enabledWorkspaces: omitWorkspace(getSetting(state)("enabled_workspaces")),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   closeElement: function (key: WorkspaceSettingEnum, persist = false) {
-    dispatch(toggleWorkspaceSetting({ key, persist }))
-  }
-})
+    dispatch(toggleWorkspaceSetting({ key, persist }));
+  },
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(MainTradingGrid)
+export default connect(mapStateToProps, mapDispatchToProps)(MainTradingGrid);

@@ -1,5 +1,5 @@
-import React from 'react';
+import React from "react";
 
-export const TwoFA = () => <div>2FA</div>
+export const TwoFA = () => <div>2FA</div>;
 
 export default TwoFA;

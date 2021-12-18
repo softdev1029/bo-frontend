@@ -1,17 +1,24 @@
-import { fromEvent, of, Observable, Subject } from 'rxjs';
-import { map, delay, startWith, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
-import { config } from '@/config';
+import { fromEvent, of, Observable, Subject } from "rxjs";
+import {
+  map,
+  delay,
+  startWith,
+  tap,
+  switchMap,
+  distinctUntilChanged,
+} from "rxjs/operators";
+import { config } from "@/config";
 
 export enum AppBrowserState {
   ACTIVE = 1,
   IDLE = 2,
-  SLEPT = 3
+  SLEPT = 3,
 }
 
 export function registerBrowserState(): Observable<AppBrowserState> {
   const appState$ = new Subject<AppBrowserState>();
 
-  let hiddenKey = '';
+  let hiddenKey = "";
   let visibilityChange;
 
   // Opera 12.10 and Firefox 18 and later support
@@ -29,27 +36,30 @@ export function registerBrowserState(): Observable<AppBrowserState> {
   }
 
   if (hiddenKey && visibilityChange) {
-    const visibilityChanged$ = fromEvent(document, visibilityChange as string).pipe(
+    const visibilityChanged$ = fromEvent(
+      document,
+      visibilityChange as string
+    ).pipe(
       //@ts-ignore
-      map(_ => document[hiddenKey]),
+      map((_) => document[hiddenKey]),
       switchMap((isHidden: boolean) => {
         const idleOrSlept$ = of(true).pipe(
           delay(config.appIdleTimeout),
           tap(() => {
-            console.log(' >>>>>> appp is in idle')
-            appState$.next(AppBrowserState.IDLE)
+            console.log(" >>>>>> appp is in idle");
+            appState$.next(AppBrowserState.IDLE);
           }),
           delay(config.appSleptTimeout),
           tap(() => {
-            console.log(' >>>>>> appp is slept')
-            appState$.next(AppBrowserState.SLEPT)
+            console.log(" >>>>>> appp is slept");
+            appState$.next(AppBrowserState.SLEPT);
           })
         );
 
         const awake$ = of(false).pipe(
           tap(() => {
-            console.log(' >>>>>> appp is awakend')
-            appState$.next(AppBrowserState.ACTIVE)
+            console.log(" >>>>>> appp is awakend");
+            appState$.next(AppBrowserState.ACTIVE);
           })
         );
 
@@ -59,15 +69,13 @@ export function registerBrowserState(): Observable<AppBrowserState> {
           return awake$;
         }
       }),
-      distinctUntilChanged(),
+      distinctUntilChanged()
     );
 
     visibilityChanged$.subscribe();
   }
 
-  return appState$.pipe(
-    startWith(AppBrowserState.ACTIVE),
-  );
+  return appState$.pipe(startWith(AppBrowserState.ACTIVE));
 }
 
 // const browser$ = registerBrowserState();

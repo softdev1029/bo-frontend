@@ -1,14 +1,14 @@
-import React, { MouseEvent } from 'react';
-import { getExtraWarning } from './Balances.helpers';
-import { Button } from '@/ui-components';
+import React, { MouseEvent } from "react";
+import { getExtraWarning } from "./Balances.helpers";
+import { Button } from "@/ui-components";
 
 interface Props {
-  currency: string,
-  confirmFn: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void
+  currency: string;
+  confirmFn: (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
 }
 
 export default function BalancesExtraWarning({ currency, confirmFn }: Props) {
-  const [ line1, line2, line3, buttonText ] = getExtraWarning(currency);
+  const [line1, line2, line3, buttonText] = getExtraWarning(currency);
   return (
     <div>
       {/* <div
@@ -22,9 +22,9 @@ export default function BalancesExtraWarning({ currency, confirmFn }: Props) {
         }
         type="info"
       /> */}
-      <div style={{marginTop: "20px"}}>
+      <div style={{ marginTop: "20px" }}>
         <Button
-          style={{width: "100%"}}
+          style={{ width: "100%" }}
           classes="radius"
           color="success"
           onClick={confirmFn}
@@ -36,6 +36,4 @@ export default function BalancesExtraWarning({ currency, confirmFn }: Props) {
   );
 }
 
-BalancesExtraWarning.propTypes = {
-  
-};
+BalancesExtraWarning.propTypes = {};

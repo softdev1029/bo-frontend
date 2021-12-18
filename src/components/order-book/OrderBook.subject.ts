@@ -5,13 +5,16 @@ import { Subject } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 
 type OrderBookTransferData = {
-  price: number, 
-  side: OrderBookSideEnum | OrderSide, 
-  amount?: number,
-  isQuick?: boolean
-}
+  price: number;
+  side: OrderBookSideEnum | OrderSide;
+  amount?: number;
+  isQuick?: boolean;
+};
 export const OrderBookSubject = new Subject<OrderBookTransferData>();
 
-export const getOrderBookObservable = () => OrderBookSubject.asObservable().pipe(
-  distinctUntilChanged((prev, current) => shallowCompareObjects(prev, current))
-);
+export const getOrderBookObservable = () =>
+  OrderBookSubject.asObservable().pipe(
+    distinctUntilChanged((prev, current) =>
+      shallowCompareObjects(prev, current)
+    )
+  );

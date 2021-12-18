@@ -1,13 +1,13 @@
-import React from 'react';
-import classNames from 'classnames';
-import { Icon } from '../Icon';
+import React from "react";
+import classNames from "classnames";
+import { Icon } from "../Icon";
 
 enum KeyCode {
   BACKSPACE = 8,
-  DELETE = 9
-};
+  DELETE = 9,
+}
 
-type ISize = 'large' | 'middle' | 'small';
+type ISize = "large" | "middle" | "small";
 
 interface NumericInputProps {
   focusOnUpDown: boolean;
@@ -59,7 +59,7 @@ function preventDefault(e) {
 }
 
 const defaultParser = (input: string) => {
-  return input.replace(/[^\w.-]+/g, '');
+  return input.replace(/[^\w.-]+/g, "");
 };
 
 /**
@@ -78,21 +78,24 @@ const DELAY = 600;
  */
 const MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 2 ** 53 - 1;
 
-const isValidProps = value => value !== undefined && value !== null;
+const isValidProps = (value) => value !== undefined && value !== null;
 
 const isEqual = (oldValue, newValue) =>
   newValue === oldValue ||
-  (typeof newValue === 'number' &&
-    typeof oldValue === 'number' &&
+  (typeof newValue === "number" &&
+    typeof oldValue === "number" &&
     isNaN(newValue) &&
     isNaN(oldValue));
 
-class NumericInput extends React.Component<Partial<NumericInputProps>, NumericInputState> {
+class NumericInput extends React.Component<
+  Partial<NumericInputProps>,
+  NumericInputState
+> {
   static defaultProps = {
     focusOnUpDown: true,
     useTouch: false,
     useHandlers: true,
-    prefixCls: 'cpn-numeric-input',
+    prefixCls: "cpn-numeric-input",
     max: MAX_SAFE_INTEGER,
     // min: -MAX_SAFE_INTEGER,
     min: 0,
@@ -104,7 +107,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     onBlur: noop,
     parser: defaultParser,
     required: false,
-    autoComplete: 'off',
+    autoComplete: "off",
   };
 
   pressingUpOrDown: boolean;
@@ -267,27 +270,28 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     this.stop();
   }
 
-  onChange = e => {
+  onChange = (e) => {
     const { onChange } = this.props;
     if (this.state.focused) {
       this.inputting = true;
     }
-    
+
     const v = this.getValueFromEvent(e);
 
-    if(isNaN(this.toNumber(v))) {
+    if (isNaN(this.toNumber(v))) {
       return;
     }
-    
+
     this.rawInput = this.props.parser(v);
-    if(`${this.rawInput}`.includes('.')) { // float number
+    if (`${this.rawInput}`.includes(".")) {
+      // float number
       this.setState({ inputValue: this.rawInput });
     } else {
       this.setState({ inputValue: `${this.getValidValue(this.rawInput)}` });
     }
-    
+
     const emitVal = +this.getValidValue(this.rawInput);
-    if(!isNaN(emitVal)) {
+    if (!isNaN(emitVal)) {
       onChange(emitVal); // valid number or invalid string
     }
   };
@@ -320,7 +324,10 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
 
     if (onBlur) {
       const originValue = this.input.value;
-      const displayValue = this.getInputDisplayValue({ focus: false, value: newValue });
+      const displayValue = this.getInputDisplayValue({
+        focus: false,
+        value: newValue,
+      });
       this.input.value = displayValue ? Number(displayValue) : displayValue;
       onBlur(...args);
       this.input.value = originValue;
@@ -329,7 +336,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
 
   getCurrentValidValue(value) {
     let val = value;
-    if (val === '') {
+    if (val === "") {
       val = 0;
     } else if (!this.isNotCompleteNumber(parseFloat(val))) {
       val = this.getValidValue(val);
@@ -339,7 +346,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     return this.toNumber(val);
   }
 
-  getRatio = e => {
+  getRatio = (e) => {
     let ratio = 1;
     if (e.metaKey || e.ctrlKey) {
       ratio = 0.1;
@@ -352,10 +359,10 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
   getValueFromEvent(e) {
     // optimize for chinese input expierence
     // https://github.com/ant-design/ant-design/issues/8196
-    let value = e.target.value.trim().replace(/。/g, '.');
+    let value = e.target.value.trim().replace(/。/g, ".");
 
     if (isValidProps(this.props.decimalSeparator)) {
-      value = value.replace(this.props.decimalSeparator, '.');
+      value = value.replace(this.props.decimalSeparator, ".");
     }
 
     return value;
@@ -380,21 +387,25 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
   setValue(v, callback) {
     // trigger onChange
     const { precision } = this.props;
-    const newValue = this.isNotCompleteNumber(parseFloat(v)) ? 0 : parseFloat(v);
+    const newValue = this.isNotCompleteNumber(parseFloat(v))
+      ? 0
+      : parseFloat(v);
     const { value = 0 } = this.state;
     let { inputValue = null } = this.state;
     // https://github.com/ant-design/ant-design/issues/7363
     // https://github.com/ant-design/ant-design/issues/16622
     const newValueInString =
-      typeof newValue === 'number' ? newValue.toFixed(precision) : `${newValue}`;
+      typeof newValue === "number"
+        ? newValue.toFixed(precision)
+        : `${newValue}`;
     const changed = newValue !== value || newValueInString !== `${inputValue}`;
-    if (!('value' in this.props)) {
+    if (!("value" in this.props)) {
       this.setState(
         {
           value: newValue,
           inputValue: this.toPrecisionAsStep(v),
         },
-        callback,
+        callback
       );
     } else {
       // always set input value same as value
@@ -403,7 +414,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
         {
           inputValue,
         },
-        callback,
+        callback
       );
     }
     if (changed) {
@@ -413,7 +424,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     return newValue;
   }
 
-  getFullNum = num => {
+  getFullNum = (num) => {
     if (isNaN(num)) {
       return 0;
     }
@@ -422,20 +433,20 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     }
     return Number(num)
       .toFixed(18)
-      .replace(/\.?0+$/, '');
+      .replace(/\.?0+$/, "");
   };
 
-  getPrecision = value => {
+  getPrecision = (value) => {
     if (isValidProps(this.props.precision)) {
       return this.props.precision;
     }
     const valueString = String(value);
-    if (valueString.indexOf('e-') >= 0) {
-      return parseInt(valueString.slice(valueString.indexOf('e-') + 2), 10);
+    if (valueString.indexOf("e-") >= 0) {
+      return parseInt(valueString.slice(valueString.indexOf("e-") + 2), 10);
     }
     let precision = 0;
-    if (valueString.indexOf('.') >= 0) {
-      precision = valueString.length - valueString.indexOf('.') - 1;
+    if (valueString.indexOf(".") >= 0) {
+      precision = valueString.length - valueString.indexOf(".") - 1;
     }
     return precision;
   };
@@ -464,7 +475,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     return 10 ** precision;
   }
 
-  getInputDisplayValue = state => {
+  getInputDisplayValue = (state) => {
     const { focused, inputValue, value } = state || this.state;
     let inputDisplayValue;
     if (focused) {
@@ -481,7 +492,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     if (isValidProps(this.props.decimalSeparator)) {
       inputDisplayValueFormat = inputDisplayValueFormat
         .toString()
-        .replace('.', this.props.decimalSeparator);
+        .replace(".", this.props.decimalSeparator);
     }
 
     return inputDisplayValueFormat;
@@ -502,7 +513,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     }
   };
 
-  restoreByAfter = str => {
+  restoreByAfter = (str) => {
     if (str === undefined) return false;
 
     const fullStr = this.input.value;
@@ -527,7 +538,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     return false;
   };
 
-  partRestoreByAfter = str => {
+  partRestoreByAfter = (str) => {
     if (str === undefined) return false;
 
     // For loop from full str to the str with last char to map. e.g. 123
@@ -564,7 +575,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
   }
 
   toPrecisionAsStep(num) {
-    if (this.isNotCompleteNumber(num) || num === '') {
+    if (this.isNotCompleteNumber(num) || num === "") {
       return num;
     }
     const precision = Math.abs(this.getMaxPrecision(num));
@@ -575,12 +586,12 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
   }
 
   // '1.' '1x' 'xx' '' => are not complete numbers
-  isNotCompleteNumber = num => {
+  isNotCompleteNumber = (num) => {
     return (
       isNaN(num) ||
-      num === '' ||
+      num === "" ||
       num === null ||
-      (num && num.toString().indexOf('.') === num.toString().length - 1)
+      (num && num.toString().indexOf(".") === num.toString().length - 1)
     );
   };
 
@@ -648,7 +659,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
       },
       () => {
         this.pressingUpOrDown = false;
-      },
+      }
     );
     if (outOfRange) {
       return;
@@ -657,7 +668,7 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
       () => {
         this[type](e, ratio, true);
       },
-      recursive ? SPEED : DELAY,
+      recursive ? SPEED : DELAY
     );
   }
 
@@ -669,20 +680,25 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
 
   down = (e, ratio, recursive) => {
     this.pressingUpOrDown = true;
-    this.step('down', e, ratio, recursive);
+    this.step("down", e, ratio, recursive);
   };
 
   up = (e, ratio, recursive) => {
     this.pressingUpOrDown = true;
-    this.step('up', e, ratio, recursive);
+    this.step("up", e, ratio, recursive);
   };
 
-  saveInput = node => {
+  saveInput = (node) => {
     this.input = node;
   };
 
   fixCaret(start, end) {
-    if (start === undefined || end === undefined || !this.input || !this.input.value) {
+    if (
+      start === undefined ||
+      end === undefined ||
+      !this.input ||
+      !this.input.value
+    ) {
       return;
     }
 
@@ -743,8 +759,12 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     });
 
     const dataOrAriaAttributeProps = {};
-    Object.keys(rest).forEach(key => {
-      if (key.substr(0, 5) === 'data-' || key.substr(0, 5) === 'aria-' || key === 'role') {
+    Object.keys(rest).forEach((key) => {
+      if (
+        key.substr(0, 5) === "data-" ||
+        key.substr(0, 5) === "aria-" ||
+        key === "role"
+      ) {
         dataOrAriaAttributeProps[key] = rest[key];
       }
     });
@@ -753,16 +773,26 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
     // unfocus state, show valid value
     const inputDisplayValue = this.getInputDisplayValue(null);
 
-    const upDisabled = (value || value === 0) && (isNaN(value) || Number(value) >= max);
-    const downDisabled = (value || value === 0) && (isNaN(value) || Number(value) <= min);
+    const upDisabled =
+      (value || value === 0) && (isNaN(value) || Number(value) >= max);
+    const downDisabled =
+      (value || value === 0) && (isNaN(value) || Number(value) <= min);
     const isUpDisabled = upDisabled || disabled || readOnly;
     const isDownDisabled = downDisabled || disabled || readOnly;
-    const upClassName = classNames(`${prefixCls}-handler`, `${prefixCls}-handler-up`, {
-      [`${prefixCls}-handler-up-disabled`]: isUpDisabled,
-    });
-    const downClassName = classNames(`${prefixCls}-handler`, `${prefixCls}-handler-down`, {
-      [`${prefixCls}-handler-down-disabled`]: isDownDisabled,
-    });
+    const upClassName = classNames(
+      `${prefixCls}-handler`,
+      `${prefixCls}-handler-up`,
+      {
+        [`${prefixCls}-handler-up-disabled`]: isUpDisabled,
+      }
+    );
+    const downClassName = classNames(
+      `${prefixCls}-handler`,
+      `${prefixCls}-handler-down`,
+      {
+        [`${prefixCls}-handler-down-disabled`]: isDownDisabled,
+      }
+    );
 
     const upEvents = useTouch
       ? {
@@ -797,40 +827,46 @@ class NumericInput extends React.Component<Partial<NumericInputProps>, NumericIn
         onFocus={() => null}
         onBlur={() => null}
       >
-        {useHandlers && <div className={`${prefixCls}-handler-wrap`}>
-          <span
-            unselectable="on"
-            {...(upEvents as any)}
-            role="button"
-            aria-label="Increase Value"
-            aria-disabled={isUpDisabled}
-            className={upClassName}
-          >
-            {upHandler || (
-              <span
-                unselectable="on"
-                className={`${prefixCls}-handler-up-inner`}
-                onClick={preventDefault}
-              ><Icon cssmodule="fas" id="angle-up"/></span>
-            )}
-          </span>
-          <span
-            unselectable="on"
-            {...(downEvents as any)}
-            role="button"
-            aria-label="Decrease Value"
-            aria-disabled={isDownDisabled}
-            className={downClassName}
-          >
-            {downHandler || (
-              <span
-                unselectable="on"
-                className={`${prefixCls}-handler-down-inner`}
-                onClick={preventDefault}
-              ><Icon cssmodule="fas" id="angle-down"/></span>
-            )}
-          </span>
-        </div>}
+        {useHandlers && (
+          <div className={`${prefixCls}-handler-wrap`}>
+            <span
+              unselectable="on"
+              {...(upEvents as any)}
+              role="button"
+              aria-label="Increase Value"
+              aria-disabled={isUpDisabled}
+              className={upClassName}
+            >
+              {upHandler || (
+                <span
+                  unselectable="on"
+                  className={`${prefixCls}-handler-up-inner`}
+                  onClick={preventDefault}
+                >
+                  <Icon cssmodule="fas" id="angle-up" />
+                </span>
+              )}
+            </span>
+            <span
+              unselectable="on"
+              {...(downEvents as any)}
+              role="button"
+              aria-label="Decrease Value"
+              aria-disabled={isDownDisabled}
+              className={downClassName}
+            >
+              {downHandler || (
+                <span
+                  unselectable="on"
+                  className={`${prefixCls}-handler-down-inner`}
+                  onClick={preventDefault}
+                >
+                  <Icon cssmodule="fas" id="angle-down" />
+                </span>
+              )}
+            </span>
+          </div>
+        )}
         <div className={`${prefixCls}-input-wrap`}>
           <input
             role="spinbutton"

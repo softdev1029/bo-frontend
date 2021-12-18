@@ -2,7 +2,7 @@ export enum SymbolType {
   SPOT = 1,
   FUTURE,
   DERIVATIVE,
-};
+}
 
 export enum SymbolValue {
   BTC = 1,
@@ -11,4 +11,4 @@ export enum SymbolValue {
   BTCUSD,
   ETHUSD,
   XRPUSD,
-};
+}

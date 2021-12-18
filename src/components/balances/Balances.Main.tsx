@@ -1,24 +1,31 @@
-import React from 'react';
-import _isEmpty from 'lodash/isEmpty';
-import { tableData, calculateWidths } from './Balances.helpers';
-import { MIN_TICKER_WIDTH, BALANCES_TABLE_FONT_SIZE, BALANCES_TABLE_HEADER_HEIGHT, BALANCES_TABLE_HEIGHT, BALANCES_TABLE_TOTAL_ROW_HEIGHT, BALANCES_TABLE_COMBINED_ROW_HEIGHT } from './Balances.constants';
-import BalancesColumns from './Balances.columns';
-import BalancesFooter from './Balances.Footer';
-import { Dim, Icon, Table } from '@/ui-components';
-import { getSortedData } from '@/ui-components/ui/Table.virtualized/Table.virtualized.helpers';
-import { getRowClasses } from '@/exports/balances.utils';
+import React from "react";
+import _isEmpty from "lodash/isEmpty";
+import { tableData, calculateWidths } from "./Balances.helpers";
+import {
+  MIN_TICKER_WIDTH,
+  BALANCES_TABLE_FONT_SIZE,
+  BALANCES_TABLE_HEADER_HEIGHT,
+  BALANCES_TABLE_HEIGHT,
+  BALANCES_TABLE_TOTAL_ROW_HEIGHT,
+  BALANCES_TABLE_COMBINED_ROW_HEIGHT,
+} from "./Balances.constants";
+import BalancesColumns from "./Balances.columns";
+import BalancesFooter from "./Balances.Footer";
+import { Dim, Icon, Table } from "@/ui-components";
+import { getSortedData } from "@/ui-components/ui/Table.virtualized/Table.virtualized.helpers";
+import { getRowClasses } from "@/exports/balances.utils";
 
 interface BalancesMainProps {
-  loading: boolean,
+  loading: boolean;
   getTotalEquivalent: () => number;
-  balances: any,
-  balancesTotal: any,
-  startBalOverlay: (ccy: string, wallet: string) => void,
-  inOverlay: boolean,
-  ticker: any,
-  setParentState: (state: object) => void,
-  needFreshData: number,
-  hideBalances: boolean
+  balances: any;
+  balancesTotal: any;
+  startBalOverlay: (ccy: string, wallet: string) => void;
+  inOverlay: boolean;
+  ticker: any;
+  setParentState: (state: object) => void;
+  needFreshData: number;
+  hideBalances: boolean;
 }
 class BalancesMain extends React.PureComponent<Partial<BalancesMainProps>> {
   static defaultProps = {
@@ -39,7 +46,9 @@ class BalancesMain extends React.PureComponent<Partial<BalancesMainProps>> {
       return null;
     },
     needFreshData: 0,
-    toggleDemoSetting: function () { return null; }
+    toggleDemoSetting: function () {
+      return null;
+    },
   };
 
   private cache: any;
@@ -59,7 +68,7 @@ class BalancesMain extends React.PureComponent<Partial<BalancesMainProps>> {
     const { setParentState } = this.props;
 
     setParentState({
-      cache: this.cache
+      cache: this.cache,
     });
   }
 
@@ -76,12 +85,14 @@ class BalancesMain extends React.PureComponent<Partial<BalancesMainProps>> {
   }
 
   renderLoading() {
-    return (<div className="virtal-list__container__loadingwrapper">
-      <Dim>
-        <Icon id="circle-o-notch" spinning={true} />
-                &nbsp; Loading items....
-            </Dim>
-    </div>);
+    return (
+      <div className="virtal-list__container__loadingwrapper">
+        <Dim>
+          <Icon id="circle-o-notch" spinning={true} />
+          &nbsp; Loading items....
+        </Dim>
+      </div>
+    );
   }
 
   changeQueryString(event) {
@@ -107,14 +118,17 @@ class BalancesMain extends React.PureComponent<Partial<BalancesMainProps>> {
       this.cache.needSort = false;
       sortedData = getSortedData(args);
       this.cache.data = sortedData;
-    } else if (sortBy !== this.cache.sortBy || sortDirection !== this.cache.sortDirection) {
+    } else if (
+      sortBy !== this.cache.sortBy ||
+      sortDirection !== this.cache.sortDirection
+    ) {
       this.cache.sortBy = sortBy;
       // we need to refresh data, but rendering it here will cause async issues, so trigger a double render, then sort after
       this.cache.sortDirection = sortDirection;
 
       this.cache.needSort = true;
       setParentState({
-        needFreshData: needFreshData + 1
+        needFreshData: needFreshData + 1,
       });
     }
 
@@ -130,7 +144,7 @@ class BalancesMain extends React.PureComponent<Partial<BalancesMainProps>> {
       needFreshData,
       inOverlay,
       startBalOverlay,
-      hideBalances
+      hideBalances,
     } = this.props;
 
     const loading = this.isLoading();
@@ -141,7 +155,7 @@ class BalancesMain extends React.PureComponent<Partial<BalancesMainProps>> {
       const { data: newData } = tableData({
         balances,
         inOverlay,
-        queryString: '',
+        queryString: "",
         startBalOverlay,
         ticker,
         equivCache,
@@ -156,12 +170,16 @@ class BalancesMain extends React.PureComponent<Partial<BalancesMainProps>> {
       this.cache.columnWidths = columnWidths;
     }
 
-    const rowHeight = columnWidths[0] === MIN_TICKER_WIDTH ? BALANCES_TABLE_TOTAL_ROW_HEIGHT : BALANCES_TABLE_COMBINED_ROW_HEIGHT;
+    const rowHeight =
+      columnWidths[0] === MIN_TICKER_WIDTH
+        ? BALANCES_TABLE_TOTAL_ROW_HEIGHT
+        : BALANCES_TABLE_COMBINED_ROW_HEIGHT;
 
     return (
       <React.Fragment>
-        {loading ?
-          this.renderLoading() :
+        {loading ? (
+          this.renderLoading()
+        ) : (
           <Table
             name="balancesTable"
             data={data}
@@ -178,7 +196,7 @@ class BalancesMain extends React.PureComponent<Partial<BalancesMainProps>> {
             columnWidths={columnWidths}
             getSortedData={this.sortData}
           />
-        }
+        )}
         <BalancesFooter
           getTotalEquivalent={getTotalEquivalent}
           socketConnected={true}

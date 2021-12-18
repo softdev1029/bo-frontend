@@ -1,7 +1,4 @@
-import List from './List';
-import ListPerfectScrollbar from './List.perfect.scroll';
+import List from "./List";
+import ListPerfectScrollbar from "./List.perfect.scroll";
 
-export {
-  List,
-  ListPerfectScrollbar
-}
+export { List, ListPerfectScrollbar };

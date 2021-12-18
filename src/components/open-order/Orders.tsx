@@ -1,18 +1,18 @@
-import { Table } from '@/ui-components';
+import { Table } from "@/ui-components";
 // import { TableInfiniteLoader } from '@/ui-components/ui/Table.Infinite';
-import React, { useCallback, useMemo } from 'react';
-import getOrderColumns, { OrderKind } from './Orders.columns';
-import { OrderItem } from '@/models/order.model';
-import { AppTradeType } from '@/constants/trade-type';
-import MarketHistoryEmptyMessage from '../market-history/MarketHistory.emptyMessage';
+import React, { useCallback, useMemo } from "react";
+import getOrderColumns, { OrderKind } from "./Orders.columns";
+import { OrderItem } from "@/models/order.model";
+import { AppTradeType } from "@/constants/trade-type";
+import MarketHistoryEmptyMessage from "../market-history/MarketHistory.emptyMessage";
 interface OrdersProps {
   orders?: any[];
   loading?: boolean;
-  cancelOrder: (order: OrderItem) => void,
-  cancelAllOrders: (orders: OrderItem[]) => void,
-  tradeType: AppTradeType,
-  orderKind: OrderKind
-};
+  cancelOrder: (order: OrderItem) => void;
+  cancelAllOrders: (orders: OrderItem[]) => void;
+  tradeType: AppTradeType;
+  orderKind: OrderKind;
+}
 
 const Orders = ({
   orders = [],
@@ -20,14 +20,26 @@ const Orders = ({
   cancelOrder,
   tradeType,
   orderKind = OrderKind.OPEN,
-  cancelAllOrders
+  cancelAllOrders,
 }: Partial<OrdersProps>) => {
-  const onCancelAllBtnClick = useCallback((e) => {
-    cancelAllOrders(orders);
-  }, [orders, cancelAllOrders])
+  const onCancelAllBtnClick = useCallback(
+    (e) => {
+      cancelAllOrders(orders);
+    },
+    [orders, cancelAllOrders]
+  );
 
-  const columns = useMemo(() => getOrderColumns({ cancelAllOrders: onCancelAllBtnClick, cancelOrder, tradeType, orderKind }), [onCancelAllBtnClick, cancelOrder, tradeType, orderKind]);
-  
+  const columns = useMemo(
+    () =>
+      getOrderColumns({
+        cancelAllOrders: onCancelAllBtnClick,
+        cancelOrder,
+        tradeType,
+        orderKind,
+      }),
+    [onCancelAllBtnClick, cancelOrder, tradeType, orderKind]
+  );
+
   return (
     <>
       <Table
@@ -42,7 +54,7 @@ const Orders = ({
         maxHeight={90}
         emptyListMessage={"There is no open orders"}
       />
-      <MarketHistoryEmptyMessage/>
+      <MarketHistoryEmptyMessage />
       {/* <TableInfiniteLoader 
         enabledHorizontalScroll
         name="openorders"
@@ -59,4 +71,4 @@ const Orders = ({
   );
 };
 
-export default Orders
+export default Orders;

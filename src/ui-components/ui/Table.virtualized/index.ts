@@ -1,1 +1,1 @@
-export { default as Table } from './Table.virtualized'
+export { default as Table } from "./Table.virtualized";

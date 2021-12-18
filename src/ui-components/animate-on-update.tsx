@@ -1,33 +1,45 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 
 interface Events {
-  [index:string]: string[]
+  [index: string]: string[];
 }
 
 const events: Events = {
-  start: ['animationstart', 'webkitAnimationStart', 'mozAnimationStart', 'oanimationstart', 'MSAnimationStart'],
-  end: ['animationend', 'webkitAnimationEnd', 'mozAnimationEnd', 'oanimationend', 'MSAnimationEnd'],
+  start: [
+    "animationstart",
+    "webkitAnimationStart",
+    "mozAnimationStart",
+    "oanimationstart",
+    "MSAnimationStart",
+  ],
+  end: [
+    "animationend",
+    "webkitAnimationEnd",
+    "mozAnimationEnd",
+    "oanimationend",
+    "MSAnimationEnd",
+  ],
   startRemoved: [],
-  endRemoved: []
-}
+  endRemoved: [],
+};
 
 export interface Props {
-  children: any,
-  animate: boolean,
-  baseClassName: string,
-  animationClassName: string,
-  customTag?: string,
-  onAnimationEnd?: () => void,
+  children: any;
+  animate: boolean;
+  baseClassName: string;
+  animationClassName: string;
+  customTag?: string;
+  onAnimationEnd?: () => void;
 }
 
 export interface State {
-  animating: boolean,
-  clearAnimationClass: boolean
+  animating: boolean;
+  clearAnimationClass: boolean;
 }
 
 interface AnimateOnUpdate {
-  elm: HTMLElement,
-  setElementRef: (ref: HTMLElement) => void
+  elm: HTMLElement;
+  setElementRef: (ref: HTMLElement) => void;
 }
 
 /**
@@ -40,86 +52,97 @@ interface AnimateOnUpdate {
  * @prop {string} animationClassName - Class added when `animate == true`.
  * @prop {bool} animate - Wheter to animate component.
  */
-class AnimateOnUpdate extends Component<Props & any, State> implements AnimateOnUpdate {
+class AnimateOnUpdate
+  extends Component<Props & any, State>
+  implements AnimateOnUpdate
+{
   static defaultProps = {
-    customTag: 'span'
-  }
+    customTag: "span",
+  };
 
-  constructor (props: Props) {
-    super(props)
-    this.state = { animating: false, clearAnimationClass: false }
-    this.animationStart = this.animationStart.bind(this)
-    this.animationEnd = this.animationEnd.bind(this)
+  constructor(props: Props) {
+    super(props);
+    this.state = { animating: false, clearAnimationClass: false };
+    this.animationStart = this.animationStart.bind(this);
+    this.animationEnd = this.animationEnd.bind(this);
 
     this.setElementRef = (ref) => {
-      this.elm = ref
-    }
+      this.elm = ref;
+    };
   }
 
-  componentDidMount () {
-    this.addEventListener('start', this.elm, this.animationStart);
-    this.addEventListener('end', this.elm, this.animationEnd);
+  componentDidMount() {
+    this.addEventListener("start", this.elm, this.animationStart);
+    this.addEventListener("end", this.elm, this.animationEnd);
   }
 
-  componentWillUnmount () {
-    this.removeEventListeners('start', this.elm, this.animationStart);
-    this.removeEventListeners('end', this.elm, this.animationEnd);
+  componentWillUnmount() {
+    this.removeEventListeners("start", this.elm, this.animationStart);
+    this.removeEventListeners("end", this.elm, this.animationEnd);
   }
 
-  addEventListener (type: string, elm: HTMLElement, eventHandler: (e: Event) => void) {
+  addEventListener(
+    type: string,
+    elm: HTMLElement,
+    eventHandler: (e: Event) => void
+  ) {
     // until an event has been triggered bind them all
-    events[type].map(event => {
+    events[type].map((event) => {
       // console.log(`adding ${event}`)
       // @ts-ignore
-      elm.addEventListener(event, eventHandler)
-    })
+      elm.addEventListener(event, eventHandler);
+    });
   }
 
-  removeEventListeners (type: string, elm: HTMLElement, eventHandler: (e: Event) => void) {
-    events[type].map(event => {
+  removeEventListeners(
+    type: string,
+    elm: HTMLElement,
+    eventHandler: (e: Event) => void
+  ) {
+    events[type].map((event) => {
       // console.log(`removing ${event}`)
       // @ts-ignore
-      elm.removeEventListener(event, eventHandler)
-    })
+      elm.removeEventListener(event, eventHandler);
+    });
   }
 
-  updateEvents (type: string, newEvent: string) {
+  updateEvents(type: string, newEvent: string) {
     // console.log(`updating ${type} event to ${newEvent}`)
-    events[type + 'Removed'] = events[type].filter(e => e !== newEvent)
-    events[type] = [newEvent]
+    events[type + "Removed"] = events[type].filter((e) => e !== newEvent);
+    events[type] = [newEvent];
   }
 
-  animationStart (e: Event) {
-    if (events['start'].length > 1) {
-      this.updateEvents('start', e.type)
-      this.removeEventListeners('startRemoved', this.elm, this.animationStart)
+  animationStart(e: Event) {
+    if (events["start"].length > 1) {
+      this.updateEvents("start", e.type);
+      this.removeEventListeners("startRemoved", this.elm, this.animationStart);
     }
-    this.setState({ animating: true, clearAnimationClass: false })
+    this.setState({ animating: true, clearAnimationClass: false });
   }
 
-  animationEnd (e: Event) {
-    if (events['end'].length > 1) {
-      this.updateEvents('end', e.type)
-      this.removeEventListeners('endRemoved', this.elm, this.animationStart)
+  animationEnd(e: Event) {
+    if (events["end"].length > 1) {
+      this.updateEvents("end", e.type);
+      this.removeEventListeners("endRemoved", this.elm, this.animationStart);
     }
     // send separate, animation state change will not render
-    this.setState({ clearAnimationClass: true })  // renders
-    this.setState({ animating: false, clearAnimationClass: false })
+    this.setState({ clearAnimationClass: true }); // renders
+    this.setState({ animating: false, clearAnimationClass: false });
 
-    if (typeof this.props.onAnimationEnd === 'function') {
-      this.props.onAnimationEnd()
+    if (typeof this.props.onAnimationEnd === "function") {
+      this.props.onAnimationEnd();
     }
   }
 
-  shouldComponentUpdate (nextProps: Props, nextState: State) {
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
     if (this.state.animating !== nextState.animating) {
       // do not render on animation change
-      return false
+      return false;
     }
-    return true
+    return true;
   }
 
-  render () {
+  render() {
     const { clearAnimationClass } = this.state;
     const {
       baseClassName,
@@ -131,16 +154,18 @@ class AnimateOnUpdate extends Component<Props & any, State> implements AnimateOn
       ...otherProps
     } = this.props;
 
-    let className = baseClassName
+    let className = baseClassName;
 
     if (animate && !clearAnimationClass) {
-      className += ` ${animationClassName}`
+      className += ` ${animationClassName}`;
     }
 
-    return <Tag ref={this.setElementRef} className={className} {...otherProps}>
-      {children}
-    </Tag>
+    return (
+      <Tag ref={this.setElementRef} className={className} {...otherProps}>
+        {children}
+      </Tag>
+    );
   }
 }
 
-export default AnimateOnUpdate
+export default AnimateOnUpdate;

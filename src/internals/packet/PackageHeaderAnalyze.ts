@@ -7,10 +7,8 @@ var NORMAL_HEADER_SIZE = 3;
 export const PacketHeaderAnalyze = {
   getDataSize: function (data) {
     var bigSize = this.isBigSize(data);
-    if (bigSize)
-      return this.getIntAt(data, BYTE_PACKET_SIZE_INDEX);
-    else
-      return this.getUnsignedShortAt(data, BYTE_PACKET_SIZE_INDEX);
+    if (bigSize) return this.getIntAt(data, BYTE_PACKET_SIZE_INDEX);
+    else return this.getUnsignedShortAt(data, BYTE_PACKET_SIZE_INDEX);
   },
   getCmdIdFromData: function (data) {
     return this.getShortAt(data, 1);
@@ -41,7 +39,7 @@ export const PacketHeaderAnalyze = {
   // },
   getBit: function (input, index) {
     var result = input & (1 << index);
-    return (result !== 0);
+    return result !== 0;
   },
   genHeader: function (bigSize, compress) {
     var header = 0;
@@ -66,10 +64,12 @@ export const PacketHeaderAnalyze = {
     return input;
   },
   getIntAt: function (data, index) {
-    return ((data[index] & 255) << 24) +
+    return (
+      ((data[index] & 255) << 24) +
       ((data[index + 1] & 255) << 16) +
       ((data[index + 2] & 255) << 8) +
-      ((data[index + 3] & 255) << 0);
+      ((data[index + 3] & 255) << 0)
+    );
   },
   getUnsignedShortAt: function (data, index) {
     var a = (data[index] & 255) << 8;
@@ -78,5 +78,5 @@ export const PacketHeaderAnalyze = {
   },
   getShortAt: function (data, index) {
     return (data[index] << 8) + (data[index + 1] & 255);
-  }
+  },
 };

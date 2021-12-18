@@ -1,83 +1,101 @@
-import React, { RefObject } from 'react';
-import { connect } from 'react-redux';
-import { AutoSizer, Table } from 'react-virtualized';
-import _isFunction from 'lodash/isFunction';
-import classNames from 'classnames';
+import React, { RefObject } from "react";
+import { connect } from "react-redux";
+import { AutoSizer, Table } from "react-virtualized";
+import _isFunction from "lodash/isFunction";
+import classNames from "classnames";
 
-import { sortData, rowNeedsWrap, getNextSort, getHeaderRowRenderer, getHeightForRow, getRowHeightFunc, renderColumns, renderLoadingContent, getSortedData, getTableWidthFunc } from './Table.virtualized.helpers';
-import ScrollBar from '../ScrollBar';
-import { Dim } from '../Dim';
-import { setOrder } from '@/actions/ui-setting.actions';
-import { getTableSorting } from '@/selectors/ui-setting.selectors';
-import { TABLE_HEADER_HEIGHT, TABLE_PRESCAN_ROWS, TABLE_ROW_HEIGHT } from '@/constants/app.constants';
+import {
+  sortData,
+  rowNeedsWrap,
+  getNextSort,
+  getHeaderRowRenderer,
+  getHeightForRow,
+  getRowHeightFunc,
+  renderColumns,
+  renderLoadingContent,
+  getSortedData,
+  getTableWidthFunc,
+} from "./Table.virtualized.helpers";
+import ScrollBar from "../ScrollBar";
+import { Dim } from "../Dim";
+import { setOrder } from "@/actions/ui-setting.actions";
+import { getTableSorting } from "@/selectors/ui-setting.selectors";
+import {
+  TABLE_HEADER_HEIGHT,
+  TABLE_PRESCAN_ROWS,
+  TABLE_ROW_HEIGHT,
+} from "@/constants/app.constants";
 
 const SCROLL_TO_BOTTOM_TRIGGER_THRESHOLD = 0;
 
 // wanna know about some Function props details, check it out: https://github.com/bvaughn/react-virtualized/blob/master/docs/Table.md
 export type VirtualizedTableProps = {
-  columns: any[],
-  data: any[],
-  renderRow?: Function,
-  renderHeaderRow?: Function,
-  rowHeight?: number,
-  headerHeight?: number,
-  disableHeader?: boolean,
-  maxHeight?: number,
-  name?: string,
-  defaultOrderBy?: string,
-  order?: Object,
-  loading?: boolean,
-  defaultSortBy?: string,
-  defaultSortDirection?: string,
-  emptyListMessage?: string,
-  onScrollToBottom?: Function,
-  onSelectionChange?: Function,
-  onMultiSelectEnd?: Function,
-  getSortedData?: Function,
-  onRowsRendered?: Function,
-  selectByKey?: string,
-  colPadding?: number,
-  enabledHorizontalScroll?: boolean,
-  getTableWidthFunc?: Function,
-  columnWidths?: any[],
+  columns: any[];
+  data: any[];
+  renderRow?: Function;
+  renderHeaderRow?: Function;
+  rowHeight?: number;
+  headerHeight?: number;
+  disableHeader?: boolean;
+  maxHeight?: number;
+  name?: string;
+  defaultOrderBy?: string;
+  order?: Object;
+  loading?: boolean;
+  defaultSortBy?: string;
+  defaultSortDirection?: string;
+  emptyListMessage?: string;
+  onScrollToBottom?: Function;
+  onSelectionChange?: Function;
+  onMultiSelectEnd?: Function;
+  getSortedData?: Function;
+  onRowsRendered?: Function;
+  selectByKey?: string;
+  colPadding?: number;
+  enabledHorizontalScroll?: boolean;
+  getTableWidthFunc?: Function;
+  columnWidths?: any[];
   // ({ data = [], cols = [], rowHeight, width }, fallback)
   // See default helper implementation getRowHeightFunc()
-  getRowHeightFunc?: Function,
+  getRowHeightFunc?: Function;
   // ({ rowData, columns, tableWidth }, fallback)
-  rowNeedsWrap?: Function,
-  defaultFontSize?: number,
-  onRowClick?: Function,
-  rowClasses?: string | Function,
-  headerClasses?: string,
-  sortedDataPostProcessor?: Function,
-  sortingPersistingEnabled?: boolean,
-  persistSortingFunction?: Function,
-  rowHoverEffect?: boolean,
-  onSort?: Function,
+  rowNeedsWrap?: Function;
+  defaultFontSize?: number;
+  onRowClick?: Function;
+  rowClasses?: string | Function;
+  headerClasses?: string;
+  sortedDataPostProcessor?: Function;
+  sortingPersistingEnabled?: boolean;
+  persistSortingFunction?: Function;
+  rowHoverEffect?: boolean;
+  onSort?: Function;
   // use "undefinedOrderSortingFunction" when you need to define some special sorting rules for
   // a situation when "sortBy" and "sortOrder" are undefined e.g. TickerList sort
   // should be a pretty rare case when it's necessary
-  undefinedOrderSortingFunction?: Function,
-  message?: string,
+  undefinedOrderSortingFunction?: Function;
+  message?: string;
   overscanRowCount?: number;
 };
 
 interface VirtualizedTableState {
-  data?: any[],
-  selectedKeys?: Object,
+  data?: any[];
+  selectedKeys?: Object;
   selectByKey?: string;
-  seedData?: any,
+  seedData?: any;
   // props data, @see getDerivedStateFromProps()
-  sortBy?: string,
-  sortDirection?: string,
-  lastAutoWidth?: number,
-  lastAutoHeight?: number,
-  multiSelectActive?: boolean,
+  sortBy?: string;
+  sortDirection?: string;
+  lastAutoWidth?: number;
+  lastAutoHeight?: number;
+  multiSelectActive?: boolean;
   multiSelectStart?: number;
   multiSelectEnd?: number;
   scrollTop?: number;
 }
-class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, VirtualizedTableState> {
+class VirtualizedTable extends React.PureComponent<
+  VirtualizedTableProps,
+  VirtualizedTableState
+> {
   static defaultProps = {
     columns: [],
     data: [],
@@ -87,29 +105,29 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     headerHeight: TABLE_HEADER_HEIGHT,
     maxHeight: 300,
     colPadding: 5,
-    name: '',
-    defaultOrderBy: '-',
+    name: "",
+    defaultOrderBy: "-",
     order: {},
     loading: false,
     defaultSortBy: null,
     defaultSortDirection: null,
-    emptyListMessage: 'No Data',
-    onScrollToBottom: function onScrollToBottom() { },
-    onSelectionChange: function onSelectionChange() { },
-    onMultiSelectEnd: function onMultiSelectEnd() { },
+    emptyListMessage: "No Data",
+    onScrollToBottom: function onScrollToBottom() {},
+    onSelectionChange: function onSelectionChange() {},
+    onMultiSelectEnd: function onMultiSelectEnd() {},
     enabledHorizontalScroll: false,
-    selectByKey: '',
+    selectByKey: "",
     getSortedData: getSortedData,
     // note useful default
     defaultFontSize: 13,
-    onRowClick: function onRowClick() { },
-    rowClasses: '',
-    sortedDataPostProcessor: function sortedDataPostProcessor() { },
+    onRowClick: function onRowClick() {},
+    rowClasses: "",
+    sortedDataPostProcessor: function sortedDataPostProcessor() {},
     columnWidths: null,
     sortingPersistingEnabled: true,
-    persistSortingFunction: function persistSortingFunction() { },
+    persistSortingFunction: function persistSortingFunction() {},
     rowHoverEffect: true,
-    onSort: function onSort() { }
+    onSort: function onSort() {},
   };
 
   tableRef = React.createRef();
@@ -127,8 +145,8 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     lastAutoWidth: null,
     lastAutoHeight: null,
     multiSelectActive: false,
-    multiSelectStart: null
-  }
+    multiSelectStart: null,
+  };
 
   constructor(props) {
     super(props);
@@ -154,7 +172,9 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
       defaultSortDirection = nextProps.defaultSortDirection,
       data = nextProps.data;
 
-    const sortingChanged = defaultSortBy !== prevState.sortBy || defaultSortDirection !== prevState.sortDirection;
+    const sortingChanged =
+      defaultSortBy !== prevState.sortBy ||
+      defaultSortDirection !== prevState.sortDirection;
 
     if (data === prevState.seedData && !sortingChanged) {
       return null;
@@ -167,14 +187,18 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
       seedData: data,
       sortBy,
       sortDirection,
-      data: sortData({
-        data: nextProps.data,
-        sortBy,
-        sortDirection,
-        columns: nextProps.columns,
-        undefinedOrderSortingFunction: nextProps.undefinedOrderSortingFunction
-      }, nextProps)
-    }
+      data: sortData(
+        {
+          data: nextProps.data,
+          sortBy,
+          sortDirection,
+          columns: nextProps.columns,
+          undefinedOrderSortingFunction:
+            nextProps.undefinedOrderSortingFunction,
+        },
+        nextProps
+      ),
+    };
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -189,20 +213,26 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     }
 
     if (prevProps.loading !== this.props.loading) {
-      this.isScrollbarMounted = false
+      this.isScrollbarMounted = false;
     }
 
     // hack scrollbar
-    if (!this.isScrollbarMounted && this.scrollbarRef.current && this.tableRef.current) {
-      this.isScrollbarMounted = true
+    if (
+      !this.isScrollbarMounted &&
+      this.scrollbarRef.current &&
+      this.tableRef.current
+    ) {
+      this.isScrollbarMounted = true;
       // @ts-ignore
-      this.tableRef.current.Grid._scrollingContainer = this.scrollbarRef.current._container;
+      this.tableRef.current.Grid._scrollingContainer =
+        this.scrollbarRef.current._container;
     }
   }
 
   handleScrollY(e) {
     // @ts-ignore
-    this.tableRef.current && this.tableRef.current.Grid._onScroll({ target: e });
+    const grid = this.tableRef.current && this.tableRef.current.Grid;
+    grid._onScroll({ target: e });
   }
 
   componentWillUnmount() {
@@ -211,9 +241,11 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     let _iteratorError = undefined;
 
     try {
-      for (var _iterator = this.autoDimentionChangeIds[Symbol.iterator](), _step;
+      for (
+        var _iterator = this.autoDimentionChangeIds[Symbol.iterator](), _step;
         !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
-        _iteratorNormalCompletion = true) {
+        _iteratorNormalCompletion = true
+      ) {
         var timeoutId = _step.value;
         clearTimeout(timeoutId);
       }
@@ -233,17 +265,16 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     }
   }
 
-  onRowMouseOut() { }
+  onRowMouseOut() {}
 
   onRowMouseOver({ index }) {
     const { multiSelectActive, multiSelectStart } = this.state;
 
-    if (!multiSelectActive)
-      return;
+    if (!multiSelectActive) return;
 
     this.onUpdateMultiSelect({
       start: multiSelectStart,
-      end: index
+      end: index,
     });
   }
 
@@ -258,7 +289,7 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
       const max = Math.max(start, end);
 
       for (let i = min; i <= max; i++) {
-        const key = selectByKey === '' ? i : data[i][selectByKey];
+        const key = selectByKey === "" ? i : data[i][selectByKey];
         selectedKeys[key] = true;
       }
 
@@ -269,7 +300,7 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
   onToggleRowSelection(rowData, rowIndex) {
     const { selectByKey } = this.props;
 
-    const key = selectByKey === '' ? rowIndex : rowData[selectByKey];
+    const key = selectByKey === "" ? rowIndex : rowData[selectByKey];
 
     this.setState(function (state) {
       var selectedKeys = { ...state.selectedKeys };
@@ -286,7 +317,9 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
 
   onToggleMultiSelect(rowIndex) {
     this.setState(function ({ multiSelectActive }) {
-      const nextState: VirtualizedTableState = { multiSelectActive: !multiSelectActive };
+      const nextState: VirtualizedTableState = {
+        multiSelectActive: !multiSelectActive,
+      };
 
       if (nextState.multiSelectActive) {
         nextState.multiSelectStart = rowIndex;
@@ -300,20 +333,21 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
   }
 
   onMultiSelectEnd() {
-    const { multiSelectStart, multiSelectEnd } = this.state as VirtualizedTableState;
+    const { multiSelectStart, multiSelectEnd } = this
+      .state as VirtualizedTableState;
 
     const start = Math.min(multiSelectStart, multiSelectEnd);
     const end = Math.max(multiSelectStart, multiSelectEnd);
 
     this.props.onMultiSelectEnd({
       start,
-      end
+      end,
     });
   }
 
   isRowSelected(rowData, rowIndex) {
     var selectByKey = this.props.selectByKey;
-    var key = selectByKey === '' ? rowIndex : rowData[selectByKey];
+    var key = selectByKey === "" ? rowIndex : rowData[selectByKey];
     return !!this.state.selectedKeys[key];
   }
 
@@ -326,7 +360,7 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
       const selectedKeys = {};
 
       data.forEach((row, i) => {
-        const key = selectByKey === '' ? i : row[selectByKey];
+        const key = selectByKey === "" ? i : row[selectByKey];
         selectedKeys[key] = true;
       });
 
@@ -337,7 +371,7 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
   onSelectNoRows() {
     this.setState(function () {
       return {
-        selectedKeys: {}
+        selectedKeys: {},
       };
     });
   }
@@ -352,7 +386,9 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
   getHeaderHeight() {
     const { message, rowHeight, headerHeight } = this.props;
 
-    return message ? (headerHeight || rowHeight) * 2 : headerHeight || rowHeight;
+    return message
+      ? (headerHeight || rowHeight) * 2
+      : headerHeight || rowHeight;
   }
 
   /**
@@ -377,16 +413,19 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
 
     if (!data.length) {
       const { colPadding } = this.props;
-      return rowHeight * 3 / 2 + colPadding;
+      return (rowHeight * 3) / 2 + colPadding;
     }
     const wrapFunc = this.props.rowNeedsWrap || rowNeedsWrap;
 
     data.forEach(function (rowData) {
-      const wrap = wrapFunc({
-        rowData,
-        columns,
-        tableWidth: lastAutoWidth
-      }, rowNeedsWrap); // <- 2nd rowNeedsWrap arg (fallback)
+      const wrap = wrapFunc(
+        {
+          rowData,
+          columns,
+          tableWidth: lastAutoWidth,
+        },
+        rowNeedsWrap
+      ); // <- 2nd rowNeedsWrap arg (fallback)
 
       // double height for wrapped rows, otherwise -> rowHeight
       contentHeight += wrap ? rowHeight * 2 : rowHeight;
@@ -410,17 +449,17 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     setTimeout(() => {
       //@ts-ignore
       this.tableRef.current && this.tableRef.current.recomputeRowHeights();
-    }, 0)
+    }, 0);
   }
 
   /**
-  * Saves new dimensions on state and recomputes row heights. Does nothing if
-  * the dimensions are unchanged.
-  *
-  * @param {Object} dimensions
-  * @param {number} dimensions.width
-  * @param {number} dimensions.height
-  */
+   * Saves new dimensions on state and recomputes row heights. Does nothing if
+   * the dimensions are unchanged.
+   *
+   * @param {Object} dimensions
+   * @param {number} dimensions.width
+   * @param {number} dimensions.height
+   */
   onAutoDimensionChange({ width, height }) {
     const { lastAutoHeight, lastAutoWidth } = this.state;
 
@@ -436,7 +475,7 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
       this.setState(function () {
         return {
           lastAutoHeight: height,
-          lastAutoWidth: width
+          lastAutoWidth: width,
         };
       });
     }, 0);
@@ -445,36 +484,32 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
   }
 
   /**
-  * Re-generates the sorted dataset from props if the sort parameters have
-  * changed. Also defers a row height recompute.
-  *
-  * @param {Object} params
-  */
+   * Re-generates the sorted dataset from props if the sort parameters have
+   * changed. Also defers a row height recompute.
+   *
+   * @param {Object} params
+   */
   onSort({ defaultSortDirection, sortBy }) {
-    const {
-      sortBy: prevSortBy,
-      sortDirection: prevSortDirection
-    } = this.state;
+    const { sortBy: prevSortBy, sortDirection: prevSortDirection } = this.state;
 
-    const supportsCustomSort = _isFunction(this.props.undefinedOrderSortingFunction);
+    const supportsCustomSort = _isFunction(
+      this.props.undefinedOrderSortingFunction
+    );
 
     const direction = getNextSort({
       prevSortDirection,
       prevSortBy,
       sortBy,
       defaultSortDirection,
-      supportsCustomSort
+      supportsCustomSort,
     });
 
     if (prevSortBy === sortBy && prevSortDirection === direction) {
       return;
     }
 
-    const {
-      sortingPersistingEnabled,
-      persistSortingFunction,
-      onSort
-    } = this.props;
+    const { sortingPersistingEnabled, persistSortingFunction, onSort } =
+      this.props;
 
     if (sortingPersistingEnabled) {
       persistSortingFunction(sortBy, direction);
@@ -490,7 +525,7 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
 
     const style = {
       lineHeight: `${rowHeight}px`,
-      padding: `${colPadding}px 0 0 0`
+      padding: `${colPadding}px 0 0 0`,
     };
 
     return (
@@ -507,7 +542,10 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
 
     const { clientHeight, scrollHeight, scrollTop } = message;
 
-    if (clientHeight + scrollTop + SCROLL_TO_BOTTOM_TRIGGER_THRESHOLD >= scrollHeight) {
+    if (
+      clientHeight + scrollTop + SCROLL_TO_BOTTOM_TRIGGER_THRESHOLD >=
+      scrollHeight
+    ) {
       this.props.onScrollToBottom();
     }
   }
@@ -519,7 +557,7 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     if (renderHeaderRow) {
       return function (args) {
         return renderHeaderRow(args, fullHeaderHeight);
-      }
+      };
     }
 
     return getHeaderRowRenderer(fullHeaderHeight, message, headerClasses);
@@ -527,12 +565,12 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
 
   onRenderRow(tableWidth, tableHeight, args = {}) {
     const { renderRow, colPadding } = this.props;
-    
+
     return renderRow({
       ...args,
       tableWidth,
       tableHeight,
-      colPadding
+      colPadding,
     });
   }
 
@@ -540,12 +578,14 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     const { rowClasses, rowHoverEffect } = this.props;
     const row = this.state.data[index];
 
-    const additionalClasses = _isFunction(rowClasses) ? rowClasses(row, index) : rowClasses;
+    const additionalClasses = _isFunction(rowClasses)
+      ? rowClasses(row, index)
+      : rowClasses;
 
-    return classNames('themed-border', additionalClasses, {
-      'cpn-virtualized-table-row': index !== -1,
-      'active': row && row.isActive,
-      'cpn-virtualized-table-row--no-hover-effect': !rowHoverEffect
+    return classNames("themed-border", additionalClasses, {
+      "cpn-virtualized-table-row": index !== -1,
+      active: row && row.isActive,
+      "cpn-virtualized-table-row--no-hover-effect": !rowHoverEffect,
     });
   }
 
@@ -553,9 +593,22 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     this.onAutoDimensionChange({ width, height });
     const fullHeaderHeight = this.getHeaderHeight();
 
-    const { data, sortBy, sortDirection, multiSelectStart, multiSelectActive } = this.state;
+    const { data, sortBy, sortDirection, multiSelectStart, multiSelectActive } =
+      this.state;
 
-    const { columns, rowHeight, disableHeader, name, renderRow, onRowClick, colPadding, columnWidths, enabledHorizontalScroll, onRowsRendered, overscanRowCount } = this.props;
+    const {
+      columns,
+      rowHeight,
+      disableHeader,
+      name,
+      renderRow,
+      onRowClick,
+      colPadding,
+      columnWidths,
+      enabledHorizontalScroll,
+      onRowsRendered,
+      overscanRowCount,
+    } = this.props;
 
     //refactor
     const rowRendererProp: any = {};
@@ -565,14 +618,19 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     }
 
     const rowHeightArgs = {
-      data, width, rowHeight, cols: columns
+      data,
+      width,
+      rowHeight,
+      cols: columns,
     };
 
-    const rowHeightFunc = this.props.getRowHeightFunc ?
-      this.props.getRowHeightFunc(rowHeightArgs, getHeightForRow) :
-      getRowHeightFunc(rowHeightArgs);
+    const rowHeightFunc = this.props.getRowHeightFunc
+      ? this.props.getRowHeightFunc(rowHeightArgs, getHeightForRow)
+      : getRowHeightFunc(rowHeightArgs);
 
-    const tableWidthFunc = this.props.getTableWidthFunc ? this.props.getTableWidthFunc(width, enabledHorizontalScroll, columns) : getTableWidthFunc(width, enabledHorizontalScroll, columns)
+    const tableWidthFunc = this.props.getTableWidthFunc
+      ? this.props.getTableWidthFunc(width, enabledHorizontalScroll, columns)
+      : getTableWidthFunc(width, enabledHorizontalScroll, columns);
 
     return (
       <Table
@@ -595,7 +653,7 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
         onRowMouseOut={this.onRowMouseOut}
         onRowMouseOver={this.onRowMouseOver}
         onRowClick={onRowClick}
-        gridStyle={{ outline: 'none', paddingTop: fullHeaderHeight }}
+        gridStyle={{ outline: "none", paddingTop: fullHeaderHeight }}
         sort={this.onSort}
         sortBy={sortBy}
         sortDirection={sortDirection}
@@ -618,7 +676,7 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
           rowHeight,
           name,
           colPadding,
-          columnWidths
+          columnWidths,
         })}
       </Table>
     );
@@ -631,40 +689,44 @@ class VirtualizedTable extends React.PureComponent<VirtualizedTableProps, Virtua
     return (
       <AutoSizer>
         {({ width, height }) => {
-          return this.renderTableInAutoSizer({ width, height: height + fullHeaderHeight });
+          return this.renderTableInAutoSizer({
+            width,
+            height: height + fullHeaderHeight,
+          });
         }}
       </AutoSizer>
     );
   }
 
   render() {
-    const {
-      headerHeight,
-      loading,
-      data,
-      defaultFontSize,
-      colPadding
-    } = this.props;
+    const { headerHeight, loading, data, defaultFontSize, colPadding } =
+      this.props;
 
     const fullHeaderHeight = this.getHeaderHeight();
     const fullHeight = fullHeaderHeight + this.getTableWrapperHeight();
     const empty = data.length === 0;
-    const wrapperClassName = classNames('cpn-virtualized-table__wrapper', `r-font-size-${defaultFontSize}`);    
+    const wrapperClassName = classNames(
+      "cpn-virtualized-table__wrapper",
+      `r-font-size-${defaultFontSize}`
+    );
 
     return (
       <div
         className={wrapperClassName}
         style={{
           // overflow: empty || loading ? 'visible' : 'hidden',
-          height: loading ? 'auto' : empty ? fullHeight + colPadding : fullHeight,
+          height: loading
+            ? "auto"
+            : empty
+            ? fullHeight + colPadding
+            : fullHeight,
           // marginTop: empty || loading ? `${fullHeaderHeight}px` : 0,
         }}
       >
-        <ScrollBar
-          onScrollY={this.handleScrollY}
-          ref={this.scrollbarRef}
-        >
-          {loading ? renderLoadingContent({ headerHeight }) : this.renderTable()}
+        <ScrollBar onScrollY={this.handleScrollY} ref={this.scrollbarRef}>
+          {loading
+            ? renderLoadingContent({ headerHeight })
+            : this.renderTable()}
         </ScrollBar>
       </div>
     );
@@ -675,14 +737,14 @@ const mapStateToProps = (state, props) => {
   const { defaultSortBy, defaultSortDirection } = getTableSorting(state, props);
   return {
     defaultSortBy,
-    defaultSortDirection
+    defaultSortDirection,
   };
 };
 
 const mapDispatchToProps = (dispatch, props) => ({
   persistSortingFunction(sortBy, sortDirection) {
     dispatch(setOrder(props.name, sortBy, sortDirection, false));
-  }
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(VirtualizedTable);

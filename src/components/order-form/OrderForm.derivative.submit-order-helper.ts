@@ -3,8 +3,16 @@ import { submitNewOrder } from "@/actions/order.actions";
 import { subtract } from "@/exports/math";
 import { getAmountDecimals } from "@/exports/ticker.utils";
 import OrderMarginConfirmationPopup from "./OrderForm.confirm-popup";
-import { commonOrderValidator, isSameSide, isValidAmount } from "./OrderForm.helpers";
-import { AdditionPopupData, OrderFormContainerProps, OrderFormControlsState} from './OrderForm.types';
+import {
+  commonOrderValidator,
+  isSameSide,
+  isValidAmount,
+} from "./OrderForm.helpers";
+import {
+  AdditionPopupData,
+  OrderFormContainerProps,
+  OrderFormControlsState,
+} from "./OrderForm.types";
 
 // export const selectedType = OrderType.LIMIT;
 
@@ -32,21 +40,23 @@ import { AdditionPopupData, OrderFormContainerProps, OrderFormControlsState} fro
 //   }
 // ];
 
-
-export function orderValidationFn({ 
-  tradeOptions, 
-  lowestSellPrice, 
-  highestBuyPrice, 
-  side, 
-  stopPrice, 
-  price, 
-  amount, 
-  type, 
-  onError,
-  executedLongCash,
-  executedLongPosition,
-  leverage 
-}, props) {
+export function orderValidationFn(
+  {
+    tradeOptions,
+    lowestSellPrice,
+    highestBuyPrice,
+    side,
+    stopPrice,
+    price,
+    amount,
+    type,
+    onError,
+    executedLongCash,
+    executedLongPosition,
+    leverage,
+  },
+  props
+) {
   const { pair } = props;
 
   if (!isValidAmount(pair, amount)) {
@@ -70,7 +80,7 @@ export function orderValidationFn({
     // so if amount > position amount. We will validate order based on different amount
     // (but still keeping original amount when submit order, that's trick)
     if (diff > 0) {
-      remainAmount = fixedDiff
+      remainAmount = fixedDiff;
     } else {
       remainAmount = 0;
     }
@@ -103,7 +113,7 @@ export function orderValidationFn({
       //   trackSellOrder(pair);
       // }
     },
-  })
+  });
 }
 
 /**
@@ -113,58 +123,79 @@ export function orderValidationFn({
  * @param {number} price: price
  * ...
  */
-export function submitOrderFn({ tradeOptions, clientOrderId, tif, type, side, price, amount, stopPrice, dispatch }, props: OrderFormContainerProps, state: OrderFormControlsState, extraData: AdditionPopupData) {
+export function submitOrderFn(
+  {
+    tradeOptions,
+    clientOrderId,
+    tif,
+    type,
+    side,
+    price,
+    amount,
+    stopPrice,
+    dispatch,
+  },
+  props: OrderFormContainerProps,
+  state: OrderFormControlsState,
+  extraData: AdditionPopupData
+) {
   if (!props.immediateSubmit) {
     // const priceDecimals = getPriceDecimals(props.pair);
     // const amountDecimals = getAmountDecimals(props.pair);
     // // const orderType = getOrderTypeNameById(type);
     // const orderType = 'order-type-name';
 
-    const mId = 'order_confirm_popup';
-    
-    dispatch(showModal(mId, OrderMarginConfirmationPopup, {
-      leverage: extraData.selectedLeverage,
-      wallet: props.wallet,
-      mmr: props.mmr,
-      tif: state.tif,
-      mId: mId,
-      total: state.total,
-      closePopup: () => dispatch(closeModal(mId)),
-      orderType: type,
-      marginType: extraData.marginType,
-      amount,
-      price,
-      stopPrice,
-      symbol: props.pair,
-      side,
-      submit: (clientId) => {
-        dispatch(submitNewOrder({
-          tradeOptions,
-          tif,
-          clientOrderId,
-          type,
-          pair: props.pair,
-          side,
-          price,
-          amount,
-          stopPrice,
-        }));
+    const mId = "order_confirm_popup";
 
-        // hide modal
-        dispatch(closeModal(mId));
-      }
-    }));
+    dispatch(
+      showModal(mId, OrderMarginConfirmationPopup, {
+        leverage: extraData.selectedLeverage,
+        wallet: props.wallet,
+        mmr: props.mmr,
+        tif: state.tif,
+        mId: mId,
+        total: state.total,
+        closePopup: () => dispatch(closeModal(mId)),
+        orderType: type,
+        marginType: extraData.marginType,
+        amount,
+        price,
+        stopPrice,
+        symbol: props.pair,
+        side,
+        submit: (clientId) => {
+          dispatch(
+            submitNewOrder({
+              tradeOptions,
+              tif,
+              clientOrderId,
+              type,
+              pair: props.pair,
+              side,
+              price,
+              amount,
+              stopPrice,
+            })
+          );
+
+          // hide modal
+          dispatch(closeModal(mId));
+        },
+      })
+    );
   } else {
-    dispatch(submitNewOrder({
-      tradeOptions,
-      tif,
-      clientOrderId,
-      type,
-      pair: props.pair,
-      side,
-      price,
-      amount,
-      stopPrice,
-    }));
+    dispatch(
+      submitNewOrder({
+        tradeOptions,
+        tif,
+        clientOrderId,
+        type,
+        pair: props.pair,
+        side,
+        price,
+        amount,
+        stopPrice,
+      })
+    );
   }
 }

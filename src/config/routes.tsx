@@ -1,35 +1,36 @@
-import { SocketWrapper } from '@/pages/SocketWrapper.page';
-import React from 'react';
+import { SocketWrapper } from "@/pages/SocketWrapper.page";
+import React from "react";
 import { Redirect } from "react-router";
-import { RoutePaths } from '../constants/route-paths';
+import { RoutePaths } from "../constants/route-paths";
 // import App from './App';
-import { withRouteGuard } from '../HOCs';
+import { withRouteGuard } from "../HOCs";
 import { withLoadable } from "../HOCs/withLoadable";
 
-const privateRoute = (Component) => withRouteGuard({directTo: RoutePaths.LOGIN})(Component);
+const privateRoute = (Component) =>
+  withRouteGuard({ directTo: RoutePaths.LOGIN })(Component);
 
 const App = withLoadable({
-  loader: () => import('../App')
+  loader: () => import("../App"),
 });
 
 const Home = withLoadable({
-  loader: () => import('../pages/Home.page')
+  loader: () => import("../pages/Home.page"),
 });
 
 const Login = withLoadable({
-  loader: () => import('../pages/Login.page')
+  loader: () => import("../pages/Login.page"),
 });
 
 const ExchangePage = withLoadable({
-  loader: () => import('../pages/Exchange.page')
+  loader: () => import("../pages/Exchange.page"),
 });
 
 const DerivativePage = withLoadable({
-  loader: () => import('../pages/Derivative.page')
+  loader: () => import("../pages/Derivative.page"),
 });
 
 const TwoFA = withLoadable({
-  loader: () => import ('../pages/TwoFA')
+  loader: () => import("../pages/TwoFA"),
 });
 
 const NotFound = () => <div>404</div>;
@@ -41,7 +42,7 @@ export const routes = [
       {
         path: RoutePaths.ROOT,
         exact: true,
-        component: Home
+        component: Home,
       },
       {
         path: RoutePaths.LOGIN,
@@ -49,7 +50,7 @@ export const routes = [
       },
       {
         path: RoutePaths.TWO_FACTOR,
-        component: TwoFA
+        component: TwoFA,
       },
       //@todo: invalid symbol
       // cuz '/' is relative path then it MUST BE defined at the end of array
@@ -60,28 +61,38 @@ export const routes = [
           {
             path: RoutePaths.EXCHANGE,
             exact: true,
-            component: () => <Redirect from={RoutePaths.EXCHANGE} to={`${RoutePaths.EXCHANGE}/BTCUSDT`} />
+            component: () => (
+              <Redirect
+                from={RoutePaths.EXCHANGE}
+                to={`${RoutePaths.EXCHANGE}/BTCUSDT`}
+              />
+            ),
           },
           {
             path: `${RoutePaths.EXCHANGE}/:symbol`,
-            component: ExchangePage
+            component: ExchangePage,
           },
           {
             path: RoutePaths.DERIVATIVE,
             exact: true,
-            component: () => <Redirect from={RoutePaths.DERIVATIVE} to={`${RoutePaths.DERIVATIVE}/BTCUSDT`} />
+            component: () => (
+              <Redirect
+                from={RoutePaths.DERIVATIVE}
+                to={`${RoutePaths.DERIVATIVE}/BTCUSDT`}
+              />
+            ),
           },
           {
             path: `${RoutePaths.DERIVATIVE}/:symbol`,
             component: DerivativePage,
           },
-        ]
+        ],
       },
       {
         path: RoutePaths.WALLET,
-        component: privateRoute(() => <div>WALLET Page</div>)
+        component: privateRoute(() => <div>WALLET Page</div>),
       },
-      {component: NotFound}
-    ]
-  }
+      { component: NotFound },
+    ],
+  },
 ];

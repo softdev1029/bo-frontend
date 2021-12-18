@@ -12,8 +12,8 @@ export enum OrderType {
   BRACKET,
   SNIPER_MKT,
   SNIPER_LIMIT,
-  TSM,               // TRAILING_STOP_MKT
-  TSL,               // TRAILING_STOP_LMT
+  TSM, // TRAILING_STOP_MKT
+  TSL, // TRAILING_STOP_LMT
 }
 
 /**
@@ -21,16 +21,16 @@ export enum OrderType {
   DAY = Day order only, only good for this session, when you log out this order will be cancelled
  */
 export enum TIF { //  time in force
-  FOK = 1,  // Fill or Kill
-  GTC,  // Good till cancel
-  IOC,  // Immediate or Cancel
-  // POO,     // (Post) Make only 
+  FOK = 1, // Fill or Kill
+  GTC, // Good till cancel
+  IOC, // Immediate or Cancel
+  // POO,     // (Post) Make only
   // RED,     // Reduce only
-};
+}
 
 export enum TradeOption {
-  POO = 1,     // (Post) Make only 
-  RED,     // Reduce only
+  POO = 1, // (Post) Make only
+  RED, // Reduce only
 }
 
 /**
@@ -39,13 +39,13 @@ export enum TradeOption {
 export enum FeeType {
   MAKE = 1,
   TAKE,
-};
+}
 
 export enum OrderSide {
   BUY = 1,
   SELL,
-  SELLSHORT
-};
+  SELLSHORT,
+}
 
 export enum OrderStatus {
   REJECTED = -1,
@@ -84,16 +84,16 @@ export enum MessageType {
   QUOTE_FILL_PARTIAL,
   MARGIN_REPLACED,
   CANCEL_REPLACE_REJECT,
-};
+}
 
 export enum MarginType {
-  CROSS = 'cross',
-  ISOLATE = 'isolate'
+  CROSS = "cross",
+  ISOLATE = "isolate",
 }
 
 export enum LastTradePriceType {
   MARK_PRICE = 1,
-  LAST_PRICE
+  LAST_PRICE,
 }
 
 export enum ICELayers {

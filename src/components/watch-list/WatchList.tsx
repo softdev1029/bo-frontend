@@ -1,54 +1,63 @@
-import { navigate } from '@/actions/app.actions';
-import { RoutePaths } from '@/constants/route-paths';
-import { AppTradeType } from '@/constants/trade-type';
-import { lastInPair } from '@/exports/ticker.utils';
-import { TickerModel } from '@/models/ticker.model';
-import { getTickerObj, TickerObject } from '@/selectors/ticker.selectors';
-import { Icon, RadioButton, RadioGroup, Table, Tabs } from '@/ui-components';
-import { getSortedData } from '@/ui-components/ui/Table.virtualized/Table.virtualized.helpers';
-import React, { ReactNode } from 'react';
-import { connect } from 'react-redux';
-import { getWatchListColumns } from './WatchList.columns';
-import { getGroupName, getLabelForGroup, getTabLabelForGroup, renderRow, symbolMatchesQueryString } from './WatchList.helpers';
+import { navigate } from "@/actions/app.actions";
+import { RoutePaths } from "@/constants/route-paths";
+import { AppTradeType } from "@/constants/trade-type";
+import { lastInPair } from "@/exports/ticker.utils";
+import { TickerModel } from "@/models/ticker.model";
+import { getTickerObj, TickerObject } from "@/selectors/ticker.selectors";
+import { Icon, RadioButton, RadioGroup, Table, Tabs } from "@/ui-components";
+import { getSortedData } from "@/ui-components/ui/Table.virtualized/Table.virtualized.helpers";
+import React, { ReactNode } from "react";
+import { connect } from "react-redux";
+import { getWatchListColumns } from "./WatchList.columns";
+import {
+  getGroupName,
+  getLabelForGroup,
+  getTabLabelForGroup,
+  renderRow,
+  symbolMatchesQueryString,
+} from "./WatchList.helpers";
 
 interface WatchListProps {
-  tickers: TickerObject,
-  tradeType: AppTradeType,
-  rowHeight: number,
-  loading: boolean,
-  emptyListMessage: ReactNode,
-  navigate: (type: string, symbol: string) => void,
-  enableFilter: boolean,
+  tickers: TickerObject;
+  tradeType: AppTradeType;
+  rowHeight: number;
+  loading: boolean;
+  emptyListMessage: ReactNode;
+  navigate: (type: string, symbol: string) => void;
+  enableFilter: boolean;
 }
 
 interface WatchListState {
-  allTickers: TickerModel[],
-  tableRows: any[],
-  activeColumn: WatchListActiveColumn,
-  selectedTab: string,
-  tabs: any[],
-  queryString: string
+  allTickers: TickerModel[];
+  tableRows: any[];
+  activeColumn: WatchListActiveColumn;
+  selectedTab: string;
+  tabs: any[];
+  queryString: string;
 }
 
 enum WatchListActiveColumn {
   VOLUME = 1,
-  CHANGE = 2
+  CHANGE = 2,
 }
 
-class WatchList extends React.Component<Partial<WatchListProps>, WatchListState> {
+class WatchList extends React.Component<
+  Partial<WatchListProps>,
+  WatchListState
+> {
   static defaultProps = {
     rowHeight: 20,
-    enableFilter: false
-  }
+    enableFilter: false,
+  };
 
   state = {
     allTickers: [],
     tableRows: [],
     activeColumn: WatchListActiveColumn.CHANGE,
-    selectedTab: '',
-    queryString: '',
-    tabs: []
-  }
+    selectedTab: "",
+    queryString: "",
+    tabs: [],
+  };
 
   constructor(props) {
     super(props);
@@ -77,7 +86,7 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
     if (orderKeys.length === 0) {
       return this.setState({
         allTickers: [],
-        tableRows: []
+        tableRows: [],
       });
     }
 
@@ -91,9 +100,9 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
       tableRows,
       tabs: tabs.map((tab) => ({
         title: getTabLabelForGroup(tab),
-        to: tab
+        to: tab,
       })),
-      selectedTab: tabs[0]
+      selectedTab: tabs[0],
     });
   }
 
@@ -121,15 +130,16 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
         const groupName = getGroupName(counter);
 
         if (enableFilter && !selectedTab) {
-          selectedTab = groupName
+          selectedTab = groupName;
         }
 
-        const needData = (enableFilter && groupName === selectedTab) || !enableFilter;
+        const needData =
+          (enableFilter && groupName === selectedTab) || !enableFilter;
         // group by symbol instead of gid
         if (!groups[groupName]) {
           if (needData) {
             groups[groupName] = {
-              items: []
+              items: [],
             };
           }
         }
@@ -156,10 +166,10 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
         const label = getLabelForGroup(groupKey);
 
         finalRows.push({
-          t: 'groupLabel',
+          t: "groupLabel",
           groupId: groupKey,
           label,
-          ids: items.map(({ id, uuid }) => `${id}#${uuid}`)
+          ids: items.map(({ id, uuid }) => `${id}#${uuid}`),
         });
       }
 
@@ -170,15 +180,15 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
   }
 
   /**
-    * Handle grouped sorting
-    */
+   * Handle grouped sorting
+   */
   onGetSortedData(args) {
     const { allTickers = [], queryString } = this.state;
 
     const sortedData = getSortedData({ ...args, data: allTickers });
     const finalRows = this.prepTickers(sortedData).finalRows;
 
-    const filteredTableRows = finalRows.filter(row => {
+    const filteredTableRows = finalRows.filter((row) => {
       return symbolMatchesQueryString(queryString, row.ccy);
     });
     return filteredTableRows;
@@ -192,35 +202,46 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
       rowHeight: rowHeight,
       style: {
         ...args.style,
-        paddingRight: 0
-      }
+        paddingRight: 0,
+      },
     });
   }
 
   renderTickerFilter() {
     const { activeColumn } = this.state;
 
-    return <RadioGroup selectedValue={activeColumn} onChange={this.onActiveColumnChange}>
-      <RadioButton label="Change" value={WatchListActiveColumn.CHANGE} />
-      <RadioButton label="Volume" value={WatchListActiveColumn.VOLUME} />
-    </RadioGroup>
+    return (
+      <RadioGroup
+        selectedValue={activeColumn}
+        onChange={this.onActiveColumnChange}
+      >
+        <RadioButton label="Change" value={WatchListActiveColumn.CHANGE} />
+        <RadioButton label="Volume" value={WatchListActiveColumn.VOLUME} />
+      </RadioGroup>
+    );
   }
 
   onActiveColumnChange(value: WatchListActiveColumn) {
     this.setState({
-      activeColumn: value
-    })
+      activeColumn: value,
+    });
   }
 
   onTabChange(to: string) {
     this.setState({
-      selectedTab: to
-    })
+      selectedTab: to,
+    });
   }
 
   renderTabs() {
     const { selectedTab, tabs } = this.state;
-    return <Tabs elements={tabs} selected={selectedTab} onChange={this.onTabChange} />
+    return (
+      <Tabs
+        elements={tabs}
+        selected={selectedTab}
+        onChange={this.onTabChange}
+      />
+    );
   }
 
   onInputChange(event) {
@@ -229,7 +250,7 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
 
   changeQueryString(nextQueryString) {
     this.setState({
-      queryString: nextQueryString
+      queryString: nextQueryString,
     });
   }
 
@@ -249,7 +270,7 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
           onChange={this.onInputChange}
         />
       </div>
-    )
+    );
   }
 
   render() {
@@ -258,30 +279,32 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
 
     const columns = getWatchListColumns({
       showVolume: activeColumn === WatchListActiveColumn.VOLUME,
-      displayExtraColumn: enableFilter
+      displayExtraColumn: enableFilter,
     });
     // Test infinite load
     // Override row renderer for mixed col rows
-    var name = 'ord';
+    var name = "ord";
 
     const tickerSearch = this.renderSearch();
     const tickerTabs = this.renderTabs();
-    const filteredTableRows = tableRows.filter(row => {
+    const filteredTableRows = tableRows.filter((row) => {
       return symbolMatchesQueryString(queryString, row.ccy);
     });
 
     return (
       <div className="watchlist-wrapper">
-        {enableFilter ? <div className="d-flex d-align-items-flex-end d-justify-content-space-between pl-5 mb-10 watchlist_filter_ctn">
-          {tickerTabs}
-          {tickerSearch}
-        </div> : null}
+        {enableFilter ? (
+          <div className="d-flex d-align-items-flex-end d-justify-content-space-between pl-5 mb-10 watchlist_filter_ctn">
+            {tickerTabs}
+            {tickerSearch}
+          </div>
+        ) : null}
         <Table
           name={name}
           columns={columns}
           data={filteredTableRows}
           getSortedData={this.onGetSortedData}
-          defaultSortBy='date'
+          defaultSortBy="date"
           loading={loading}
           emptyListMessage={emptyListMessage}
           rowHeight={rowHeight}
@@ -292,7 +315,6 @@ class WatchList extends React.Component<Partial<WatchListProps>, WatchListState>
           renderRow={this.renderRow}
         />
       </div>
-
     );
   }
 }
@@ -318,7 +340,7 @@ const mapDispatchToProps = (dispatch) => ({
     if (path) {
       dispatch(navigate(`${path}/${ccy}`));
     }
-  }
-})
+  },
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(WatchList)
+export default connect(mapStateToProps, mapDispatchToProps)(WatchList);

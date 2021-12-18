@@ -1,13 +1,13 @@
-import { closeModal } from '@/actions/app.actions';
-import { LastTradePriceType } from '@/constants/order-enums';
-import { greenText, redText } from '@/exports';
-import { getPriceDecimals, lastInPair } from '@/exports/ticker.utils';
-import { ConfirmModal } from '@/ui-components';
-import { IConfirmBodyRenderer } from '@/ui-components/ui/Modal/ConfirmModal';
-import React, { ReactNode } from 'react';
-import { connect } from 'react-redux';
-import GroupInput from '../order-form/OrderForm.group-input';
-import { OrderFormLastTradePriceOptions } from '../order-form/OrderForm.lastTradePrice-options';
+import { closeModal } from "@/actions/app.actions";
+import { LastTradePriceType } from "@/constants/order-enums";
+import { greenText, redText } from "@/exports";
+import { getPriceDecimals, lastInPair } from "@/exports/ticker.utils";
+import { ConfirmModal } from "@/ui-components";
+import { IConfirmBodyRenderer } from "@/ui-components/ui/Modal/ConfirmModal";
+import React, { ReactNode } from "react";
+import { connect } from "react-redux";
+import GroupInput from "../order-form/OrderForm.group-input";
+import { OrderFormLastTradePriceOptions } from "../order-form/OrderForm.lastTradePrice-options";
 
 interface TPSLModalState {
   takeProfit: number;
@@ -21,13 +21,16 @@ type TPSLModalProps = TPSLModalState & {
   popupId: string;
   closePopup: (mId: string) => void;
   sendSubmit: (data: TPSLModalState) => void;
-}
+};
 
-class TPSLModal extends React.PureComponent<Partial<TPSLModalProps>, TPSLModalState> implements IConfirmBodyRenderer {
+class TPSLModal
+  extends React.PureComponent<Partial<TPSLModalProps>, TPSLModalState>
+  implements IConfirmBodyRenderer
+{
   static defaultProps = {
     takeProfitTradePriceType: LastTradePriceType.LAST_PRICE,
-    stopLossTradePriceType: LastTradePriceType.LAST_PRICE
-  }
+    stopLossTradePriceType: LastTradePriceType.LAST_PRICE,
+  };
 
   constructor(props) {
     super(props);
@@ -37,10 +40,12 @@ class TPSLModal extends React.PureComponent<Partial<TPSLModalProps>, TPSLModalSt
       stopLoss: props.stopLoss,
       takeProfitTradePriceType: props.takeProfitTradePriceType,
       stopLossTradePriceType: props.stopLossTradePriceType,
-    }
+    };
 
-    this.onTakeProfitLastTradePriceTypeChange = this.onTakeProfitLastTradePriceTypeChange.bind(this);
-    this.onStopLossLastTradePriceTypeChange = this.onStopLossLastTradePriceTypeChange.bind(this);
+    this.onTakeProfitLastTradePriceTypeChange =
+      this.onTakeProfitLastTradePriceTypeChange.bind(this);
+    this.onStopLossLastTradePriceTypeChange =
+      this.onStopLossLastTradePriceTypeChange.bind(this);
     this.onStopLossChange = this.onStopLossChange.bind(this);
     this.onTakeProfitChange = this.onTakeProfitChange.bind(this);
     this.onConfirmBtnClick = this.onConfirmBtnClick.bind(this);
@@ -53,43 +58,52 @@ class TPSLModal extends React.PureComponent<Partial<TPSLModalProps>, TPSLModalSt
     const { popupId, closePopup, sendSubmit } = this.props;
 
     sendSubmit(this.state);
-    closePopup(popupId)
+    closePopup(popupId);
   }
 
   onTakeProfitChange(value: number) {
     this.setState({
-      takeProfit: value
+      takeProfit: value,
     });
   }
 
   onStopLossChange(value: number) {
-    console.log('onStopLossChange', value);
+    console.log("onStopLossChange", value);
 
     this.setState({
-      stopLoss: value
+      stopLoss: value,
     });
   }
 
   onTakeProfitLastTradePriceTypeChange(ltp: LastTradePriceType) {
     this.setState({
-      takeProfitTradePriceType: ltp
+      takeProfitTradePriceType: ltp,
     });
   }
 
   onStopLossLastTradePriceTypeChange(ltp: LastTradePriceType) {
     this.setState({
-      stopLossTradePriceType: ltp
+      stopLossTradePriceType: ltp,
     });
   }
 
   renderBody({ renderButtons }): ReactNode {
-    const { takeProfit, stopLoss, takeProfitTradePriceType, stopLossTradePriceType } = this.state;
+    const {
+      takeProfit,
+      stopLoss,
+      takeProfitTradePriceType,
+      stopLossTradePriceType,
+    } = this.state;
     const { symbol } = this.props;
     const quote = lastInPair(symbol);
     const decimalPlacePrice = getPriceDecimals(symbol);
     const numberRegex = "[0-9]+";
     const floatingPointRegex = "[+-]?([0-9]+([.][0-9]{0,8})?|[.][0-9]{1,8})";
-    const priceRegex = decimalPlacePrice ? `^([0-9]+([.][0-9]{0,${decimalPlacePrice}})?|[.][0-9]{1,${decimalPlacePrice}})$` : decimalPlacePrice === null ? floatingPointRegex : numberRegex;
+    const priceRegex = decimalPlacePrice
+      ? `^([0-9]+([.][0-9]{0,${decimalPlacePrice}})?|[.][0-9]{1,${decimalPlacePrice}})$`
+      : decimalPlacePrice === null
+      ? floatingPointRegex
+      : numberRegex;
 
     return (
       <div className="edit-order__body tpsl-body__ctn">
@@ -107,12 +121,32 @@ class TPSLModal extends React.PureComponent<Partial<TPSLModalProps>, TPSLModalSt
         </div>
         <div className="divider"></div>
         <div className="order-form__input-wraper--2-1">
-          <GroupInput value={takeProfit === undefined ? '' : takeProfit} pattern={priceRegex} onChange={this.onTakeProfitChange} addonAfter={quote} addonBefore={"Take Profit"} />
-          <OrderFormLastTradePriceOptions selected={takeProfitTradePriceType} onLastTradePriceTypeChange={this.onTakeProfitLastTradePriceTypeChange} />
+          <GroupInput
+            value={takeProfit === undefined ? "" : takeProfit}
+            pattern={priceRegex}
+            onChange={this.onTakeProfitChange}
+            addonAfter={quote}
+            addonBefore={"Take Profit"}
+          />
+          <OrderFormLastTradePriceOptions
+            selected={takeProfitTradePriceType}
+            onLastTradePriceTypeChange={
+              this.onTakeProfitLastTradePriceTypeChange
+            }
+          />
         </div>
         <div className="order-form__input-wraper--2-1">
-          <GroupInput value={stopLoss === undefined ? '' : stopLoss} pattern={priceRegex} onChange={this.onStopLossChange} addonAfter={quote} addonBefore={"Stop Loss"} />
-          <OrderFormLastTradePriceOptions selected={stopLossTradePriceType} onLastTradePriceTypeChange={this.onStopLossLastTradePriceTypeChange} />
+          <GroupInput
+            value={stopLoss === undefined ? "" : stopLoss}
+            pattern={priceRegex}
+            onChange={this.onStopLossChange}
+            addonAfter={quote}
+            addonBefore={"Stop Loss"}
+          />
+          <OrderFormLastTradePriceOptions
+            selected={stopLossTradePriceType}
+            onLastTradePriceTypeChange={this.onStopLossLastTradePriceTypeChange}
+          />
         </div>
         <div className="divider mt-10"></div>
         <div className="summary">
@@ -148,10 +182,9 @@ class TPSLModal extends React.PureComponent<Partial<TPSLModalProps>, TPSLModalSt
   }
 }
 
-
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   closePopup(id) {
-    dispatch(closeModal(id))
-  }
+    dispatch(closeModal(id));
+  },
 });
 export default connect(null, mapDispatchToProps)(TPSLModal);

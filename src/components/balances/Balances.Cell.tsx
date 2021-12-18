@@ -1,39 +1,42 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from "react";
+import classNames from "classnames";
 
-import BalanceAmount from './Balances.Amount';
-import { AppTradeType } from '@/constants/trade-type';
+import BalanceAmount from "./Balances.Amount";
+import { AppTradeType } from "@/constants/trade-type";
 
 interface BalancesCellProps {
-  currency: string,
-  overlayCallback: (ccy: string, walletType?: string) => void,
-  data: any,
-  inOverlay: boolean,
-  wallet: AppTradeType
+  currency: string;
+  overlayCallback: (ccy: string, walletType?: string) => void;
+  data: any;
+  inOverlay: boolean;
+  wallet: AppTradeType;
 }
 
-class BalancesCell extends React.PureComponent<Partial<BalancesCellProps>, { amountClass: any }> {
+class BalancesCell extends React.PureComponent<
+  Partial<BalancesCellProps>,
+  { amountClass: any }
+> {
   static defaultProps = {
-    currency: '',
+    currency: "",
     overlayCallback: function overlayCallback(ccy, walletType) {
       return null;
     },
     data: {
       available: 0,
       reserved: 0,
-      total: 0
+      total: 0,
     },
     inOverlay: false,
   };
 
   state = {
     amountClass: {
-      'transfer-selectable': true,
-      'cpn-virtualized-table__cellwrapper': true,
-      'text-right': true,
-      'clickable': true
-    }
-  }
+      "transfer-selectable": true,
+      "cpn-virtualized-table__cellwrapper": true,
+      "text-right": true,
+      clickable: true,
+    },
+  };
 
   constructor(props) {
     super(props);
@@ -53,26 +56,23 @@ class BalancesCell extends React.PureComponent<Partial<BalancesCellProps>, { amo
   }
 
   amountClass() {
-    const {
-      data: amount = 0,
-      inOverlay,
-    } = this.props;
+    const { data: amount = 0, inOverlay } = this.props;
     const { amountClass } = this.state;
     let changed = false;
 
     if (inOverlay) {
-      if (amount <= 0 && !amountClass['empty-val']) {
-        amountClass['empty-val'] = true;
+      if (amount <= 0 && !amountClass["empty-val"]) {
+        amountClass["empty-val"] = true;
         changed = true;
-      } else if (amountClass['empty-val']) {
-        amountClass['empty-val'] = false;
+      } else if (amountClass["empty-val"]) {
+        amountClass["empty-val"] = false;
         changed = true;
       }
     }
 
     if (changed) {
       this.setState({
-        amountClass: Object.assign({}, amountClass)
+        amountClass: Object.assign({}, amountClass),
       });
     }
   }
@@ -83,7 +83,7 @@ class BalancesCell extends React.PureComponent<Partial<BalancesCellProps>, { amo
       currency,
       overlayCallback,
       inOverlay,
-      wallet
+      wallet,
     } = this.props;
 
     if (!inOverlay) {
@@ -94,20 +94,19 @@ class BalancesCell extends React.PureComponent<Partial<BalancesCellProps>, { amo
   }
 
   render() {
-    const {
-      data,
-      inOverlay,
-      currency,
-    } = this.props;
+    const { data, inOverlay, currency } = this.props;
     const { amountClass } = this.state;
 
-    const Wrapper = inOverlay ? 'td' : 'div';
+    const Wrapper = inOverlay ? "td" : "div";
 
     const available = data.available || 0;
     const reserved = data.reserved || 0;
 
     return (
-      <Wrapper className={classNames(amountClass)} onClick={this.amountCallback}>
+      <Wrapper
+        className={classNames(amountClass)}
+        onClick={this.amountCallback}
+      >
         <BalanceAmount amount={available} ccy={currency} dim={true} />
         <BalanceAmount amount={reserved} ccy={currency} />
       </Wrapper>

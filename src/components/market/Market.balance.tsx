@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export const MarketBalance = () => {
   const [isOpen, setOpen] = useState(false);
 
   return isOpen ? (
-    <div className="d-flex d-align-items-center cpn-market-info__balances clickable" onClick={() => setOpen(false)}>
+    <div
+      className="d-flex d-align-items-center cpn-market-info__balances clickable"
+      onClick={() => setOpen(false)}
+    >
       <span className="mr-10">»</span>
       <div className="info">
         <div className="title">Balance</div>
@@ -20,10 +23,11 @@ export const MarketBalance = () => {
       </div>
     </div>
   ) : (
-      <div className="market-info__balances clickable" onClick={() => setOpen(true)}>
-        <div className="dropdown__button">
-          « Stats
-        </div>
-      </div>
-    )
+    <div
+      className="market-info__balances clickable"
+      onClick={() => setOpen(true)}
+    >
+      <div className="dropdown__button">« Stats</div>
+    </div>
+  );
 };

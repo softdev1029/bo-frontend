@@ -1,5 +1,5 @@
-import _sortBy from 'lodash/sortBy';
-import { OrderBookModel } from '@/models/book.model';
+import _sortBy from "lodash/sortBy";
+import { OrderBookModel } from "@/models/book.model";
 
 const fbids = [
   { price: 10867.0, size: 3542 },

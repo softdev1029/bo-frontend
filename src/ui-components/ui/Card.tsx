@@ -1,9 +1,9 @@
-import React, { ReactNode, useCallback } from 'react';
-import classNames from 'classnames';
-import IconButton from './IconButton';
+import React, { ReactNode, useCallback } from "react";
+import classNames from "classnames";
+import IconButton from "./IconButton";
 
 interface CardProps {
-  cardIdentify?: any,
+  cardIdentify?: any;
   children: ReactNode;
   title?: ReactNode;
   rightTool?: ReactNode;
@@ -13,14 +13,14 @@ interface CardProps {
   draggable?: boolean;
   onClose?: (identiy?: any) => void;
   className?: string;
-  contentPadding?: boolean
-};
+  contentPadding?: boolean;
+}
 
 const iconClass = [];
 
 export const Card = ({
   cardIdentify,
-  title = 'Title',
+  title = "Title",
   className,
   rightTool,
   children,
@@ -29,36 +29,45 @@ export const Card = ({
   closable,
   onClose,
   transparent = true,
-  contentPadding = true
+  contentPadding = true,
 }: CardProps) => {
-  const cardClass = classNames('card', className, {
-    'transparent': resizable && transparent
+  const cardClass = classNames("card", className, {
+    transparent: resizable && transparent,
   });
 
-  const titleClass = classNames('card__title__ctn', {
-    'draggable': draggable
+  const titleClass = classNames("card__title__ctn", {
+    draggable: draggable,
   });
 
-  const contentClass = classNames('card__content', {
-    'card__content__padding': contentPadding
+  const contentClass = classNames("card__content", {
+    card__content__padding: contentPadding,
   });
 
-  const onCloseBtnClick = useCallback((e: any) => {
-    onClose(cardIdentify)
-  }, [onClose, cardIdentify]);
+  const onCloseBtnClick = useCallback(
+    (e: any) => {
+      onClose(cardIdentify);
+    },
+    [onClose, cardIdentify]
+  );
 
   return (
     <div className={cardClass}>
       <div className={titleClass}>
-        <div className="card__title h-100 d-flex d-align-items-center">{title}</div>
+        <div className="card__title h-100 d-flex d-align-items-center">
+          {title}
+        </div>
         <div className="icons-right">
           {rightTool}
-          {closable && <IconButton id="times" classes="clickable p-5" onClick={onCloseBtnClick} />}
+          {closable && (
+            <IconButton
+              id="times"
+              classes="clickable p-5"
+              onClick={onCloseBtnClick}
+            />
+          )}
         </div>
       </div>
-      <div className={contentClass}>
-        {children}
-      </div>
+      <div className={contentClass}>{children}</div>
     </div>
   );
-}
+};

@@ -57,11 +57,11 @@
     justify-content: center;
     margin-right: 0;
     background-color: var(--shark-200);
-    
+
     &:last-child {
       border-right: 0;
     }
-    
+
     &.active {
       border-bottom: none;
       background-color: var(--dodger-blue);

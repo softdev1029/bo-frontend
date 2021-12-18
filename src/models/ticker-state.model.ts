@@ -2,9 +2,9 @@ import { Instrument } from "./instrument.model";
 import { TickerModel } from "./ticker.model";
 
 export interface TickerState {
-  items: TickerModel[],
+  items: TickerModel[];
   instruments: {
-    [x: number]: Instrument
-  },
-  instrumentLoaded: boolean
+    [x: number]: Instrument;
+  };
+  instrumentLoaded: boolean;
 }

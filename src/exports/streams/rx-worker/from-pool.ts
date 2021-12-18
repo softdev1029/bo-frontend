@@ -22,7 +22,9 @@ export interface WorkerPoolOptions<I, O> {
 }
 
 const defaultOptions = {
-  workerCount: navigator.hardwareConcurrency ? navigator.hardwareConcurrency - 1 : null,
+  workerCount: navigator.hardwareConcurrency
+    ? navigator.hardwareConcurrency - 1
+    : null,
   fallbackWorkerCount: 3,
 };
 
@@ -33,12 +35,12 @@ export function fromWorkerPool<I, O>(
 ): Observable<O> {
   const {
     selectTransferables = undefined,
-    workerCount, 
+    workerCount,
     fallbackWorkerCount,
-    flattenOperator = mergeAll<O>()
-  } = {...defaultOptions, ...options};
+    flattenOperator = mergeAll<O>(),
+  } = { ...defaultOptions, ...options };
 
-  return new Observable<O>(resultObserver => {
+  return new Observable<O>((resultObserver) => {
     const idleWorker$$: Subject<LazyWorker> = new Subject<LazyWorker>();
 
     let completed = 0,
@@ -46,7 +48,7 @@ export function fromWorkerPool<I, O>(
       finished = false;
 
     const lazyWorkers: LazyWorker[] = Array.from({
-      length: workerCount !== null ? workerCount : fallbackWorkerCount
+      length: workerCount !== null ? workerCount : fallbackWorkerCount,
     }).map((_, index) => {
       let cachedWorker: Worker | null = null;
 
@@ -54,17 +56,17 @@ export function fromWorkerPool<I, O>(
         processing: false,
         index,
         factory() {
-          if(!cachedWorker) {
+          if (!cachedWorker) {
             cachedWorker = workerConstructor(index);
           }
 
           return cachedWorker;
         },
         terminate() {
-          if(!this.processing && cachedWorker) {
-            cachedWorker.terminate()
+          if (!this.processing && cachedWorker) {
+            cachedWorker.terminate();
           }
-        }
+        },
       };
     });
 
@@ -76,27 +78,32 @@ export function fromWorkerPool<I, O>(
       finalize(() => {
         idleWorker$$.complete();
         finished = true;
-        lazyWorkers.forEach(worker => worker.terminate());
+        lazyWorkers.forEach((worker) => worker.terminate());
       }),
       map(([worker, unitWork]): Observable<O> => {
-        return fromWorker<I, O>(() => worker.factory(), of(unitWork), selectTransferables, {
-          terminateOnComplete: false
-        }).pipe(
+        return fromWorker<I, O>(
+          () => worker.factory(),
+          of(unitWork),
+          selectTransferables,
+          {
+            terminateOnComplete: false,
+          }
+        ).pipe(
           finalize(() => {
-            completed ++;
+            completed++;
 
             worker.processing = false;
 
-            if(!finished) {
+            if (!finished) {
               idleWorker$$.next(worker);
             } else {
               worker.terminate();
             }
 
-            if(finished && completed === sent) {
-              resultObserver.complete()
+            if (finished && completed === sent) {
+              resultObserver.complete();
             }
-          }),
+          })
         );
       }),
       flattenOperator
@@ -104,7 +111,7 @@ export function fromWorkerPool<I, O>(
 
     const sub = processor$.subscribe(resultObserver);
 
-    lazyWorkers.forEach(worker => idleWorker$$.next(worker));
+    lazyWorkers.forEach((worker) => idleWorker$$.next(worker));
 
     return () => sub.unsubscribe();
   });

@@ -1,23 +1,23 @@
-import React from 'react';
-import { ConfirmModal, Tooltip } from '@/ui-components';
-import DisplayConfirmModalBtn from '../DisplayConfirmModalBtn';
+import React from "react";
+import { ConfirmModal, Tooltip } from "@/ui-components";
+import DisplayConfirmModalBtn from "../DisplayConfirmModalBtn";
 interface CancelOrderProps {
   onClick: (e: any) => void;
   tooltip?: string;
   message?: string;
-};
+}
 
 // data format: `orderId`
-const CancelAllOrderBtn = ({ 
-  tooltip = 'Cancel All orders', 
-  message = 'Are you sure you want to cancel all order?',
-  onClick 
+const CancelAllOrderBtn = ({
+  tooltip = "Cancel All orders",
+  message = "Are you sure you want to cancel all order?",
+  onClick,
 }: CancelOrderProps) => {
   const popupProps = {
     onAccept: onClick,
-    title: '',
+    title: "",
     children: () => <p className="text-center">{message}</p>,
-    initWidth: 270
+    initWidth: 270,
   };
 
   return (
@@ -32,6 +32,6 @@ const CancelAllOrderBtn = ({
       </DisplayConfirmModalBtn>
     </Tooltip>
   );
-}
+};
 
 export default React.memo(CancelAllOrderBtn);

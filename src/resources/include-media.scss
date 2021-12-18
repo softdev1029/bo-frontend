@@ -51,8 +51,10 @@ $media-expressions: (
   "handheld": "handheld",
   "landscape": "(orientation: landscape)",
   "portrait": "(orientation: portrait)",
-  "retina2x": "(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (min-resolution: 2dppx)",
-  "retina3x": "(-webkit-min-device-pixel-ratio: 3), (min-resolution: 350dpi), (min-resolution: 3dppx)",
+  "retina2x":
+    "(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (min-resolution: 2dppx)",
+  "retina3x":
+    "(-webkit-min-device-pixel-ratio: 3), (min-resolution: 350dpi), (min-resolution: 3dppx)",
 ) !default;
 
 ///
@@ -529,7 +531,10 @@ $im-no-media-expressions: ("screen", "portrait", "landscape") !default;
 
   // Update global configuration
   $breakpoints: map-merge($breakpoints, $tweakpoints) !global;
-  $media-expressions: map-merge($media-expressions, $tweak-media-expressions) !global;
+  $media-expressions: map-merge(
+    $media-expressions,
+    $tweak-media-expressions
+  ) !global;
 
   @content;
 

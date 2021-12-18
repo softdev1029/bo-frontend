@@ -6,30 +6,78 @@ export const GRID_ROW_HEIGHT = 10;
 export const MainGridBreakPoints = {
   lg: 1300,
   md: 996,
-  // sm: 768, 
-  // xs: 480, 
+  // sm: 768,
+  // xs: 480,
   // xxs: 0
-}
+};
 
-export const COLS = { 
-  lg: 24, 
-  md: 24, 
-  // sm: 6, 
+export const COLS = {
+  lg: 24,
+  md: 24,
+  // sm: 6,
   // xs: 4
 };
 
 const lgLayout = [
-  { i: WorkspaceSettingEnum.ORDERBOOK, x: 0, y: 0, w: 7, h: 27, minH: 14, minW: 3 },
+  {
+    i: WorkspaceSettingEnum.ORDERBOOK,
+    x: 0,
+    y: 0,
+    w: 7,
+    h: 27,
+    minH: 14,
+    minW: 3,
+  },
   { i: WorkspaceSettingEnum.TRADE, x: 0, y: 20, w: 7, h: 21, minH: 6, minW: 3 },
-  { i: WorkspaceSettingEnum.MARKET_HISTORY, x: 16, y: 48, w: 24, h: 12, minH: 8, minW: 6 },
-  { i: WorkspaceSettingEnum.CHART, x: 12, y: 0, w: 17, h: 48, minW: 5, minH: 20 },
+  {
+    i: WorkspaceSettingEnum.MARKET_HISTORY,
+    x: 16,
+    y: 48,
+    w: 24,
+    h: 12,
+    minH: 8,
+    minW: 6,
+  },
+  {
+    i: WorkspaceSettingEnum.CHART,
+    x: 12,
+    y: 0,
+    w: 17,
+    h: 48,
+    minW: 5,
+    minH: 20,
+  },
 ];
 
 const mdLayout = [
-  { i: WorkspaceSettingEnum.ORDERBOOK, x: 0, y: 0, w: 7, h: 24, minH: 14, minW: 3 },
+  {
+    i: WorkspaceSettingEnum.ORDERBOOK,
+    x: 0,
+    y: 0,
+    w: 7,
+    h: 24,
+    minH: 14,
+    minW: 3,
+  },
   { i: WorkspaceSettingEnum.TRADE, x: 0, y: 20, w: 7, h: 16, minH: 6, minW: 3 },
-  { i: WorkspaceSettingEnum.MARKET_HISTORY, x: 16, y: 40, w: 24, h: 12, minH: 8, minW: 6 },
-  { i: WorkspaceSettingEnum.CHART, x: 7, y: 0, w: 17, h: 40, minW: 5, minH: 20 },
+  {
+    i: WorkspaceSettingEnum.MARKET_HISTORY,
+    x: 16,
+    y: 40,
+    w: 24,
+    h: 12,
+    minH: 8,
+    minW: 6,
+  },
+  {
+    i: WorkspaceSettingEnum.CHART,
+    x: 7,
+    y: 0,
+    w: 17,
+    h: 40,
+    minW: 5,
+    minH: 20,
+  },
 ];
 
 // // 12 cols
@@ -76,4 +124,4 @@ export const MainGridLayout = {
   md: mdLayout,
   // sm: smLayout,
   // xs: xsLayout
-}
+};

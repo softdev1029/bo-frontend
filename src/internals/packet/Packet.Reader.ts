@@ -42,7 +42,7 @@ export class PacketReader {
 
   parseByte(): number {
     invariant(this._pos < this._length, "parseByte: IndexOutOfBoundsException");
-    return this._data[this._pos++]
+    return this._data[this._pos++];
   }
 
   getByte(): number {
@@ -56,19 +56,30 @@ export class PacketReader {
   }
 
   getBytes(a) {
-    invariant(this._pos + a <= this._length, "getBytes: IndexOutOfBoundsException");
+    invariant(
+      this._pos + a <= this._length,
+      "getBytes: IndexOutOfBoundsException"
+    );
     let b = [];
     for (let d = 0; d < a; d++) b.push(this.parseByte());
     return b;
   }
 
   getShort() {
-    invariant(this._pos + 2 <= this._length, "getShort: IndexOutOfBoundsException");
-    return this._pos + 2 > this._length ? 0 : (this.parseByte() & 255) + (this.parseByte() << 8);
+    invariant(
+      this._pos + 2 <= this._length,
+      "getShort: IndexOutOfBoundsException"
+    );
+    return this._pos + 2 > this._length
+      ? 0
+      : (this.parseByte() & 255) + (this.parseByte() << 8);
   }
 
   getUnsignedShort() {
-    invariant(this._pos + 2 <= this._length, "getUnsignedShort: IndexOutOfBoundsException");
+    invariant(
+      this._pos + 2 <= this._length,
+      "getUnsignedShort: IndexOutOfBoundsException"
+    );
 
     let a = (this.parseByte() & 255) << 0,
       b = (this.parseByte() & 255) << 8;
@@ -77,18 +88,24 @@ export class PacketReader {
   }
 
   getInt() {
-    invariant(this._pos + 4 <= this._length, "getInt: IndexOutOfBoundsException");
+    invariant(
+      this._pos + 4 <= this._length,
+      "getInt: IndexOutOfBoundsException"
+    );
 
     let a = new ArrayBuffer(4),
       b = new Uint8Array(a);
 
     for (let d = 3; 0 <= d; d--) b[3 - d] = this.parseByte();
 
-    return (new DataView(a)).getInt32(0, true);
+    return new DataView(a).getInt32(0, true);
   }
 
   getLong() {
-    invariant(this._pos + 8 <= this._length, "getLong: IndexOutOfBoundsException");
+    invariant(
+      this._pos + 8 <= this._length,
+      "getLong: IndexOutOfBoundsException"
+    );
 
     let data = [];
     for (let i = 0; i < 8; i++) {
@@ -107,19 +124,23 @@ export class PacketReader {
       24: 16777216,
       16: 65536,
       8: 256,
-      0: 1
+      0: 1,
     };
-    invariant(this._pos + 8 <= this._length, "getLong: IndexOutOfBoundsException");
+    invariant(
+      this._pos + 8 <= this._length,
+      "getLong: IndexOutOfBoundsException"
+    );
 
-    return (this.parseByte() & 255) * a["0"] +
+    return (
+      (this.parseByte() & 255) * a["0"] +
       (this.parseByte() & 255) * a["8"] +
       (this.parseByte() & 255) * a["16"] +
       (this.parseByte() & 255) * a["24"] +
       (this.parseByte() & 255) * a["32"] +
       (this.parseByte() & 255) * a["40"] +
       (this.parseByte() & 255) * a["48"] +
-      (this.parseByte() & 255) * a["56"];
-
+      (this.parseByte() & 255) * a["56"]
+    );
   }
 
   byteArrayToLong(array) {
@@ -132,7 +153,7 @@ export class PacketReader {
 
     if (positive) {
       for (let i = 7; i >= 0; i--) {
-        value = (value * 256) + array[i];
+        value = value * 256 + array[i];
       }
     } else {
       value = 1;
@@ -145,7 +166,10 @@ export class PacketReader {
   }
 
   getDouble() {
-    invariant(this._pos + 8 <= this._length, "getDouble: IndexOutOfBoundsException");
+    invariant(
+      this._pos + 8 <= this._length,
+      "getDouble: IndexOutOfBoundsException"
+    );
     var buffer = new ArrayBuffer(8);
     var int8array = new Uint8Array(buffer);
 
@@ -159,7 +183,7 @@ export class PacketReader {
 
   getCharArray() {
     var a = this.getUnsignedShort();
-    return this.getBytes(a)
+    return this.getBytes(a);
   }
 
   getChar(size: number, trim: boolean = true) {
@@ -174,8 +198,8 @@ export class PacketReader {
     var uintarray = [];
     for (var i = 0; i < out.length; i++) {
       const n = parseInt(out[i], 10);
-      if(trim && n) {
-        uintarray[i] = n
+      if (trim && n) {
+        uintarray[i] = n;
       }
     }
 
@@ -201,5 +225,5 @@ export class PacketReader {
     return decode;
   }
 
-  clean() { }
+  clean() {}
 }

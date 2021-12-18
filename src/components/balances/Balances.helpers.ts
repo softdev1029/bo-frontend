@@ -1,7 +1,7 @@
-import _get from 'lodash/get';
-import _set from 'lodash/set';
-import _isEmpty from 'lodash/isEmpty';
-import _cloneDeep from 'lodash/cloneDeep';
+import _get from "lodash/get";
+import _set from "lodash/set";
+import _isEmpty from "lodash/isEmpty";
+import _cloneDeep from "lodash/cloneDeep";
 
 import {
   wallets,
@@ -9,9 +9,16 @@ import {
   DEFAULT_AMOUNT_WIDTH,
   MIN_AMOUNT_CHARACTERS,
   MIN_TICKER_WIDTH,
-  TOTAL_WIDTH
-} from './Balances.constants';
-import { balanceZeroFilter, equivalents, EQUIV_CCY, hasBalance, hasZeroBalance, noBalanceSmallFilter } from '@/exports/balances.utils';
+  TOTAL_WIDTH,
+} from "./Balances.constants";
+import {
+  balanceZeroFilter,
+  equivalents,
+  EQUIV_CCY,
+  hasBalance,
+  hasZeroBalance,
+  noBalanceSmallFilter,
+} from "@/exports/balances.utils";
 
 /**
  *
@@ -27,7 +34,7 @@ export function tableData({
   inOverlay,
   startBalOverlay,
   equivCache,
-  queryString = '',
+  queryString = "",
   ticker,
   needFreshData,
   cache,
@@ -38,19 +45,19 @@ export function tableData({
   const foundKeys = {};
   let keys = [];
   let keepZero = false;
-  
+
   if (needFreshData !== cache.needFreshData || !cache.data) {
     cache.needFreshData = needFreshData;
     keys = Object.keys(balances);
     cache.needSort = true;
   } else {
     keepZero = true;
-    keys = cache.data.map(function(row) {
+    keys = cache.data.map(function (row) {
       foundKeys[row.ccy] = true;
 
       return row.ccy;
     });
-    Object.keys(balances).forEach(function(symbol) {
+    Object.keys(balances).forEach(function (symbol) {
       if (
         symbol === EQUIV_CCY ||
         (!foundKeys[symbol] && hasBalance(balances[symbol]))
@@ -63,22 +70,22 @@ export function tableData({
   }
 
   let data = keys
-    .filter(function(symbol) {
+    .filter(function (symbol) {
       return symbol.includes(queryString.toUpperCase());
     })
-    .filter(function(symbol) {
+    .filter(function (symbol) {
       return balanceZeroFilter({ symbol, balances, keepZero });
     })
-    .map(function(symbol) {
-      wallets.forEach(function(wallet) {
-        let total = _get(balances, [symbol, wallet, 'total'], 0) || 0;
+    .map(function (symbol) {
+      wallets.forEach(function (wallet) {
+        let total = _get(balances, [symbol, wallet, "total"], 0) || 0;
 
         equivalents({
           equivCache,
           symbol,
           ticker,
           total,
-          wallet
+          wallet,
         });
 
         if (total < 0) {
@@ -86,26 +93,26 @@ export function tableData({
         }
 
         if (maxSizes[wallet]) {
-          if (total > _get(maxSizes, [wallet, 'total'], 0)) {
+          if (total > _get(maxSizes, [wallet, "total"], 0)) {
             maxSizes[wallet] = {
               total,
-              key: symbol
+              key: symbol,
             };
           }
         } else {
           maxSizes[wallet] = {
             total,
-            key: symbol
+            key: symbol,
           };
         }
       });
 
       const balance = _cloneDeep(balances[symbol] || {});
 
-      wallets.forEach(function(wallet) {
+      wallets.forEach(function (wallet) {
         if (balance[wallet]) {
           const equiv = _get(equivCache, [symbol, wallet], 0);
-          _set(balance, [wallet, 'equiv'], equiv);
+          _set(balance, [wallet, "equiv"], equiv);
         }
       });
 
@@ -113,17 +120,17 @@ export function tableData({
         ...balance,
         ccy: symbol,
         startBalOverlay,
-        inOverlay
+        inOverlay,
       };
     });
-  
-  if(isSmall) {
+
+  if (isSmall) {
     data = data.filter(noBalanceSmallFilter);
   }
-    
+
   return {
     maxSizes: maxSizes,
-    data: data
+    data: data,
   };
 }
 
@@ -133,26 +140,26 @@ export function calculateWidths(maxWidths?: object) {
       DEFAULT_TICKER_WIDTH,
       DEFAULT_AMOUNT_WIDTH,
       DEFAULT_AMOUNT_WIDTH,
-      DEFAULT_AMOUNT_WIDTH
+      DEFAULT_AMOUNT_WIDTH,
     ];
   }
 
   let totalLength = 0;
 
-  Object.keys(maxWidths).forEach(function(wallet) {
-    const walletTotal = _get(maxWidths, [wallet, 'total'], 0);
+  Object.keys(maxWidths).forEach(function (wallet) {
+    const walletTotal = _get(maxWidths, [wallet, "total"], 0);
     const total = Math.trunc(walletTotal);
 
-    _set(maxWidths, [wallet, 'length'], total.toString().length);
-    totalLength += _get(maxWidths, [wallet, 'length'], 0);
+    _set(maxWidths, [wallet, "length"], total.toString().length);
+    totalLength += _get(maxWidths, [wallet, "length"], 0);
   });
 
-  Object.keys(maxWidths).forEach(function(wallet) {
-    const length = _get(maxWidths, [wallet, 'length'], 0);
+  Object.keys(maxWidths).forEach(function (wallet) {
+    const length = _get(maxWidths, [wallet, "length"], 0);
 
     if (length < MIN_AMOUNT_CHARACTERS) {
       totalLength += MIN_AMOUNT_CHARACTERS - length;
-      _set(maxWidths, [wallet, 'length'], MIN_AMOUNT_CHARACTERS);
+      _set(maxWidths, [wallet, "length"], MIN_AMOUNT_CHARACTERS);
     }
   });
 
@@ -162,8 +169,8 @@ export function calculateWidths(maxWidths?: object) {
   const availableWidth = TOTAL_WIDTH - tickerWidth;
 
   //@ts-ignore
-  return [tickerWidth, ...maxWidths].map(function(wallet) {
-    const length = _get(maxWidths, [wallet, 'length'], 0);
+  return [tickerWidth, ...maxWidths].map(function (wallet) {
+    const length = _get(maxWidths, [wallet, "length"], 0);
     const percent = length / totalLength;
 
     return availableWidth * percent;
@@ -182,112 +189,129 @@ export function hasExtraData(ccy) {
 
 export function getExtraLabel(ccy) {
   switch (ccy) {
-    case 'XRP':
-      return 'Tag';
-    case 'EOS':
-      return 'Memo';
+    case "XRP":
+      return "Tag";
+    case "EOS":
+      return "Memo";
     default:
-      return '';
+      return "";
   }
 }
 
 export function getExtraData(ccy, data) {
-  if (!data) return '';
+  if (!data) return "";
   switch (ccy) {
-    case 'XRP':
-    case 'EOS':
-      return data.extraUuid || '';
+    case "XRP":
+    case "EOS":
+      return data.extraUuid || "";
     default:
-      return '';
+      return "";
   }
 }
 
-export function getGenerateTootipExtraData(ccy){
-    switch(ccy){
-        case 'XRP':
-        case 'EOS': return `Generate new ${getExtraLabel(ccy)}`;
+export function getGenerateTootipExtraData(ccy) {
+  switch (ccy) {
+    case "XRP":
+    case "EOS":
+      return `Generate new ${getExtraLabel(ccy)}`;
 
-        default: return ''
-    }
+    default:
+      return "";
+  }
 }
 
 export function getQrData(ccy, state) {
   const { depositAddress, extraData } = state;
   switch (ccy) {
-    case 'XRP':
-    case 'EOS':
-      return extraData || '';
+    case "XRP":
+    case "EOS":
+      return extraData || "";
     default:
-      return depositAddress || '';
+      return depositAddress || "";
   }
 }
 
-export function getEnableExtraDataLabel(ccy){
-    switch(ccy){
-        case 'XRP':
-        case 'EOS': return `No ${getExtraLabel(ccy)}`;
-        default: return '';
-    }
+export function getEnableExtraDataLabel(ccy) {
+  switch (ccy) {
+    case "XRP":
+    case "EOS":
+      return `No ${getExtraLabel(ccy)}`;
+    default:
+      return "";
+  }
 }
 
-export function getPlaceholderWithdrawExtraData(ccy){
-    switch(ccy){
-        case 'XRP':
-        case 'EOS': return `Enter a valid ${getExtraLabel(ccy)}`;
-        default: return '';
-    }
+export function getPlaceholderWithdrawExtraData(ccy) {
+  switch (ccy) {
+    case "XRP":
+    case "EOS":
+      return `Enter a valid ${getExtraLabel(ccy)}`;
+    default:
+      return "";
+  }
 }
 
-export function getLabelWithdrawExtraData(ccy){
-    switch(ccy){
-        case 'XRP':
-        case 'EOS': return `Withdrawal ${getExtraLabel(ccy)}`;
-        default: return '';
-    }
+export function getLabelWithdrawExtraData(ccy) {
+  switch (ccy) {
+    case "XRP":
+    case "EOS":
+      return `Withdrawal ${getExtraLabel(ccy)}`;
+    default:
+      return "";
+  }
 }
 
-function validateMemo(memo){
-  if(memo.length < 1 || memo.length > 256) return false
-  return true
+function validateMemo(memo) {
+  if (memo.length < 1 || memo.length > 256) return false;
+  return true;
 }
 
-function validateTag(tag){
-  if(!tag || tag.length !== tag.trim().length) return false
-  if(!/^\d{1,10}$/.test(tag)) return false
-  const num = Number(tag)
-  if(num < 0 || num > 4294967295) return false
-  return true
+function validateTag(tag) {
+  if (!tag || tag.length !== tag.trim().length) return false;
+  if (!/^\d{1,10}$/.test(tag)) return false;
+  const num = Number(tag);
+  if (num < 0 || num > 4294967295) return false;
+  return true;
 }
 
-export function validateWithdrawExtraData(ccy, extraData){
-    if(!hasExtraData(ccy)) return ''
-    switch(ccy){
-        case 'XRP': return validateTag(extraData) ? '' : `Invalid ${getExtraLabel(ccy)} format`;
-        case 'EOS': return validateMemo(extraData) ? '' : `Invalid ${getExtraLabel(ccy)} format`;
-        default: return '';
-    }
+export function validateWithdrawExtraData(ccy, extraData) {
+  if (!hasExtraData(ccy)) return "";
+  switch (ccy) {
+    case "XRP":
+      return validateTag(extraData)
+        ? ""
+        : `Invalid ${getExtraLabel(ccy)} format`;
+    case "EOS":
+      return validateMemo(extraData)
+        ? ""
+        : `Invalid ${getExtraLabel(ccy)} format`;
+    default:
+      return "";
+  }
 }
 
 export function getAddressLabel(ccy) {
   let rs = {
-    deposit: 'Deposit Address:',
-    withdraw: 'Withdrawal Address',
-    withdrawPlaceholder: 'Enter a valid address',
+    deposit: "Deposit Address:",
+    withdraw: "Withdrawal Address",
+    withdrawPlaceholder: "Enter a valid address",
     whitelistAddressRequiredMsg: "Please input your address",
     whitelistAddressValidateMsg: "Invalid address format",
-    whitelistExtraDataRequiredMsg: '',
-    whitelistExtraDataIsRequired: ''
+    whitelistExtraDataRequiredMsg: "",
+    whitelistExtraDataIsRequired: "",
   };
 
   // eslint-disable-next-line default-case
-  switch(ccy) {
-    case 'XRP': 
-    case 'EOS': {
+  switch (ccy) {
+    case "XRP":
+    case "EOS": {
       rs = {
         ...rs,
-        whitelistExtraDataRequiredMsg: `Please input your ${getExtraLabel(ccy)}`,
-        whitelistExtraDataIsRequired: `${getExtraLabel(ccy)} is required`
-      }
+        whitelistExtraDataRequiredMsg: `Please input your ${getExtraLabel(
+          ccy
+        )}`,
+        whitelistExtraDataIsRequired: `${getExtraLabel(ccy)} is required`,
+      };
       break;
     }
   }
@@ -295,15 +319,17 @@ export function getAddressLabel(ccy) {
   return rs;
 }
 
-export function hasShowExtraWarningView(ccy){
-  switch(ccy){
+export function hasShowExtraWarningView(ccy) {
+  switch (ccy) {
     case "EOS":
-    case "XRP": return true
-    default: return false
+    case "XRP":
+      return true;
+    default:
+      return false;
   }
 }
 
-export function getExtraWarning(ccy){
+export function getExtraWarning(ccy) {
   let tagName = getExtraLabel(ccy).toLowerCase();
 
   return `
@@ -311,11 +337,14 @@ export function getExtraWarning(ccy){
     Do NOT deposit ${ccy} to your account unless you know what an ${ccy} ${tagName} is. If you fail to include the ${tagName} with your deposit the funds will be lost forever.
     If you are not familiar with the procedure, please contact our support.
     I Understand. Show me the deposit address and ${tagName}
-  `.trim().split('\n').map(str => str.trim());
+  `
+    .trim()
+    .split("\n")
+    .map((str) => str.trim());
 }
 
 export function getDepositNoteContent(ccy) {
-  if(hasShowExtraWarningView(ccy)) {
+  if (hasShowExtraWarningView(ccy)) {
     const tagName = getExtraLabel(ccy).toLowerCase();
     return `Please re-check the deposit address and ${tagName} before depositing. Make sure your transaction output address and ${tagName} is the same as the one on our site.`;
   } else {
@@ -323,20 +352,22 @@ export function getDepositNoteContent(ccy) {
   }
 }
 
-export function getNumDecimals(ccy){
-  switch(ccy){
-    case 'XTZ':
-    case 'XRP':
-    case 'USDC': return 6
-    case 'EOS': return 4
-    default: return 8
+export function getNumDecimals(ccy) {
+  switch (ccy) {
+    case "XTZ":
+    case "XRP":
+    case "USDC":
+      return 6;
+    case "EOS":
+      return 4;
+    default:
+      return 8;
   }
 }
 
 // prevent transfer between the same wallet type
 export function getFilteredWallets(wallet) {
-  if(!wallet)
-    return wallets;
+  if (!wallet) return wallets;
 
-  return wallets.filter(walletName => walletName !== wallet);
+  return wallets.filter((walletName) => walletName !== wallet);
 }

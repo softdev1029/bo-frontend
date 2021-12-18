@@ -3,18 +3,20 @@ import { OrderItem } from "@/models/order.model";
 
 export const mapDispatchToProps = (dispatch) => ({
   cancelOrder: function (order: OrderItem) {
-    dispatch(cancelOrder({
-      clientOrderId: Date.now(),
-      order
-    }));
+    dispatch(
+      cancelOrder({
+        clientOrderId: Date.now(),
+        order,
+      })
+    );
   },
-  cancelAllOrders: function(orders: OrderItem[]) {
-    console.log('cancel all orders', orders);
+  cancelAllOrders: function (orders: OrderItem[]) {
+    console.log("cancel all orders", orders);
     // orders.forEach((order: OrderItem) => {
     //   dispatch(cancelOrder({
     //     clientOrderId: Date.now(),
     //     order
     //   }));
     // })
-  }
+  },
 });

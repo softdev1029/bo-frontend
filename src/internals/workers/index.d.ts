@@ -1,8 +1,8 @@
 // custom.d.ts
-declare module '*.worker.ts' {
+declare module "*.worker.ts" {
   class TestWorker extends Worker {
     constructor();
   }
 
-  export default TestWorker
+  export default TestWorker;
 }

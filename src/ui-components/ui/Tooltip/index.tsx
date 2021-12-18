@@ -1,24 +1,23 @@
-
-import React, { ReactNode } from 'react';
-import ReactDOM from 'react-dom';
-import classNames from 'classnames';
-import ReactToolTip, { Offset } from 'react-tooltip';
-import _uniqueId2 from 'lodash/uniqueId';
-import './styles.scss';
+import React, { ReactNode } from "react";
+import ReactDOM from "react-dom";
+import classNames from "classnames";
+import ReactToolTip, { Offset } from "react-tooltip";
+import _uniqueId2 from "lodash/uniqueId";
+import "./styles.scss";
 
 var PERSISTENT_HIDE_DELAY = 1000;
 
 type TooltipProps = {
-  children: ReactNode,
-  tooltipContent: ReactNode,
-  underline?: boolean,
-  cursorHelp?: boolean,
-  persistent?: boolean,
-  cursorPointer?: boolean,
-  preFormatted?: boolean
-  offset?: Offset,
+  children: ReactNode;
+  tooltipContent: ReactNode;
+  underline?: boolean;
+  cursorHelp?: boolean;
+  persistent?: boolean;
+  cursorPointer?: boolean;
+  preFormatted?: boolean;
+  offset?: Offset;
   // move tooltip to highest layer
-  global: boolean
+  global: boolean;
 };
 
 class Tooltip extends React.PureComponent<Partial<TooltipProps>> {
@@ -28,10 +27,10 @@ class Tooltip extends React.PureComponent<Partial<TooltipProps>> {
     cursorHelp: true,
     persistent: false,
     cursorPointer: false,
-    preFormatted: false
+    preFormatted: false,
   };
 
-  tooltipId = _uniqueId2('tooltip-')
+  tooltipId = _uniqueId2("tooltip-");
 
   render() {
     const {
@@ -42,15 +41,14 @@ class Tooltip extends React.PureComponent<Partial<TooltipProps>> {
       cursorPointer,
       preFormatted,
       offset,
-      global
+      global,
     } = this.props;
 
-    if (!tooltipContent)
-      return this.props.children;
+    if (!tooltipContent) return this.props.children;
 
-    const tooltipClasses = classNames('__react-tooltip', {
-      '__react-tooltip--persistent': persistent,
-      '__react-tooltip--pre-formatted': preFormatted
+    const tooltipClasses = classNames("__react-tooltip", {
+      "__react-tooltip--persistent": persistent,
+      "__react-tooltip--pre-formatted": preFormatted,
     });
 
     const tooltip = (
@@ -68,18 +66,14 @@ class Tooltip extends React.PureComponent<Partial<TooltipProps>> {
     );
 
     var tooltipPortal = ReactDOM.createPortal(tooltip, document.body);
-    var classes = classNames('ui-tooltip', {
-      'ui-tooltip--underline': underline,
-      'ui-tooltip--cursor-help': cursorHelp,
-      'ui-tooltip--cursor-pointer': cursorPointer
+    var classes = classNames("ui-tooltip", {
+      "ui-tooltip--underline": underline,
+      "ui-tooltip--cursor-help": cursorHelp,
+      "ui-tooltip--cursor-pointer": cursorPointer,
     });
 
     return (
-      <span
-        data-tip="true"
-        data-for={this.tooltipId}
-        className={classes}
-      >
+      <span data-tip="true" data-for={this.tooltipId} className={classes}>
         {tooltipPortal}
         {this.props.children}
       </span>
@@ -87,4 +81,4 @@ class Tooltip extends React.PureComponent<Partial<TooltipProps>> {
   }
 }
 
-export default Tooltip
+export default Tooltip;

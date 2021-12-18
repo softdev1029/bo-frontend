@@ -1,6 +1,6 @@
-import React from 'react';
-import { Icon } from '../Icon';
-import Tooltip from '../Tooltip';
+import React from "react";
+import { Icon } from "../Icon";
+import Tooltip from "../Tooltip";
 
 interface Format {
   id: string;
@@ -14,22 +14,26 @@ interface TitleProps {
   format: Format;
   orderBy: any;
   sortOrder: any;
-};
+}
 
 class Title extends React.PureComponent<TitleProps> {
   render() {
     const { format, orderBy, sortOrder } = this.props;
-    const { id, alt, altUnderline, altCursorPointer, title = '', sortingEnabled = false } = format;
+    const {
+      id,
+      alt,
+      altUnderline,
+      altCursorPointer,
+      title = "",
+      sortingEnabled = false,
+    } = format;
 
-    if (title === '')
-      return null;
+    if (title === "") return null;
 
     const arrows = sortingEnabled ? (
-      <span
-        className="table__title-iconwrapper"
-      >
-        <Icon id="sort-down" active={id === orderBy && sortOrder === 'desc'} />
-        <Icon id="sort-up" active={id === orderBy && sortOrder === 'asc'} />
+      <span className="table__title-iconwrapper">
+        <Icon id="sort-down" active={id === orderBy && sortOrder === "desc"} />
+        <Icon id="sort-up" active={id === orderBy && sortOrder === "asc"} />
       </span>
     ) : null;
 

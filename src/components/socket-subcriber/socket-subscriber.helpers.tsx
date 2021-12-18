@@ -1,9 +1,15 @@
-import { WebSocketChannelEnum, WebSocketChannelParams } from "@/constants/websocket.enums";
+import {
+  WebSocketChannelEnum,
+  WebSocketChannelParams,
+} from "@/constants/websocket.enums";
 import { strTemplate } from "@/exports";
 import { SingletonWSManager } from "@/internals";
 import { SubscribeParams } from "@/models/ws-action-types";
 
-export function getSubscribeData(channel: WebSocketChannelEnum, dependencies: object): SubscribeParams | null {
+export function getSubscribeData(
+  channel: WebSocketChannelEnum,
+  dependencies: object
+): SubscribeParams | null {
   const wsId = SingletonWSManager.getSocketInChargeOfByChannel(channel);
 
   if (!wsId) {
@@ -12,9 +18,9 @@ export function getSubscribeData(channel: WebSocketChannelEnum, dependencies: ob
 
   return {
     params: strTemplate(WebSocketChannelParams[channel], dependencies, {
-      symbol: (symbol: string) => symbol.toLowerCase()
+      symbol: (symbol: string) => symbol.toLowerCase(),
     }),
     requestId: channel,
-    id: wsId
-  }
+    id: wsId,
+  };
 }

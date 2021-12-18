@@ -1,6 +1,4 @@
-import loadable from '@loadable/component';
+import loadable from "@loadable/component";
 
-export const withLoadable = ({
-  loader,
-  fallback = undefined
-}) => loadable(loader, {fallback});
+export const withLoadable = ({ loader, fallback = undefined }) =>
+  loadable(loader, { fallback });

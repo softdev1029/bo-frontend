@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react';
-import { firstInPair } from '@/exports/ticker.utils';
-import DisplayConfirmModalBtn from '../DisplayConfirmModalBtn';
-import PositionCloseModal from './Positions.close.modal';
-import { getSetting } from '@/selectors/ui-setting.selectors';
-import { connect } from 'react-redux';
-import { Button } from '@/ui-components';
+import React, { useCallback } from "react";
+import { firstInPair } from "@/exports/ticker.utils";
+import DisplayConfirmModalBtn from "../DisplayConfirmModalBtn";
+import PositionCloseModal from "./Positions.close.modal";
+import { getSetting } from "@/selectors/ui-setting.selectors";
+import { connect } from "react-redux";
+import { Button } from "@/ui-components";
 
 interface ClosePositionProps {
   position: any;
@@ -12,14 +12,16 @@ interface ClosePositionProps {
   closePosition: (price: number, qty: number, isMarket?: boolean) => void;
   isEnableLimitClosePopup: boolean;
   isEnableMarketClosePopup: boolean;
-};
+}
 
 class ClosePositionBtn extends React.Component<Partial<ClosePositionProps>> {
   constructor(props) {
     super(props);
 
-    this.onLimitClosePositionBtnClick = this.onLimitClosePositionBtnClick.bind(this);
-    this.onMarketClosePositionBtnClick = this.onMarketClosePositionBtnClick.bind(this);
+    this.onLimitClosePositionBtnClick =
+      this.onLimitClosePositionBtnClick.bind(this);
+    this.onMarketClosePositionBtnClick =
+      this.onMarketClosePositionBtnClick.bind(this);
   }
 
   onLimitClosePositionBtnClick(e) {
@@ -34,52 +36,62 @@ class ClosePositionBtn extends React.Component<Partial<ClosePositionProps>> {
   }
 
   renderLimitBtn() {
-    const { symbol, position, closePosition, isEnableLimitClosePopup } = this.props;
+    const { symbol, position, closePosition, isEnableLimitClosePopup } =
+      this.props;
 
     const limitProps = {
       position,
       symbol,
-      confirmFunc: closePosition
-    }
+      confirmFunc: closePosition,
+    };
 
-    return (
-      isEnableLimitClosePopup ? <DisplayConfirmModalBtn
+    return isEnableLimitClosePopup ? (
+      <DisplayConfirmModalBtn
         popupComp={PositionCloseModal}
         popupId="position_limit_close_popup"
         popupData={limitProps}
         classes="position__cancel position__cancel__limit"
       >
         Limit
-      </DisplayConfirmModalBtn> : <Button
-          classes="position__cancel position__cancel__limit"
-          onClick={this.onLimitClosePositionBtnClick}
-        >Limit</Button>
-    )
+      </DisplayConfirmModalBtn>
+    ) : (
+      <Button
+        classes="position__cancel position__cancel__limit"
+        onClick={this.onLimitClosePositionBtnClick}
+      >
+        Limit
+      </Button>
+    );
   }
 
   renderMarketBtn() {
-    const { symbol, position, closePosition, isEnableMarketClosePopup } = this.props;
+    const { symbol, position, closePosition, isEnableMarketClosePopup } =
+      this.props;
 
     const limitProps = {
       position,
       symbol,
       confirmFunc: closePosition,
-      isMarket: true
-    }
+      isMarket: true,
+    };
 
-    return (
-      isEnableMarketClosePopup ? <DisplayConfirmModalBtn
+    return isEnableMarketClosePopup ? (
+      <DisplayConfirmModalBtn
         popupComp={PositionCloseModal}
         popupId="position_market_close_popup"
         popupData={limitProps}
         classes="position__cancel position__cancel__market"
       >
         Market
-      </DisplayConfirmModalBtn> : <Button
-          classes="position__cancel position__cancel__market"
-          onClick={this.onMarketClosePositionBtnClick}
-        >Market</Button>
-    )
+      </DisplayConfirmModalBtn>
+    ) : (
+      <Button
+        classes="position__cancel position__cancel__market"
+        onClick={this.onMarketClosePositionBtnClick}
+      >
+        Market
+      </Button>
+    );
   }
   render() {
     const { symbol, position } = this.props;
@@ -95,13 +107,17 @@ class ClosePositionBtn extends React.Component<Partial<ClosePositionProps>> {
         {this.renderLimitBtn()}
         {this.renderMarketBtn()}
       </div>
-    )
+    );
   }
 }
 
 const mapStateToProps = (state) => ({
-  isEnableLimitClosePopup: getSetting(state)('enabled_position_close_limit_popup'),
-  isEnableMarketClosePopup: getSetting(state)('enabled_position_close_market_popup'),
-})
+  isEnableLimitClosePopup: getSetting(state)(
+    "enabled_position_close_limit_popup"
+  ),
+  isEnableMarketClosePopup: getSetting(state)(
+    "enabled_position_close_market_popup"
+  ),
+});
 
 export default connect(mapStateToProps)(ClosePositionBtn);

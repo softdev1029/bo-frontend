@@ -1,12 +1,12 @@
 import { Notification, Observable } from "rxjs";
 
 export interface GenericWorkerMessage<P = any> {
-  payload: P,
+  payload: P;
   transferable?: Transferable[];
 }
 
 export interface WorkerMessageNotification<T> extends MessageEvent {
-  data: Notification<T>
+  data: Notification<T>;
 }
 
 export interface DoWork<I, O> {

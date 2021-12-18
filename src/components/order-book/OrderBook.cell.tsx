@@ -1,43 +1,54 @@
-import React from 'react';
-import { AnimateOnUpdate, Button, NumberFormat } from '@/ui-components';
-import classNames from 'classnames';
-import { usePrevious } from '@/hooks';
-import { WalletType } from '@/constants/balance-enums';
-import { OrderSide, OrderType, TIF } from '@/constants/order-enums';
-import { connect } from 'react-redux';
-import { submitNewOrder } from '@/actions/order.actions';
-import { OrderBookSubject } from './OrderBook.subject';
+import React from "react";
+import { AnimateOnUpdate, Button, NumberFormat } from "@/ui-components";
+import classNames from "classnames";
+import { usePrevious } from "@/hooks";
+import { WalletType } from "@/constants/balance-enums";
+import { OrderSide, OrderType, TIF } from "@/constants/order-enums";
+import { connect } from "react-redux";
+import { submitNewOrder } from "@/actions/order.actions";
+import { OrderBookSubject } from "./OrderBook.subject";
 
 interface Props {
-  data: number,
-  classes: string,
-  decimals: number,
+  data: number;
+  classes: string;
+  decimals: number;
 }
 
 interface CellContainsBarProps extends Props {
-  depthPerc: number
+  depthPerc: number;
 }
 
-export const BookCellContainsBar = ({ data, classes, decimals = 0, depthPerc }: CellContainsBarProps) => (
+export const BookCellContainsBar = ({
+  data,
+  classes,
+  decimals = 0,
+  depthPerc,
+}: CellContainsBarProps) => (
   <td className={classes}>
     <div>
       <div className="depthBar" style={{ width: `${depthPerc}%` }}></div>
-      <span className="output"><NumberFormat decimals={decimals} number={data} /></span>
+      <span className="output">
+        <NumberFormat decimals={decimals} number={data} />
+      </span>
     </div>
   </td>
 );
 
 export const BookCellNumber = ({ data, classes, decimals = 0 }: Props) => (
-  <td className={classes}><div><NumberFormat decimals={decimals} number={data} /></div></td>
-)
+  <td className={classes}>
+    <div>
+      <NumberFormat decimals={decimals} number={data} />
+    </div>
+  </td>
+);
 
 export const BookCellSize = ({ data, classes, decimals = 0 }: Props) => {
   const lastValue = usePrevious(data) || 0;
 
   const animateClasses = classNames({
     isNew: lastValue && lastValue !== data,
-    highlightDec: lastValue && (data - lastValue) < 0,
-    highlightInc: lastValue && (data - lastValue) > 0,
+    highlightDec: lastValue && data - lastValue < 0,
+    highlightInc: lastValue && data - lastValue > 0,
   });
 
   return (
@@ -46,17 +57,19 @@ export const BookCellSize = ({ data, classes, decimals = 0 }: Props) => {
       baseClassName={classes}
       animationClassName={animateClasses}
       animate={lastValue && lastValue !== data}
-    ><NumberFormat decimals={decimals} number={data} /></AnimateOnUpdate>
-  )
-}
+    >
+      <NumberFormat decimals={decimals} number={data} />
+    </AnimateOnUpdate>
+  );
+};
 
 interface QuickOrderBtnProps {
-  price: number,
-  qty: number,
-  symbol: string,
-  walletType: WalletType,
-  side: OrderSide,
-  classes: string
+  price: number;
+  qty: number;
+  symbol: string;
+  walletType: WalletType;
+  side: OrderSide;
+  classes: string;
 }
 export class QuickOrderBtn extends React.PureComponent<QuickOrderBtnProps> {
   constructor(props) {
@@ -73,19 +86,21 @@ export class QuickOrderBtn extends React.PureComponent<QuickOrderBtnProps> {
       price,
       side,
       amount: qty,
-      isQuick: true
-    })
+      isQuick: true,
+    });
   }
 
   render() {
     const { side, classes } = this.props;
-    const lbl = side === OrderSide.BUY ? 'Buy' : 'Sell';
-    const cls = classNames('ui-button', lbl.toLowerCase());
+    const lbl = side === OrderSide.BUY ? "Buy" : "Sell";
+    const cls = classNames("ui-button", lbl.toLowerCase());
 
     return (
       <td className={classes}>
-        <button onDoubleClick={this.onBtnClick} className={cls}>{lbl}</button>
+        <button onDoubleClick={this.onBtnClick} className={cls}>
+          {lbl}
+        </button>
       </td>
-    )
+    );
   }
 }

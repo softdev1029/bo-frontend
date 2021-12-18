@@ -1,8 +1,8 @@
 import { OrderBookSideEnum } from "@/constants/order-book-enums";
 
-export const TRADE_INIT = '@trade/TRADE_INIT';
-export const TRADE_INITIALIZED = '@trade/TRADE_INITIALIZED';
-export const TRADE_RECEIVED_UPDATE = '@trade/RECEIVED_UPDATE';
+export const TRADE_INIT = "@trade/TRADE_INIT";
+export const TRADE_INITIALIZED = "@trade/TRADE_INITIALIZED";
+export const TRADE_RECEIVED_UPDATE = "@trade/RECEIVED_UPDATE";
 
 /**
  *   "e": "trade",     // Event type
@@ -18,7 +18,7 @@ export const TRADE_RECEIVED_UPDATE = '@trade/RECEIVED_UPDATE';
   "M": true         // Ignore
 */
 export function tradeUpdate(batchTrades = []) {
-  const data = batchTrades.map(trade => {
+  const data = batchTrades.map((trade) => {
     const { m: isBuyer, l: id, T: tradeTime, p: price, q: amount } = trade;
 
     return {
@@ -26,28 +26,28 @@ export function tradeUpdate(batchTrades = []) {
       date: tradeTime,
       price: +price,
       amount: +amount,
-      side: isBuyer ? OrderBookSideEnum.BID : OrderBookSideEnum.ASK
-    }
+      side: isBuyer ? OrderBookSideEnum.BID : OrderBookSideEnum.ASK,
+    };
   });
 
   return {
     type: TRADE_RECEIVED_UPDATE,
-    payload: data
-  }
+    payload: data,
+  };
 }
 
 export function tradeUpdate2(batchTrades = []) {
   return {
     type: TRADE_RECEIVED_UPDATE,
-    payload: batchTrades
-  }
+    payload: batchTrades,
+  };
 }
 
 export function requestInitTrades(symbol, limit = 100) {
   return {
     type: TRADE_INIT,
-    payload: { symbol, limit }
-  }
+    payload: { symbol, limit },
+  };
 }
 
 /**
@@ -63,8 +63,8 @@ export function requestInitTrades(symbol, limit = 100) {
  */
 export function tradeInitliazed(trades) {
   const data = [];
-  
-  for(let i = trades.length - 1; i >= 0; i--) {
+
+  for (let i = trades.length - 1; i >= 0; i--) {
     const { id, price, qty, time, isBuyerMaker } = trades[i];
 
     data.push({
@@ -72,12 +72,12 @@ export function tradeInitliazed(trades) {
       date: time,
       price: +price,
       amount: +qty,
-      side: isBuyerMaker ? OrderBookSideEnum.BID : OrderBookSideEnum.ASK
-    })
+      side: isBuyerMaker ? OrderBookSideEnum.BID : OrderBookSideEnum.ASK,
+    });
   }
 
   return {
     type: TRADE_INITIALIZED,
-    payload: data
-  }
+    payload: data,
+  };
 }

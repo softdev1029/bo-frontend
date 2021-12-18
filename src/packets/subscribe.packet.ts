@@ -1,7 +1,12 @@
 // trades = MDExecReport
 import { PacketHeaderMessageType } from "@/constants/websocket.enums";
 import { PacketReader, PacketSender } from "@/internals";
-import { DataByte, IPutCustomData, IReadCustomData, TypedData } from "@/message-structures/typed-data";
+import {
+  DataByte,
+  IPutCustomData,
+  IReadCustomData,
+  TypedData,
+} from "@/message-structures/typed-data";
 import { getPackLength, PacketManner } from "./packet-manner";
 
 /**
@@ -14,20 +19,26 @@ import { getPackLength, PacketManner } from "./packet-manner";
   => 23
  */
 const SUBSCRIBE_STRUCTURE = [
-  new DataByte('symbolEnum', TypedData.SHORT), // 0
-  new DataByte('symbol', TypedData.CHAR, 16), // 2
-  new DataByte('symbolType', TypedData.SHORT), // 18
-  new DataByte('layer', TypedData.SHORT), // 20
-  new DataByte('subscribe', TypedData.CHAR, 1), // 22
+  new DataByte("symbolEnum", TypedData.SHORT), // 0
+  new DataByte("symbol", TypedData.CHAR, 16), // 2
+  new DataByte("symbolType", TypedData.SHORT), // 18
+  new DataByte("layer", TypedData.SHORT), // 20
+  new DataByte("subscribe", TypedData.CHAR, 1), // 22
 ];
 
-class SubscribeCustomByte extends DataByte implements IReadCustomData, IPutCustomData {
+class SubscribeCustomByte
+  extends DataByte
+  implements IReadCustomData, IPutCustomData
+{
   putCustomValue(values: Object | Object[], sender: PacketSender) {
     const maxLoop = this.length() / getPackLength(SUBSCRIBE_STRUCTURE);
-    for(let i = 0; i < maxLoop; i++) {
+    for (let i = 0; i < maxLoop; i++) {
       SUBSCRIBE_STRUCTURE.forEach((dataByte) => {
-        dataByte.putValue(values[i] ? values[i][dataByte.name] : undefined, sender);
-      })
+        dataByte.putValue(
+          values[i] ? values[i][dataByte.name] : undefined,
+          sender
+        );
+      });
     }
   }
 
@@ -42,7 +53,7 @@ class SubscribeCustomByte extends DataByte implements IReadCustomData, IPutCusto
         o[dataByte.name] = dataByte.getValue(reader);
       });
 
-      if(!!o['symbolEnum']) {
+      if (!!o["symbolEnum"]) {
         subscribe.push(o);
       }
     }
@@ -51,14 +62,17 @@ class SubscribeCustomByte extends DataByte implements IReadCustomData, IPutCusto
   }
 }
 const TRADE_MESSAGE_STRUCTURE = [
-  new DataByte('type', TypedData.CHAR, 2), // 4
-  new DataByte('padding', TypedData.SHORT), // 6
-  new DataByte('accountId', TypedData.INT), // 8
-  new DataByte('key', TypedData.INT), // 12
-  new DataByte('sessionId', TypedData.INT), // 24
-  new DataByte('sendingTime', TypedData.LONG), // 28
-  new DataByte('MsgSeqNum', TypedData.INT), // 36
-  new SubscribeCustomByte('bit24Subscribe', TypedData.CUSTOM_DATA, 115), // 40
+  new DataByte("type", TypedData.CHAR, 2), // 4
+  new DataByte("padding", TypedData.SHORT), // 6
+  new DataByte("accountId", TypedData.INT), // 8
+  new DataByte("key", TypedData.INT), // 12
+  new DataByte("sessionId", TypedData.INT), // 24
+  new DataByte("sendingTime", TypedData.LONG), // 28
+  new DataByte("MsgSeqNum", TypedData.INT), // 36
+  new SubscribeCustomByte("bit24Subscribe", TypedData.CUSTOM_DATA, 115), // 40
 ];
 
-export const SubscribeManner = new PacketManner(PacketHeaderMessageType.SUBSCRIBE, TRADE_MESSAGE_STRUCTURE);
+export const SubscribeManner = new PacketManner(
+  PacketHeaderMessageType.SUBSCRIBE,
+  TRADE_MESSAGE_STRUCTURE
+);

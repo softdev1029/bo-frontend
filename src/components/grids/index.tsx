@@ -1,1 +1,1 @@
-export { default as MainTradingGrid } from './MainTradingGrid'
+export { default as MainTradingGrid } from "./MainTradingGrid";

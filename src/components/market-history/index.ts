@@ -1,1 +1,1 @@
-export { default as MarketHistory } from './MarketHistory.container';
+export { default as MarketHistory } from "./MarketHistory.container";

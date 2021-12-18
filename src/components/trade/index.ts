@@ -1,1 +1,1 @@
-export { default as Trade } from './Trade.container';
+export { default as Trade } from "./Trade.container";

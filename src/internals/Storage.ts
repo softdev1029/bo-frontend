@@ -1,20 +1,20 @@
-import _merge from 'lodash/merge';
-import _isObject from 'lodash/isObject';
-import _isNull from 'lodash/isNull';
-import _isString from 'lodash/isString';
-import { invariant } from '@/exports/invariant';
+import _merge from "lodash/merge";
+import _isObject from "lodash/isObject";
+import _isNull from "lodash/isNull";
+import _isString from "lodash/isString";
+import { invariant } from "@/exports/invariant";
 
 interface Options {
   isSession?: boolean;
   expiration?: number | string;
-};
+}
 
 const Storage = (function () {
   const expiredTime = "_expiredTime";
 
   /**
-   * 
-   * @param {Options} options 
+   *
+   * @param {Options} options
    */
   function getStorageByOption(options: Options) {
     const { isSession } = options;
@@ -39,7 +39,7 @@ const Storage = (function () {
       try {
         value = JSON.parse(item);
       } catch (e) {
-        value = JSON.parse(JSON.stringify(item))
+        value = JSON.parse(JSON.stringify(item));
       }
 
       if (_isObject(value) && value.hasOwnProperty(expiredTime)) {
@@ -62,7 +62,7 @@ const Storage = (function () {
 
       if (expiration) {
         value = _merge({}, _isObject(value) ? value : { value }, {
-          [expiredTime]: new Date(expiration).getTime()
+          [expiredTime]: new Date(expiration).getTime(),
         });
       }
 
@@ -70,14 +70,14 @@ const Storage = (function () {
     },
 
     /**
-     * Updates the value in the store for a given key in localStorage. 
-     * If the value is a string it will be replaced. 
-     * If the value is a null it will be replaced. 
+     * Updates the value in the store for a given key in localStorage.
+     * If the value is a string it will be replaced.
+     * If the value is a null it will be replaced.
      * If the value is an object it will be deep merged.
-     * 
+     *
      * @param {String} key The key
      * @param {String | Object} value The value to update with
-     * @param {Options} options 
+     * @param {Options} options
      * @return {Any} value The value to save
      */
     update(key: string, value: string | Object, options: Options = {}): any {
@@ -86,7 +86,8 @@ const Storage = (function () {
         `The "key" must have a value, given "key": ${key} or "value":${value}`
       );
       let item = this.get(key);
-      value = _isString(value) || _isNull(value) ? value : _merge({}, item, value);
+      value =
+        _isString(value) || _isNull(value) ? value : _merge({}, item, value);
       this.save(key, value, options);
 
       return value;
@@ -108,8 +109,8 @@ const Storage = (function () {
 
     key(key: number): string | null {
       return window.localStorage.key(key);
-    }
-  }
+    },
+  };
 })();
 
 export default Storage;

@@ -42,5 +42,5 @@ export const getBookMaxSumsize = createSelector<any, OrderBookModel[], number>(
 
 export const isBookLoaded = createSelector(
   _getBookState,
-  book => book.initialized
+  (book) => book.initialized
 );

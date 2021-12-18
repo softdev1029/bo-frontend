@@ -13,7 +13,7 @@ export function walletNameFromId(id) {
     case WalletType.DERIVATIVE:
       return AppTradeType.DERIVATIVE;
     default:
-      return '';
+      return "";
   }
 }
 

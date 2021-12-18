@@ -2,24 +2,24 @@ import { capitalize } from "@/exports";
 import { WorkspaceSettingEnum } from "@/models/workspace-setting";
 
 export function getWorkspaceLabel(name: string): string {
-  switch(name) {
+  switch (name) {
     case WorkspaceSettingEnum.CONTRACT: {
-      return 'Contract Details';
+      return "Contract Details";
     }
     case WorkspaceSettingEnum.TRADE: {
-      return 'Recent Trades';
+      return "Recent Trades";
     }
     case WorkspaceSettingEnum.ORDERBOOK: {
-      return 'Order Book'
+      return "Order Book";
     }
     case WorkspaceSettingEnum.BALANCE: {
-      return 'Balances';
+      return "Balances";
     }
     case WorkspaceSettingEnum.MARKET: {
-      return 'Trading Info';
+      return "Trading Info";
     }
     case WorkspaceSettingEnum.MARKET_HISTORY: {
-      return 'Positions & Open Orders';
+      return "Positions & Open Orders";
     }
     default: {
       return capitalize(name);

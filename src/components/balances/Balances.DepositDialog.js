@@ -1,17 +1,17 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _get from 'lodash/get';
-import { Card, Row, Col, Input, Alert } from 'antd';
-import QRCode from 'qrcode.react';
+import React from "react";
+import PropTypes from "prop-types";
+import _get from "lodash/get";
+import { Card, Row, Col, Input, Alert } from "antd";
+import QRCode from "qrcode.react";
 
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { formatByDecimal } from '../../helpers';
-import Touchable from '../../components/MtbitComponents/Touchable';
-import Modal from '../ui/Modal/Modal';
-import toast from '../Toast/index';
-import { requester } from '../../utils/fetchAPI/index';
-import Tooltip from '../Tooltip/index';
-import { beautifier } from '../../vars/utils';
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { formatByDecimal } from "../../helpers";
+import Touchable from "../../components/MtbitComponents/Touchable";
+import Modal from "../ui/Modal/Modal";
+import toast from "../Toast/index";
+import { requester } from "../../utils/fetchAPI/index";
+import Tooltip from "../Tooltip/index";
+import { beautifier } from "../../vars/utils";
 import {
   getExtraLabel,
   hasExtraData,
@@ -20,20 +20,20 @@ import {
   isHiddenGenerateAddress,
   getAddressLabel,
   hasShowExtraWarningView,
-  getDepositNoteContent
-} from './Balances.helpers';
-import BalancesExtraWarning from "./Balances.ExtraWarning"
-import { getWalletIdFromName, wallets } from './Balances.constants';
-import Dropdown from '../ui/Select.Dropdown';
+  getDepositNoteContent,
+} from "./Balances.helpers";
+import BalancesExtraWarning from "./Balances.ExtraWarning";
+import { getWalletIdFromName, wallets } from "./Balances.constants";
+import Dropdown from "../ui/Select.Dropdown";
 
 class BalancesDepositDialog extends React.PureComponent {
   state = {
-    clipboardTooltip: 'Copy to clipboard',
-    depositAddress: '',
-    extraData: '',
-    clipboardTooltipExtraData: 'Copy to clipboard',
+    clipboardTooltip: "Copy to clipboard",
+    depositAddress: "",
+    extraData: "",
+    clipboardTooltipExtraData: "Copy to clipboard",
     isUnderstandWarningExtra: !hasShowExtraWarningView(this.props.currency),
-    wallet: this.props.wallet
+    wallet: this.props.wallet,
   };
 
   constructor(props) {
@@ -44,13 +44,13 @@ class BalancesDepositDialog extends React.PureComponent {
     this.onWalletChange = this.onWalletChange.bind(this);
   }
 
-  onWalletChange({value: wallet}) {
-    if(wallet === this.state.wallet) {
+  onWalletChange({ value: wallet }) {
+    if (wallet === this.state.wallet) {
       return;
     }
 
     this.setState({
-      wallet
+      wallet,
     });
 
     this.getAddress(wallet);
@@ -62,35 +62,39 @@ class BalancesDepositDialog extends React.PureComponent {
 
     const walletId = getWalletIdFromName(wallet);
 
-    const rq = requester('user.generateNewAdress', { symbol: currency }, {type: walletId});
+    const rq = requester(
+      "user.generateNewAdress",
+      { symbol: currency },
+      { type: walletId }
+    );
 
     if (rq) {
-      rq.then(response => {
+      rq.then((response) => {
         const { data = [] } = response;
 
         const [address, extraUuid] = data;
-        
+
         if (address) {
           this.setState({ depositAddress: address });
         }
         if (extraUuid) {
-          this.setState({ extraData: extraUuid || '' });
+          this.setState({ extraData: extraUuid || "" });
         }
-      }).catch(error => {
+      }).catch((error) => {
         toast.error(error.message);
       });
     }
   }
 
-  onCopyTooltipVisibleChange = e => {
+  onCopyTooltipVisibleChange = (e) => {
     this.setState({
-      clipboardTooltip: 'Copy to clipboard'
+      clipboardTooltip: "Copy to clipboard",
     });
   };
 
   understandWarningExtra() {
     this.setState({
-      isUnderstandWarningExtra: true
+      isUnderstandWarningExtra: true,
     });
   }
 
@@ -105,35 +109,42 @@ class BalancesDepositDialog extends React.PureComponent {
 
     const walletId = getWalletIdFromName(wallet);
 
-    const rq = requester('user.getAddress', null, { status: 1, currencyCode: currency, type: walletId });
+    const rq = requester("user.getAddress", null, {
+      status: 1,
+      currencyCode: currency,
+      type: walletId,
+    });
 
     if (rq) {
-      rq.then(response => {
+      rq.then((response) => {
         const { data = [] } = response;
         const [address, extraUuid] = data;
 
         this.setState({
-          depositAddress: address || '',
-          extraData: extraUuid || ''
+          depositAddress: address || "",
+          extraData: extraUuid || "",
         });
-        
-      }).catch(err => {});
+      }).catch((err) => {});
     }
   }
 
   componentDidUpdate(_, prevState) {
     if (prevState.depositAddress !== this.state.depositAddress) {
-      this.setState({ clipboardTooltip: 'Copy to clipboard' });
+      this.setState({ clipboardTooltip: "Copy to clipboard" });
     }
     if (prevState.extraData !== this.state.extraData) {
-      this.setState({ clipboardTooltipExtraData: 'Copy to clipboard' });
+      this.setState({ clipboardTooltipExtraData: "Copy to clipboard" });
     }
   }
 
   render() {
     let { mId, currency, balances } = this.props;
-    const {isUnderstandWarningExtra, wallet} = this.state
-    const {available, reserved, total} = _get(balances, [currency, wallet], {});
+    const { isUnderstandWarningExtra, wallet } = this.state;
+    const { available, reserved, total } = _get(
+      balances,
+      [currency, wallet],
+      {}
+    );
 
     const title = `Deposit ${this.props.currency} to your account`;
     const hiddenGenerateAddress = isHiddenGenerateAddress(currency);
@@ -146,9 +157,20 @@ class BalancesDepositDialog extends React.PureComponent {
         headerContent={title}
       >
         <Card>
-          <Row style={{ marginBottom: 10 }} className="d-flex align-items--center">
-            <Col span={8}><span>Choose Wallet</span></Col>
-            <Col span={16}><Dropdown options={wallets} value={wallet} onChange={this.onWalletChange}/></Col>
+          <Row
+            style={{ marginBottom: 10 }}
+            className="d-flex align-items--center"
+          >
+            <Col span={8}>
+              <span>Choose Wallet</span>
+            </Col>
+            <Col span={16}>
+              <Dropdown
+                options={wallets}
+                value={wallet}
+                onChange={this.onWalletChange}
+              />
+            </Col>
           </Row>
           <Row style={{ marginBottom: 10 }}>
             <Col span={8}>
@@ -180,79 +202,31 @@ class BalancesDepositDialog extends React.PureComponent {
               }`}</span>
             </Col>
           </Row>
-          {isUnderstandWarningExtra ? <React.Fragment>
-            <Row style={{ marginBottom: 10, marginTop: 30 }}>
-            {depositAddressLabel}
-          </Row>
-          <Row className="display-flex">
-            <Col span={20}>
-              <Input
-                className="default-size-input"
-                size="default"
-                value={this.state.depositAddress}
-                readOnly={true}
-              />
-            </Col>
-            <Col span={2} style={{paddingLeft: '15px'}}>
-              <Tooltip
-                tooltipContent={this.state.clipboardTooltip}
-                onVisibleChange={this.onCopyTooltipVisibleChange}
-              >
-                <CopyToClipboard
-                  text={this.state.depositAddress}
-                  onCopy={() =>
-                    this.setState({ copied: true, clipboardTooltip: 'Copied' })
-                  }
-                >
-                  <button
-                    className="setting-page__button clickable"
-                    margin="1"
-                    // style={{ float: 'right' }}
-                  >
-                    <i className="fa fa-copy" aria-hidden="true"></i>
-                  </button>
-                </CopyToClipboard>
-              </Tooltip>
-            </Col>
-            {!hiddenGenerateAddress && (
-              <Col span={2} style={{paddingLeft: hiddenGenerateAddress ? "15px": "12px"}}>
-                <Tooltip tooltipContent={'Generate new address'}>
-                  <Touchable onClick={this.generateNewAddress}>
-                    <button
-                      className="setting-page__button clickable"
-                      // style={{ float: 'right' }}
-                    >
-                      <i className="fa fa-refresh" aria-hidden="true"></i>
-                    </button>
-                  </Touchable>
-                </Tooltip>
-              </Col>
-            )}
-          </Row>
-          {hasExtraData(currency) && (
+          {isUnderstandWarningExtra ? (
             <React.Fragment>
               <Row style={{ marginBottom: 10, marginTop: 30 }}>
-                {getExtraLabel(currency)}
+                {depositAddressLabel}
               </Row>
               <Row className="display-flex">
                 <Col span={20}>
                   <Input
                     className="default-size-input"
                     size="default"
-                    value={getQrData(currency, this.state)}
+                    value={this.state.depositAddress}
                     readOnly={true}
                   />
                 </Col>
-                <Col span={2} style={{paddingLeft: '15px'}}>
+                <Col span={2} style={{ paddingLeft: "15px" }}>
                   <Tooltip
-                    tooltipContent={this.state.clipboardTooltipExtraData}
-                    // onVisibleChange={this.onCopyTooltipVisibleChange}
+                    tooltipContent={this.state.clipboardTooltip}
+                    onVisibleChange={this.onCopyTooltipVisibleChange}
                   >
                     <CopyToClipboard
-                      text={getQrData(currency, this.state)}
+                      text={this.state.depositAddress}
                       onCopy={() =>
                         this.setState({
-                          clipboardTooltipExtraData: 'Copied'
+                          copied: true,
+                          clipboardTooltip: "Copied",
                         })
                       }
                     >
@@ -266,41 +240,104 @@ class BalancesDepositDialog extends React.PureComponent {
                     </CopyToClipboard>
                   </Tooltip>
                 </Col>
-                <Col span={2} style={{paddingLeft: '12px'}}>
-                  <Tooltip
-                    tooltipContent={getGenerateTootipExtraData(currency)}
+                {!hiddenGenerateAddress && (
+                  <Col
+                    span={2}
+                    style={{
+                      paddingLeft: hiddenGenerateAddress ? "15px" : "12px",
+                    }}
                   >
-                    <Touchable onClick={this.generateNewAddress}>
-                      <button
-                        className="setting-page__button clickable"
-                        // style={{ float: 'right' }}
+                    <Tooltip tooltipContent={"Generate new address"}>
+                      <Touchable onClick={this.generateNewAddress}>
+                        <button
+                          className="setting-page__button clickable"
+                          // style={{ float: 'right' }}
+                        >
+                          <i className="fa fa-refresh" aria-hidden="true"></i>
+                        </button>
+                      </Touchable>
+                    </Tooltip>
+                  </Col>
+                )}
+              </Row>
+              {hasExtraData(currency) && (
+                <React.Fragment>
+                  <Row style={{ marginBottom: 10, marginTop: 30 }}>
+                    {getExtraLabel(currency)}
+                  </Row>
+                  <Row className="display-flex">
+                    <Col span={20}>
+                      <Input
+                        className="default-size-input"
+                        size="default"
+                        value={getQrData(currency, this.state)}
+                        readOnly={true}
+                      />
+                    </Col>
+                    <Col span={2} style={{ paddingLeft: "15px" }}>
+                      <Tooltip
+                        tooltipContent={this.state.clipboardTooltipExtraData}
+                        // onVisibleChange={this.onCopyTooltipVisibleChange}
                       >
-                        <i className="fa fa-refresh" aria-hidden="true"></i>
-                      </button>
-                    </Touchable>
-                  </Tooltip>
-                </Col>
+                        <CopyToClipboard
+                          text={getQrData(currency, this.state)}
+                          onCopy={() =>
+                            this.setState({
+                              clipboardTooltipExtraData: "Copied",
+                            })
+                          }
+                        >
+                          <button
+                            className="setting-page__button clickable"
+                            margin="1"
+                            // style={{ float: 'right' }}
+                          >
+                            <i className="fa fa-copy" aria-hidden="true"></i>
+                          </button>
+                        </CopyToClipboard>
+                      </Tooltip>
+                    </Col>
+                    <Col span={2} style={{ paddingLeft: "12px" }}>
+                      <Tooltip
+                        tooltipContent={getGenerateTootipExtraData(currency)}
+                      >
+                        <Touchable onClick={this.generateNewAddress}>
+                          <button
+                            className="setting-page__button clickable"
+                            // style={{ float: 'right' }}
+                          >
+                            <i className="fa fa-refresh" aria-hidden="true"></i>
+                          </button>
+                        </Touchable>
+                      </Tooltip>
+                    </Col>
+                  </Row>
+                </React.Fragment>
+              )}
+              <Row style={{ margin: 20, textAlign: "center" }}>
+                {getQrData(currency, this.state) && (
+                  <QRCode
+                    value={getQrData(currency, this.state)}
+                    style={{ border: "10px solid white" }}
+                    size={256}
+                  />
+                )}
+              </Row>
+              <Row>
+                <Alert
+                  message="IMPORTANT NOTE"
+                  description={getDepositNoteContent(currency)}
+                  type="info"
+                  showIcon
+                />
               </Row>
             </React.Fragment>
-          )}
-          <Row style={{ margin: 20, textAlign: 'center' }}>
-            {getQrData(currency, this.state) && (
-              <QRCode
-                value={getQrData(currency, this.state)}
-                style={{ border: '10px solid white' }}
-                size={256}
-              />
-            )}
-          </Row>
-          <Row>
-            <Alert
-              message="IMPORTANT NOTE"
-              description={getDepositNoteContent(currency)}
-              type="info"
-              showIcon
+          ) : (
+            <BalancesExtraWarning
+              currency={currency}
+              confirmFn={this.understandWarningExtra}
             />
-          </Row>
-          </React.Fragment> : <BalancesExtraWarning currency={currency} confirmFn={this.understandWarningExtra} />}
+          )}
         </Card>
       </Modal>
     );
@@ -310,7 +347,7 @@ class BalancesDepositDialog extends React.PureComponent {
 BalancesDepositDialog.propTypes = {
   currency: PropTypes.string.isRequired,
   balances: PropTypes.object.isRequired,
-  wallet: PropTypes.string.isRequired
+  wallet: PropTypes.string.isRequired,
 };
 
 export default BalancesDepositDialog;

@@ -16,7 +16,9 @@
     cursor: pointer;
     display: inline-block;
     position: absolute;
-    &:focus { outline: none };
+    &:focus {
+      outline: none;
+    }
 
     .cpn-rangeslider__active {
       opacity: 1;

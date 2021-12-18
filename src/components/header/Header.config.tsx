@@ -1,15 +1,19 @@
-import { AppTradeType } from '@/constants/trade-type';
-import { getHeaderQuestions, getHeaderMarketDropdown, getHeaderMultilanguage, getHeaderSetting } from './Header.helpers';
+import { AppTradeType } from "@/constants/trade-type";
+import {
+  getHeaderQuestions,
+  getHeaderMarketDropdown,
+  getHeaderMultilanguage,
+  getHeaderSetting,
+} from "./Header.helpers";
 
 interface HeaderConfigData {
   marketLbl: string;
   tradeType?: AppTradeType;
-};
+}
 
 const CONTRACT_POSITION = 1;
 
 export const getHeaderConfig = (data?: HeaderConfigData) => {
-
   const configs = [getHeaderQuestions(), getHeaderSetting(data)];
 
   // if(data?.tradeType === AppTradeType.DERIVATIVE) {
@@ -17,4 +21,4 @@ export const getHeaderConfig = (data?: HeaderConfigData) => {
   // }
 
   return configs;
-}
+};

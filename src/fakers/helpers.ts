@@ -1,7 +1,7 @@
-import _uniqueId from 'lodash/uniqueId';
+import _uniqueId from "lodash/uniqueId";
 
 export function generateRandTokenId(): string {
-  return _uniqueId('token_')
+  return _uniqueId("token_");
 }
 
 export interface Response {
@@ -10,17 +10,21 @@ export interface Response {
   errorMessage?: string;
 }
 
-export function createFakeResponse(code: number, data: any, errorMessage?: string): Response {
+export function createFakeResponse(
+  code: number,
+  data: any,
+  errorMessage?: string
+): Response {
   const res = {
     code,
-    data
+    data,
   };
 
-  if(errorMessage) {
+  if (errorMessage) {
     return {
       ...res,
-      errorMessage
-    }
+      errorMessage,
+    };
   }
 
   return res;

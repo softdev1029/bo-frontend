@@ -43,21 +43,36 @@ import { commonOrderValidator } from "./OrderForm.helpers";
 //   }
 // ];
 
-export function spotOrderValidationFn({ 
-  tradeOptions, 
-  lowestSellPrice, 
-  highestBuyPrice, 
-  side, 
-  stopPrice, 
-  price, 
-  amount, 
-  type, 
-  onError,
-  executedLongCash,
-  executedLongPosition,
-  leverage 
-}, props) {
-  console.log('{lowestSellPrice, highestBuyPrice, side, stopPrice, price, amount, type, onError},', { lowestSellPrice, highestBuyPrice, side, stopPrice, price, amount, type, onError },);
+export function spotOrderValidationFn(
+  {
+    tradeOptions,
+    lowestSellPrice,
+    highestBuyPrice,
+    side,
+    stopPrice,
+    price,
+    amount,
+    type,
+    onError,
+    executedLongCash,
+    executedLongPosition,
+    leverage,
+  },
+  props
+) {
+  console.log(
+    "{lowestSellPrice, highestBuyPrice, side, stopPrice, price, amount, type, onError},",
+    {
+      lowestSellPrice,
+      highestBuyPrice,
+      side,
+      stopPrice,
+      price,
+      amount,
+      type,
+      onError,
+    }
+  );
 
   return commonOrderValidator({
     tradeOptions,
@@ -85,20 +100,35 @@ export function spotOrderValidationFn({
       //   trackSellOrder(pair);
       // }
     },
-  })
+  });
 }
 
-export function spotSubmitOrderFn({ tradeOptions, clientOrderId, tif, type, side, price, amount, stopPrice, dispatch }, props) {
-  // dispatch()
-  dispatch(submitNewOrder({
+export function spotSubmitOrderFn(
+  {
     tradeOptions,
     clientOrderId,
+    tif,
     type,
-    pair: props.pair,
     side,
     price,
     amount,
     stopPrice,
-    tif
-  }))
+    dispatch,
+  },
+  props
+) {
+  // dispatch()
+  dispatch(
+    submitNewOrder({
+      tradeOptions,
+      clientOrderId,
+      type,
+      pair: props.pair,
+      side,
+      price,
+      amount,
+      stopPrice,
+      tif,
+    })
+  );
 }

@@ -1,19 +1,22 @@
-import { LastTradePriceType } from '@/constants/order-enums';
-import { SelectDropdown } from '@/ui-components';
-import React from 'react';
+import { LastTradePriceType } from "@/constants/order-enums";
+import { SelectDropdown } from "@/ui-components";
+import React from "react";
 
 interface OrderFormTIFOptionsProps {
   onLastTradePriceTypeChange: (ltp: LastTradePriceType) => void;
-  selected: LastTradePriceType | null
+  selected: LastTradePriceType | null;
 }
 
-const defaultOptions = [{
-  label: 'Mark Price',
-  value: LastTradePriceType.MARK_PRICE,
-}, {
-  label: 'Last Price',
-  value: LastTradePriceType.LAST_PRICE
-}];
+const defaultOptions = [
+  {
+    label: "Mark Price",
+    value: LastTradePriceType.MARK_PRICE,
+  },
+  {
+    label: "Last Price",
+    value: LastTradePriceType.LAST_PRICE,
+  },
+];
 
 export class OrderFormLastTradePriceOptions extends React.PureComponent<OrderFormTIFOptionsProps> {
   constructor(props) {
@@ -31,7 +34,11 @@ export class OrderFormLastTradePriceOptions extends React.PureComponent<OrderFor
     const { selected } = this.props;
 
     return (
-      <SelectDropdown options={defaultOptions} value={selected} onChange={this.onOptionChange}/>
+      <SelectDropdown
+        options={defaultOptions}
+        value={selected}
+        onChange={this.onOptionChange}
+      />
     );
   }
 }

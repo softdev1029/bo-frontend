@@ -6,7 +6,11 @@ export function useRouteToTradeType() {
   const isExchange = !!useRouteMatch(getRouteMatchConfig(true));
   const isDerivative = !!useRouteMatch(getRouteMatchConfig(false));
 
-  return isExchange ? AppTradeType.SPOT : isDerivative ? AppTradeType.DERIVATIVE : undefined;
+  return isExchange
+    ? AppTradeType.SPOT
+    : isDerivative
+    ? AppTradeType.DERIVATIVE
+    : undefined;
 }
 
 export function useRouteSymbolParam() {
@@ -17,17 +21,17 @@ export function useRouteSymbolParam() {
     If it matches, it will return some object with parameters put into it
     nicely like `match.params`.
     */
-   let match = matchPath(window.location.search, '/:symbol');
-  console.log('math', match)
-  return 'XXX';
+  let match = matchPath(window.location.search, "/:symbol");
+  console.log("math", match);
+  return "XXX";
 }
 
 function getRouteMatchConfig(isExchange: boolean) {
   return {
     path: getTradingPathByParam(isExchange),
     strict: true,
-    sensitive: true
-  }
+    sensitive: true,
+  };
 }
 
 function getTradingPathByParam(isExchange: boolean): string {

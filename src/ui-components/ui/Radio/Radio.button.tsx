@@ -1,17 +1,19 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from "react";
+import classNames from "classnames";
 
 interface RadioButtonProps {
-  value: string | number,
-  selectedValue: string | number | boolean,
-  name: string,
+  value: string | number;
+  selectedValue: string | number | boolean;
+  name: string;
   onChange: (value: string | number | boolean) => void;
   className?: string;
   label?: string;
-  type: 'checkbox' | 'radio'
+  type: "checkbox" | "radio";
 }
 
-export class RadioButton extends React.PureComponent<Partial<RadioButtonProps>> {
+export class RadioButton extends React.PureComponent<
+  Partial<RadioButtonProps>
+> {
   constructor(props) {
     super(props);
 
@@ -26,11 +28,11 @@ export class RadioButton extends React.PureComponent<Partial<RadioButtonProps>> 
 
   render() {
     const { type, value, name, selectedValue, className, label } = this.props;
-    const checked = (this.props.value === selectedValue);
+    const checked = this.props.value === selectedValue;
 
     const radioCls = classNames(`${type}-input`, className);
     const markCls = classNames(`${type}-checkmark`, className, {
-      checked
+      checked,
     });
 
     return (
@@ -49,4 +51,4 @@ export class RadioButton extends React.PureComponent<Partial<RadioButtonProps>> 
       </label>
     );
   }
-};
+}

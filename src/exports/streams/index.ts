@@ -1,1 +1,1 @@
-export { registerBrowserState, AppBrowserState } from './browser-states';
+export { registerBrowserState, AppBrowserState } from "./browser-states";

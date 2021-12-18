@@ -1,36 +1,46 @@
-import { TICKER_FUTURE_UPDATE, TICKER_INITIALIZED, INSTRUMENT_RECEIVED_UPDATE, TICKER_RECEIVED_UPDATE, INSTRUMENT_REQUEST } from "@/actions/ticker.actions"
+import {
+  TICKER_FUTURE_UPDATE,
+  TICKER_INITIALIZED,
+  INSTRUMENT_RECEIVED_UPDATE,
+  TICKER_RECEIVED_UPDATE,
+  INSTRUMENT_REQUEST,
+} from "@/actions/ticker.actions";
 import { EMPTY_ARRAY, EMPTY_OBJ } from "@/exports";
 import { Instrument } from "@/models/instrument.model";
 import { TickerState } from "@/models/ticker-state.model";
 import { TickerMarkPriceModel, TickerModel } from "@/models/ticker.model";
-import _isArray from 'lodash/isArray';
-import _set from 'lodash/set';
+import _isArray from "lodash/isArray";
+import _set from "lodash/set";
 
 const initialState: TickerState = {
   items: EMPTY_ARRAY,
   instruments: EMPTY_OBJ,
-  instrumentLoaded: false
-}
+  instrumentLoaded: false,
+};
 
 export function tickerReducer(state: TickerState = initialState, action) {
   switch (action.type) {
     case INSTRUMENT_REQUEST: {
       return {
         ...state,
-        instrumentLoaded: false
-      }
+        instrumentLoaded: false,
+      };
     }
     case INSTRUMENT_RECEIVED_UPDATE: {
       const instrument = action.payload.instrument as Instrument;
       const instrumentLoaded = action.payload.finished;
 
-      const instruments = _set({ ...state.instruments }, [instrument.symbolEnum], instrument);
+      const instruments = _set(
+        { ...state.instruments },
+        [instrument.symbolEnum],
+        instrument
+      );
 
       return {
         ...state,
         instruments,
-        instrumentLoaded: instrumentLoaded
-      }
+        instrumentLoaded: instrumentLoaded,
+      };
     }
     case TICKER_RECEIVED_UPDATE: {
       const payload = action.payload;
@@ -42,8 +52,8 @@ export function tickerReducer(state: TickerState = initialState, action) {
         if (payload[item.ccy]) {
           return {
             ...item,
-            ...payload[item.ccy]
-          }
+            ...payload[item.ccy],
+          };
         }
 
         return item;
@@ -51,8 +61,8 @@ export function tickerReducer(state: TickerState = initialState, action) {
 
       return {
         ...state,
-        items
-      }
+        items,
+      };
     }
     case TICKER_FUTURE_UPDATE: {
       const markTicker = action.payload as TickerMarkPriceModel;
@@ -65,8 +75,8 @@ export function tickerReducer(state: TickerState = initialState, action) {
             indexPrice: +markTicker.indexPrice,
             lastFundingRate: +markTicker.lastFundingRate,
             nextFundingRate: +markTicker.nextFundingRate,
-            interestRate: +markTicker.interestRate
-          }
+            interestRate: +markTicker.interestRate,
+          };
         }
 
         return item;
@@ -74,8 +84,8 @@ export function tickerReducer(state: TickerState = initialState, action) {
 
       return {
         ...state,
-        items
-      }
+        items,
+      };
     }
     case TICKER_INITIALIZED: {
       const items = action.payload;
@@ -83,11 +93,11 @@ export function tickerReducer(state: TickerState = initialState, action) {
       return {
         ...state,
         initialized: true,
-        items
-      }
+        items,
+      };
     }
     // TICKER_UPDATE
     default:
-      return state
+      return state;
   }
 }

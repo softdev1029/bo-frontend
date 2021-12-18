@@ -1,30 +1,37 @@
-import React from 'react';
-import _now from 'lodash/now';
-import classNames from 'classnames';
+import React from "react";
+import _now from "lodash/now";
+import classNames from "classnames";
 
-import { OrderSide } from '@/constants/order-enums';
-import { Button } from '@/ui-components';
+import { OrderSide } from "@/constants/order-enums";
+import { Button } from "@/ui-components";
 
 const BTN_TIMEOUT_IN_MS = 30 * 1000;
 
 interface OrderSubmitButtonProps {
-  className: string,
-  disabled: boolean,
-  side: OrderSide,
-  disableLoading: boolean,
-  onBtnClickFallback: (clientOrderId: number, side: OrderSide, onFallback: () => void) => void,
-  label: string
-};
-
-interface OrderSubmitButtonState {
-  btnLoading: boolean
+  className: string;
+  disabled: boolean;
+  side: OrderSide;
+  disableLoading: boolean;
+  onBtnClickFallback: (
+    clientOrderId: number,
+    side: OrderSide,
+    onFallback: () => void
+  ) => void;
+  label: string;
 }
 
-class OrderSubmitButton extends React.PureComponent<Partial<OrderSubmitButtonProps>, OrderSubmitButtonState>{
+interface OrderSubmitButtonState {
+  btnLoading: boolean;
+}
+
+class OrderSubmitButton extends React.PureComponent<
+  Partial<OrderSubmitButtonProps>,
+  OrderSubmitButtonState
+> {
   static defaultProps = {
-    onBtnClickFallback: function (clientId, side, cb) { },
-    disableLoading: true
-  }
+    onBtnClickFallback: function (clientId, side, cb) {},
+    disableLoading: true,
+  };
 
   _btnLoadingTimeoutId = null;
   _clientOrderId = null;
@@ -44,12 +51,12 @@ class OrderSubmitButton extends React.PureComponent<Partial<OrderSubmitButtonPro
 
     const { disableLoading, side, onBtnClickFallback } = this.props;
     if (disableLoading) {
-      onBtnClickFallback(this._clientOrderId, side, () => { })
+      onBtnClickFallback(this._clientOrderId, side, () => {});
     } else {
       this._setLoadingBtn(() => {
         onBtnClickFallback(this._clientOrderId, side, () => {
           this.setState({
-            btnLoading: false
+            btnLoading: false,
           });
 
           this._clearBtnTimeout();
@@ -80,8 +87,7 @@ class OrderSubmitButton extends React.PureComponent<Partial<OrderSubmitButtonPro
     }
     const { side } = this.props;
 
-    if (side !== orderSide || clientOrderId !== this._clientOrderId)
-      return;
+    if (side !== orderSide || clientOrderId !== this._clientOrderId) return;
 
     this._clearState();
   }
@@ -97,7 +103,7 @@ class OrderSubmitButton extends React.PureComponent<Partial<OrderSubmitButtonPro
 
   _clearState() {
     this.setState({
-      btnLoading: false
+      btnLoading: false,
     });
 
     this._clearBtnTimeout();
@@ -112,38 +118,52 @@ class OrderSubmitButton extends React.PureComponent<Partial<OrderSubmitButtonPro
   }
 
   _setLoadingBtn(cb) {
-    this.setState({
-      btnLoading: true
-    }, () => {
-      // init timer
-      console.log('init timer')
-      this._btnLoadingTimeoutId = setTimeout(() => {
-        this.setState({
-          btnLoading: false
-        });
-        this._clientOrderId = null;
+    this.setState(
+      {
+        btnLoading: true,
+      },
+      () => {
+        // init timer
+        console.log("init timer");
+        this._btnLoadingTimeoutId = setTimeout(() => {
+          this.setState({
+            btnLoading: false,
+          });
+          this._clientOrderId = null;
 
-        // toast.error('Request timed out!');
-      }, BTN_TIMEOUT_IN_MS);
+          // toast.error('Request timed out!');
+        }, BTN_TIMEOUT_IN_MS);
 
-      cb();
-    })
+        cb();
+      }
+    );
   }
 
   render() {
     const { btnLoading } = this.state;
     const { disabled, label, className } = this.props;
 
+    const btnClasses = classNames(
+      "order-form__button-container-btn",
+      className,
+      {
+        "order-form__button-container-btn--disabled": disabled,
+      }
+    );
 
-    const btnClasses = classNames('order-form__button-container-btn', className, {
-      'order-form__button-container-btn--disabled': disabled,
-    });
-
-    return <div className="order-form__button-container">
-      <Button loading={btnLoading} classes={btnClasses} disabled={disabled} onClick={this.onBtnClick}>{label}</Button>
-    </div>
+    return (
+      <div className="order-form__button-container">
+        <Button
+          loading={btnLoading}
+          classes={btnClasses}
+          disabled={disabled}
+          onClick={this.onBtnClick}
+        >
+          {label}
+        </Button>
+      </div>
+    );
   }
-
 }
 
 export default OrderSubmitButton;

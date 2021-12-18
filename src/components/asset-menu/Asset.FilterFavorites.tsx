@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { IconButton } from '@/ui-components';
+import React from "react";
+import PropTypes from "prop-types";
+import { IconButton } from "@/ui-components";
 
 class TickerListFavoriteFilter extends React.PureComponent {
   static defaultProps = {
     showOnlyFavorites: false,
-    toggleShowFavoritesOnly: function toggleShowFavoritesOnly() { }
-  }
+    toggleShowFavoritesOnly: function toggleShowFavoritesOnly() {},
+  };
 
   render() {
     // const { showOnlyFavorites, toggleShowFavoritesOnly } = this.props;
@@ -16,7 +16,7 @@ class TickerListFavoriteFilter extends React.PureComponent {
         <IconButton
           tooltip="Only favorites"
           clear={true}
-          size='small'
+          size="small"
           delayed={true}
           // dim={!showOnlyFavorites}
           // active={showOnlyFavorites}

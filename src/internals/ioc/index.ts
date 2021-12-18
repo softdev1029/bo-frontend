@@ -88,4 +88,4 @@
 
     console.log(b.a); // classA{}
  */
-export {default as Ioc} from './Ioc.Container'
+export { default as Ioc } from "./Ioc.Container";

@@ -1,4 +1,4 @@
 export enum AppTradeType {
-  SPOT = 'spot',
-  DERIVATIVE = 'derivative',
-};
+  SPOT = "spot",
+  DERIVATIVE = "derivative",
+}

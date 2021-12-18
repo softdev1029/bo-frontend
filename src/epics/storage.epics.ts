@@ -9,21 +9,23 @@ import Storage from "@/internals/Storage";
 import { ofType } from "redux-observable";
 import { ignoreElements, tap } from "rxjs/operators";
 
-export const storageSaveEpic = (action$) => action$.pipe(
-  ofType(SAVE_DATA_STORAGE),
-  tap((action: any) => {
-    const {key, data} = action.payload;
-    Storage.save(key, data);
-  }),
-  ignoreElements()
-);
+export const storageSaveEpic = (action$) =>
+  action$.pipe(
+    ofType(SAVE_DATA_STORAGE),
+    tap((action: any) => {
+      const { key, data } = action.payload;
+      Storage.save(key, data);
+    }),
+    ignoreElements()
+  );
 
-export const storageDeleteEpic = (action$) => action$.pipe(
-  ofType(DELETE_DATA_STORAGE),
-  tap((action: any) => {
-    const {key} = action.payload;
-    console.warn('kekekek', key);
-    Storage.delete(key);
-  }),
-  ignoreElements()
-);
+export const storageDeleteEpic = (action$) =>
+  action$.pipe(
+    ofType(DELETE_DATA_STORAGE),
+    tap((action: any) => {
+      const { key } = action.payload;
+      console.warn("kekekek", key);
+      Storage.delete(key);
+    }),
+    ignoreElements()
+  );

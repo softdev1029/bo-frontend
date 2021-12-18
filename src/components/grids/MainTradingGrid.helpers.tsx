@@ -1,12 +1,15 @@
-import React, { ReactNode } from 'react';
-import _omit from 'lodash/omit';
-import { WorkspaceSetting, WorkspaceSettingEnum } from '@/models/workspace-setting';
-import Chart from '../chart';
-import { MarketHistory } from '../market-history';
-import { BookSettingDropdown, OrderBook } from '../order-book';
-import { Trade } from '../trade';
-import { capitalize } from '@/exports';
-import { AppTradeType } from '@/constants/trade-type';
+import React, { ReactNode } from "react";
+import _omit from "lodash/omit";
+import {
+  WorkspaceSetting,
+  WorkspaceSettingEnum,
+} from "@/models/workspace-setting";
+import Chart from "../chart";
+import { MarketHistory } from "../market-history";
+import { BookSettingDropdown, OrderBook } from "../order-book";
+import { Trade } from "../trade";
+import { capitalize } from "@/exports";
+import { AppTradeType } from "@/constants/trade-type";
 
 export function getCardContentPaddingByKey(key: WorkspaceSettingEnum): boolean {
   switch (key) {
@@ -15,7 +18,7 @@ export function getCardContentPaddingByKey(key: WorkspaceSettingEnum): boolean {
       return false;
     }
     default: {
-      return undefined
+      return undefined;
     }
   }
 }
@@ -23,13 +26,13 @@ export function getCardContentPaddingByKey(key: WorkspaceSettingEnum): boolean {
 export function getCardNameByKey(key: WorkspaceSettingEnum): string {
   switch (key) {
     case WorkspaceSettingEnum.TRADE: {
-      return 'Recent Trades';
+      return "Recent Trades";
     }
     case WorkspaceSettingEnum.ORDERBOOK: {
-      return 'Order Book';
+      return "Order Book";
     }
     case WorkspaceSettingEnum.MARKET_HISTORY: {
-      return 'Market History';
+      return "Market History";
     }
     default: {
       return capitalize(WorkspaceSettingEnum[key.toUpperCase()]);
@@ -37,32 +40,48 @@ export function getCardNameByKey(key: WorkspaceSettingEnum): string {
   }
 }
 
-export function getCardInnerByKey(key: WorkspaceSettingEnum, symbol: string, tradeType: AppTradeType, enableWindowPopup?: boolean): ReactNode {
+export function getCardInnerByKey(
+  key: WorkspaceSettingEnum,
+  symbol: string,
+  tradeType: AppTradeType,
+  enableWindowPopup?: boolean
+): ReactNode {
   switch (key) {
     case WorkspaceSettingEnum.TRADE: {
       return <Trade symbol={symbol} />;
     }
     case WorkspaceSettingEnum.ORDERBOOK: {
-      return <OrderBook symbol={symbol} windowOpen={enableWindowPopup} tradeType={tradeType}/>;
+      return (
+        <OrderBook
+          symbol={symbol}
+          windowOpen={enableWindowPopup}
+          tradeType={tradeType}
+        />
+      );
     }
     case WorkspaceSettingEnum.MARKET_HISTORY: {
       return <MarketHistory symbol={symbol} tradeType={tradeType} />;
     }
     case WorkspaceSettingEnum.CHART: {
-      return <Chart pair={symbol} tradingType={tradeType} />
+      return <Chart pair={symbol} tradingType={tradeType} />;
     }
   }
 }
 
-export function getCardToolByKey(key: WorkspaceSettingEnum, openChildPopup?: () => void): ReactNode {
+export function getCardToolByKey(
+  key: WorkspaceSettingEnum,
+  openChildPopup?: () => void
+): ReactNode {
   // const icon = <IconButton tooltip="Popup" onClick={openChildPopup} id="window-restore" />;
 
   switch (key) {
     case WorkspaceSettingEnum.ORDERBOOK: {
-      return <>
-        <BookSettingDropdown />
-        {/* {icon} */}
-      </>;
+      return (
+        <>
+          <BookSettingDropdown />
+          {/* {icon} */}
+        </>
+      );
     }
     case WorkspaceSettingEnum.CHART:
     case WorkspaceSettingEnum.MARKET_HISTORY: {
@@ -80,9 +99,9 @@ export function omitWorkspace(workpsaces: WorkspaceSetting): WorkspaceSetting {
     WorkspaceSettingEnum.BALANCE,
     WorkspaceSettingEnum.MARKET,
     WorkspaceSettingEnum.WATCHLIST,
-  ])
+  ]);
 }
 
 export function omitGridProps(props) {
-  return _omit(props, ['enabledWorkspaces']);
+  return _omit(props, ["enabledWorkspaces"]);
 }

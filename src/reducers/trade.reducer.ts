@@ -1,6 +1,10 @@
 import { TradeItemModel } from "@/models/trade.model";
-import _isArray from 'lodash/isArray';
-import { TRADE_INIT, TRADE_INITIALIZED, TRADE_RECEIVED_UPDATE } from "@/actions/trade.actions";
+import _isArray from "lodash/isArray";
+import {
+  TRADE_INIT,
+  TRADE_INITIALIZED,
+  TRADE_RECEIVED_UPDATE,
+} from "@/actions/trade.actions";
 import { EMPTY_ARRAY } from "@/exports";
 import { WS_REQUEST_UNSUBSCRIBE } from "@/actions/ws.actions";
 
@@ -13,8 +17,8 @@ interface TradeState {
 
 const initialState: TradeState = {
   initialized: false,
-  items: EMPTY_ARRAY
-}
+  items: EMPTY_ARRAY,
+};
 
 export function tradeReducer(state: TradeState = initialState, action) {
   switch (action.type) {
@@ -22,8 +26,8 @@ export function tradeReducer(state: TradeState = initialState, action) {
       return {
         ...state,
         items: EMPTY_ARRAY,
-        initialized: false
-      }
+        initialized: false,
+      };
     }
     case TRADE_INITIALIZED: {
       const data = action.payload;
@@ -31,8 +35,8 @@ export function tradeReducer(state: TradeState = initialState, action) {
       return {
         ...state,
         initialized: true,
-        items: data
-      }
+        items: data,
+      };
     }
     case TRADE_RECEIVED_UPDATE: {
       const payload = action.payload;
@@ -46,11 +50,11 @@ export function tradeReducer(state: TradeState = initialState, action) {
 
       return {
         ...state,
-        items
-      }
+        items,
+      };
     }
     // TICKER_UPDATE
     default:
-      return state
+      return state;
   }
 }

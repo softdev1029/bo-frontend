@@ -1,7 +1,7 @@
-import { OrderSide } from '@/constants/order-enums';
-import { ConfirmModal } from '@/ui-components';
-import React from 'react';
-import OrderFormConfirmOverlay from './OrderForm.confirm-overlay';
+import { OrderSide } from "@/constants/order-enums";
+import { ConfirmModal } from "@/ui-components";
+import React from "react";
+import OrderFormConfirmOverlay from "./OrderForm.confirm-overlay";
 
 const OrderMarginConfirmationPopup = ({
   submit,
@@ -18,7 +18,7 @@ const OrderMarginConfirmationPopup = ({
   tif,
   side,
   mId,
-  closePopup
+  closePopup,
 }) => {
   const overlayProps = {
     side,
@@ -33,8 +33,8 @@ const OrderMarginConfirmationPopup = ({
     symbol,
     closeOverlay: closePopup,
     sendOrder: submit,
-    label: side === OrderSide.BUY ? 'BUY / LONG' : 'SELL / SHORT',
-    orderType
+    label: side === OrderSide.BUY ? "BUY / LONG" : "SELL / SHORT",
+    orderType,
   };
 
   return (

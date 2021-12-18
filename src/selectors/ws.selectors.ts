@@ -4,5 +4,5 @@ const getWsReducer = (state) => state.ws;
 
 export const wsCollectionSelector = createSelector(
   getWsReducer,
-  ws => ws.wsCollection
-)
+  (ws) => ws.wsCollection
+);

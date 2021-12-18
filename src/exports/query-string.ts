@@ -1,27 +1,31 @@
-const EMPTY_ARRAY_STRING = '[\u00A0]';
+const EMPTY_ARRAY_STRING = "[\u00A0]";
 
 /**
  * @example
  * "?param=1&param=2" |> stripQuestionMark // should returns "param=1&param=2"
-*/
-export function stripLeadingHashOrQuestionMark(s: string = ''): string {
-  if (s && (s.indexOf('?') === 0 || s.indexOf('#') === 0)) {
+ */
+export function stripLeadingHashOrQuestionMark(s: string = ""): string {
+  if (s && (s.indexOf("?") === 0 || s.indexOf("#") === 0)) {
     return s.slice(1);
   }
   return s;
 }
 
 /**
- * 
+ *
  * @param {string} queryString initial query string (for example ?param=1&param=2)
  */
 export function parseQueryState(queryString: string): Object | null {
   const queryState = {};
-  const params = new URLSearchParams(stripLeadingHashOrQuestionMark(queryString));
+  const params = new URLSearchParams(
+    stripLeadingHashOrQuestionMark(queryString)
+  );
 
   params.forEach((value, key) => {
     if (key in queryState.constructor.prototype) {
-      return console.warn(`parseQueryState | invalid key "${key}" will be ignored`);
+      return console.warn(
+        `parseQueryState | invalid key "${key}" will be ignored`
+      );
     }
 
     if (key in queryState) {
@@ -35,13 +39,13 @@ export function parseQueryState(queryString: string): Object | null {
     } else {
       queryState[key] = value;
     }
-  })
+  });
 
   return Object.keys(queryState).length ? queryState : null;
 }
 
 export function createMergedQuery(...queryStates): string {
-  const mergedQueryStates = Object.assign({}, ...queryStates)
+  const mergedQueryStates = Object.assign({}, ...queryStates);
   const params = new URLSearchParams();
 
   Object.entries(mergedQueryStates).forEach(([key, value]) => {
@@ -52,9 +56,9 @@ export function createMergedQuery(...queryStates): string {
 
     if (Array.isArray(value)) {
       if (value.length) {
-        value.forEach(v => {
-          params.append(key, v || '');
-        })
+        value.forEach((v) => {
+          params.append(key, v || "");
+        });
       } else {
         params.append(key, EMPTY_ARRAY_STRING);
       }
@@ -67,28 +71,33 @@ export function createMergedQuery(...queryStates): string {
   return params.toString();
 }
 
-export function toQueryStateValue(value: string | string[] | number | boolean | Date): string | string[] | null {
+export function toQueryStateValue(
+  value: string | string[] | number | boolean | Date
+): string | string[] | null {
   if (Array.isArray(value)) {
-    return value.map(v => v.toString());
-  } else if (value || value === '' || value === false || value === 0) {
+    return value.map((v) => v.toString());
+  } else if (value || value === "" || value === false || value === 0) {
     if (value instanceof Date) {
       return value.toJSON();
     }
 
     switch (typeof value) {
-      case 'string':
-      case 'number':
-      case 'boolean':
+      case "string":
+      case "number":
+      case "boolean":
         return value.toString();
       default:
-        break
+        break;
     }
   }
   return null;
 }
 
-export function parseQueryStateValue(value: string | string[], defaultValue: string | string[] | number | boolean | Date): string | string[] | number | boolean | Date | null {
-  const defaultValueType = typeof defaultValue
+export function parseQueryStateValue(
+  value: string | string[],
+  defaultValue: string | string[] | number | boolean | Date
+): string | string[] | number | boolean | Date | null {
+  const defaultValueType = typeof defaultValue;
 
   if (Array.isArray(defaultValue)) {
     // special case of empty array saved in query string to keep it distinguishable from ['']
@@ -98,7 +107,7 @@ export function parseQueryStateValue(value: string | string[], defaultValue: str
     return [...value];
   }
 
-  if (typeof value !== 'string' && !Array.isArray(value)) {
+  if (typeof value !== "string" && !Array.isArray(value)) {
     return null;
   }
 
@@ -111,15 +120,15 @@ export function parseQueryStateValue(value: string | string[], defaultValue: str
   }
 
   switch (defaultValueType) {
-    case 'string':
-      return value.toString()
-    case 'number':
+    case "string":
+      return value.toString();
+    case "number":
       const num = Number(value);
       return num || num === 0 ? num : null;
-    case 'boolean':
-      if (value === 'true') {
+    case "boolean":
+      if (value === "true") {
         return true;
-      } else if (value === 'false') {
+      } else if (value === "false") {
         return false;
       }
       break;

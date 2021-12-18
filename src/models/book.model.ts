@@ -20,6 +20,6 @@ export interface OrderBookModel extends OrderBookRaw {
  */
 export type BookItem = {
   [price: number]: number; // pirce:quantity
-}
+};
 
 export type BookData = Partial<BookItem>;

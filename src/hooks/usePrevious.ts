@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 /**
  * @usage
- * 
+ *
  * const [count, setCount] = useState(initValue)
  * const previous = usePrevious(count);
  */

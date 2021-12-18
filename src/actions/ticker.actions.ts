@@ -2,24 +2,24 @@ import { WalletType } from "@/constants/balance-enums";
 import { TickerMarkPriceModel } from "@/models/ticker.model";
 import { TOGGLE_FAVOR_SYMBOL } from "./ui-setting.actions";
 
-export const TICKER_INIT = '@ticker/INIT';
-export const TICKER_INITIALIZED = '@ticker/INITIALIZED';
-export const TICKER_RECEIVED_UPDATE = '@ticker/RECEIVED_UPDATE';
+export const TICKER_INIT = "@ticker/INIT";
+export const TICKER_INITIALIZED = "@ticker/INITIALIZED";
+export const TICKER_RECEIVED_UPDATE = "@ticker/RECEIVED_UPDATE";
 
 // future
-export const GET_TICKER_FUTURE = '@ticker/GET_TICKER_FUTURE';
-export const TICKER_FUTURE_UPDATE = '@ticker/TICKER_FUTURE_UPDATE';
+export const GET_TICKER_FUTURE = "@ticker/GET_TICKER_FUTURE";
+export const TICKER_FUTURE_UPDATE = "@ticker/TICKER_FUTURE_UPDATE";
 
 // instrument
-export const INSTRUMENT_REQUEST = '@ticker/INSTRUMENT_REQUEST';
-export const INSTRUMENT_RECEIVED_UPDATE = '@ticker/INSTRUMENT_RECEIVED_UPDATE';
+export const INSTRUMENT_REQUEST = "@ticker/INSTRUMENT_REQUEST";
+export const INSTRUMENT_RECEIVED_UPDATE = "@ticker/INSTRUMENT_RECEIVED_UPDATE";
 
 export function requestInstrument(walletType: WalletType) {
-  console.log('instrument', walletType)
+  console.log("instrument", walletType);
   return {
     type: INSTRUMENT_REQUEST,
-    payload: walletType
-  }
+    payload: walletType,
+  };
 }
 
 export function updateInstrument(data, isLoaded) {
@@ -27,35 +27,35 @@ export function updateInstrument(data, isLoaded) {
     type: INSTRUMENT_RECEIVED_UPDATE,
     payload: {
       instrument: data,
-      finished: isLoaded
-    }
-  }
+      finished: isLoaded,
+    },
+  };
 }
 
 export function initTickers() {
   return {
-    type: TICKER_INIT
-  }
+    type: TICKER_INIT,
+  };
 }
 
 export function getFutureTicker(symbol: string) {
   return {
     type: GET_TICKER_FUTURE,
-    payload: symbol
-  }
+    payload: symbol,
+  };
 }
 
 export function updateFutureTicker(ticker: TickerMarkPriceModel) {
   return {
     type: TICKER_FUTURE_UPDATE,
-    payload: ticker
-  }
+    payload: ticker,
+  };
 }
 
 export function toggleFavoriteSymbol(ccy: string, persist?) {
   return {
     type: TOGGLE_FAVOR_SYMBOL,
-    payload: { symbol: ccy, persist }
+    payload: { symbol: ccy, persist },
   };
 }
 
@@ -86,7 +86,15 @@ export function toggleFavoriteSymbol(ccy: string, persist?) {
 */
 export function tickerUpdate(batchTickers = []) {
   const data = batchTickers.reduce((ticker, rawData) => {
-    const {s: symbol, h, l, c: lastPrice, p: priceChange, P: dailyChangePerc, v: volume} = rawData;
+    const {
+      s: symbol,
+      h,
+      l,
+      c: lastPrice,
+      p: priceChange,
+      P: dailyChangePerc,
+      v: volume,
+    } = rawData;
     ticker[symbol] = {
       symbol,
       high: h,
@@ -94,7 +102,7 @@ export function tickerUpdate(batchTickers = []) {
       lastPrice,
       volume,
       dailyChangePerc,
-      priceChange
+      priceChange,
     };
 
     return ticker;
@@ -102,14 +110,13 @@ export function tickerUpdate(batchTickers = []) {
 
   return {
     type: TICKER_RECEIVED_UPDATE,
-    payload: data
-  }
+    payload: data,
+  };
 }
 
 export function tickerUpdate2(ticker) {
- 
   return {
     type: TICKER_RECEIVED_UPDATE,
-    payload: ticker
-  }
+    payload: ticker,
+  };
 }

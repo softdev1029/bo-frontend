@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { AutoSizer, Column, InfiniteLoader } from 'react-virtualized';
-import { Table } from './Table.virtualized';
+import React, { useEffect, useState } from "react";
+import { AutoSizer, Column, InfiniteLoader } from "react-virtualized";
+import { Table } from "./Table.virtualized";
 
 // type TableInfiniteProps = {} & VirtualizedTableProps;
 
@@ -9,7 +9,7 @@ import { Table } from './Table.virtualized';
 //   let promiseResolve;
 //   function loadMore({startIndex, stopIndex}) {
 //     console.log('startIndex, stopIndex', startIndex, stopIndex);
-//     setTimeout(() => { 
+//     setTimeout(() => {
 //       saveItems([items, ...items]);
 //       promiseResolve()
 //      }, 1500)
@@ -29,7 +29,7 @@ import { Table } from './Table.virtualized';
 //       rowCount={1000}
 //     >
 //       {({ onRowsRendered, registerChild }) => (
-//         <Table 
+//         <Table
 //           ref={registerChild}
 //           data={items}
 //           onRowsRendered={onRowsRendered}
@@ -40,34 +40,35 @@ import { Table } from './Table.virtualized';
 //   );
 // }
 
-
 export class TableInfiniteLoader extends React.Component<any, any> {
   promiseResolve;
 
   constructor(props) {
     super(props);
-    this.loadMore = this.loadMore.bind(this)
+    this.loadMore = this.loadMore.bind(this);
     this.state = {
-      items: props.data
-    }
+      items: props.data,
+    };
   }
 
   loadMore({ startIndex, stopIndex }) {
-    console.log('startIndex, stopIndex', startIndex, stopIndex);
+    console.log("startIndex, stopIndex", startIndex, stopIndex);
     // simulate a request
-    setTimeout(() => { this.actuallyLoadMore() }, 500)
+    setTimeout(() => {
+      this.actuallyLoadMore();
+    }, 500);
     // we need to return a promise
     return new Promise((resolve, reject) => {
       this.promiseResolve = resolve;
-    })
+    });
   }
 
   actuallyLoadMore() {
     // fake new data
     //@ts-ignore
     this.setState({ items: this.state.items.concat(this.state.items) }, () => {
-      console.log('length', this.state.items.length)
-    })
+      console.log("length", this.state.items.length);
+    });
     // resolve the promise after data where fetched
     this.promiseResolve();
   }
@@ -124,6 +125,6 @@ export class TableInfiniteLoader extends React.Component<any, any> {
           )}
         </InfiniteLoader>
       </div>
-    )
+    );
   }
 }

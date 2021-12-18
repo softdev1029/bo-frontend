@@ -1,31 +1,31 @@
-import { useQMQueryString } from '@/hooks/useQueryString';
-import { Table } from '@/ui-components';
-import { TableInfiniteLoader } from '@/ui-components/ui/Table.Infinite';
-import React, { useEffect, useMemo } from 'react';
-import MarketHistoryEmptyMessage from '../market-history/MarketHistory.emptyMessage';
-import getOrderHistoryColumns from './OrderHistory.columns';
+import { useQMQueryString } from "@/hooks/useQueryString";
+import { Table } from "@/ui-components";
+import { TableInfiniteLoader } from "@/ui-components/ui/Table.Infinite";
+import React, { useEffect, useMemo } from "react";
+import MarketHistoryEmptyMessage from "../market-history/MarketHistory.emptyMessage";
+import getOrderHistoryColumns from "./OrderHistory.columns";
 
 interface OrdersProps {
   orders?: any[];
   loading?: boolean;
-};
+}
 
 const a = (amount?: number) => ({
   id: 1,
   uuid: 1,
-  symbol: 'BTCUSDT',
-  pair: 'BTCUSDT',
+  symbol: "BTCUSDT",
+  pair: "BTCUSDT",
   tradeType: 1,
   totalFilled: 1,
   avgPrice: 2,
   stopPrice: 0,
-  ccy: 'BTC',
+  ccy: "BTC",
   type: 1,
   side: 1,
   amount: amount ? amount : 2,
   price: 2.01,
   status: 1,
-  createdAt: Date.now()
+  createdAt: Date.now(),
 });
 
 // function MyTestComponent() {
@@ -96,11 +96,8 @@ const o = [
   a(3),
 ];
 
-export const OrderHistory = ({
-  orders = o,
-  loading = false,
-}: OrdersProps) => {
-  const [page, setPage] = useQMQueryString('page', 1);
+export const OrderHistory = ({ orders = o, loading = false }: OrdersProps) => {
+  const [page, setPage] = useQMQueryString("page", 1);
 
   const columns = useMemo(() => getOrderHistoryColumns(), []);
 
@@ -118,7 +115,7 @@ export const OrderHistory = ({
         maxHeight={90}
         emptyListMessage={"There is no order history"}
       />
-      <MarketHistoryEmptyMessage/>
+      <MarketHistoryEmptyMessage />
     </>
   );
 };

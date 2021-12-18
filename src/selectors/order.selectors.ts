@@ -9,9 +9,10 @@ export const getOrdersObj = createSelector(
   (order) => order.orders
 );
 
-export const getOpenOrdersArray = createSelector(
-  getOrdersObj,
-  (orders) => (Object.values(orders) as OrderItem[]).filter((order: OrderItem) => !isStopOrder(order.orderType))
+export const getOpenOrdersArray = createSelector(getOrdersObj, (orders) =>
+  (Object.values(orders) as OrderItem[]).filter(
+    (order: OrderItem) => !isStopOrder(order.orderType)
+  )
 );
 
 const getUpdatedOrder = createSelector(
@@ -27,16 +28,17 @@ export const getUpdatedOrderId = createSelector(
 export const getUpdatedOrderMessage = createSelector(
   getUpdatedOrder,
   (updatedOrder) => updatedOrder.message
-)
+);
 
 export const getOpenOrdersCount = createSelector(
   getOpenOrdersArray,
   (orders) => orders.length
 );
 
-export const getStopOrdersArray = createSelector(
-  getOrdersObj,
-  (orders) => (Object.values(orders) as OrderItem[]).filter((order: OrderItem) => isStopOrder(order.orderType))
+export const getStopOrdersArray = createSelector(getOrdersObj, (orders) =>
+  (Object.values(orders) as OrderItem[]).filter((order: OrderItem) =>
+    isStopOrder(order.orderType)
+  )
 );
 
 export const getStopOrdersCount = createSelector(

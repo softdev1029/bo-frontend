@@ -1,41 +1,41 @@
-export { default as history } from './history';
-export { configureStore } from './configure-store';
+export { default as history } from "./history";
+export { configureStore } from "./configure-store";
 
-export {
-  registerBrowserState,
-  AppBrowserState
-} from './streams';
+export { registerBrowserState, AppBrowserState } from "./streams";
 
-export { invariant } from './invariant';
-export { sleep } from './sleep';
+export { invariant } from "./invariant";
+export { sleep } from "./sleep";
 export {
   stripLeadingHashOrQuestionMark,
   parseQueryState,
   createMergedQuery,
   toQueryStateValue,
   parseQueryStateValue,
-} from './query-string';
+} from "./query-string";
 
-export { DEFAULT_USER_SETTINGS_MAP, getDefaultUserSetting } from './defaultUISettings';
-export { formatNumber } from './format-number';
-export { getPosition } from './get-elm-position';
-export { makeRequest } from './make-request';
-export { strTemplate } from './string-template';
+export {
+  DEFAULT_USER_SETTINGS_MAP,
+  getDefaultUserSetting,
+} from "./defaultUISettings";
+export { formatNumber } from "./format-number";
+export { getPosition } from "./get-elm-position";
+export { makeRequest } from "./make-request";
+export { strTemplate } from "./string-template";
 
 export function greenText(): string {
-  return 'text--mountain-meadow'
-};
+  return "text--mountain-meadow";
+}
 
 export function redText(): string {
-  return 'text--burnt-sienna'
-};
+  return "text--burnt-sienna";
+}
 
 export function insertsAt(n: number, ins: any[], arr: any[]) {
-  return [...arr.slice(0, n), ...ins, ...arr.slice(n)]
+  return [...arr.slice(0, n), ...ins, ...arr.slice(n)];
 }
 
 export function insertAt(n: number, entry: any, arr: any[]) {
-  return [...arr.slice(0, n), entry, ...arr.slice(n)]
+  return [...arr.slice(0, n), entry, ...arr.slice(n)];
 }
 
 export const EMPTY_ARRAY = [];
@@ -90,47 +90,47 @@ export function shallowCompareObjects(obj1: Object, obj2: Object): boolean {
   return true;
 }
 
-const hasOwnProperty = Object.prototype.hasOwnProperty
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
-* inlined Object.is polyfill to avoid requiring consumers ship their own
-*/
+ * inlined Object.is polyfill to avoid requiring consumers ship their own
+ */
 function is(x, y) {
   // SameValue algorithm
   if (x === y) {
     // Steps 1-5, 7-10
     // Steps 6.b-6.e: +0 != -0
     // Added the nonzero y check to make Flow happy, but it is redundant
-    return x !== 0 || y !== 0 || 1 / x === 1 / y
+    return x !== 0 || y !== 0 || 1 / x === 1 / y;
   }
   // Step 6.a: NaN == NaN
-  return x !== x && y !== y
+  return x !== x && y !== y;
 }
 
 /**
-* Performs equality by iterating through keys on an object and returning false
-* when any key has values which are not strictly equal between the arguments.
-* Returns true when the values of all keys are strictly equal.
-*/
+ * Performs equality by iterating through keys on an object and returning false
+ * when any key has values which are not strictly equal between the arguments.
+ * Returns true when the values of all keys are strictly equal.
+ */
 export function shallowEqual(objA, objB) {
   if (is(objA, objB)) {
-    return true
+    return true;
   }
 
   if (
-    typeof objA !== 'object' ||
+    typeof objA !== "object" ||
     objA === null ||
-    typeof objB !== 'object' ||
+    typeof objB !== "object" ||
     objB === null
   ) {
-    return false
+    return false;
   }
 
-  const keysA = Object.keys(objA)
-  const keysB = Object.keys(objB)
+  const keysA = Object.keys(objA);
+  const keysB = Object.keys(objB);
 
   if (keysA.length !== keysB.length) {
-    return false
+    return false;
   }
 
   // Test for A's keys different from B.
@@ -139,11 +139,11 @@ export function shallowEqual(objA, objB) {
       !hasOwnProperty.call(objB, keysA[i]) ||
       !is(objA[keysA[i]], objB[keysA[i]])
     ) {
-      return false
+      return false;
     }
   }
 
-  return true
+  return true;
 }
 
 export function capitalize(string: string): string {
@@ -151,12 +151,16 @@ export function capitalize(string: string): string {
 }
 
 export function titleCase(string: string): string {
-  return string.toLowerCase().replace(/[-_]/g, ' ').replace(/./, (x) => x.toUpperCase()).replace(/[^']\b\w/g, (y) => y.toUpperCase())
+  return string
+    .toLowerCase()
+    .replace(/[-_]/g, " ")
+    .replace(/./, (x) => x.toUpperCase())
+    .replace(/[^']\b\w/g, (y) => y.toUpperCase());
 }
 
 export function getTheme() {
-  const elms = document.getElementsByTagName('body');
-  const body = (elms && elms.length) ? elms[0] : null;
+  const elms = document.getElementsByTagName("body");
+  const body = elms && elms.length ? elms[0] : null;
 
   return body ? body.className : "";
 }

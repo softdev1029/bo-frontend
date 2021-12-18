@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
 interface DimProps {
   amount?: number;
@@ -6,18 +6,24 @@ interface DimProps {
   block?: boolean;
   small?: boolean;
   children: ReactNode;
-};
+}
 
-export const Dim = React.memo(({ amount = 50, block, style, small, children }: DimProps) => {
-  var classes = `show${amount}`;
-  var Wrapper = !block ? 'span' : 'div';
+export const Dim = React.memo(
+  ({ amount = 50, block, style, small, children }: DimProps) => {
+    var classes = `show${amount}`;
+    var Wrapper = !block ? "span" : "div";
 
-  if (small) {
-    classes += ` font-size-90`;
+    if (small) {
+      classes += ` font-size-90`;
+    }
+
+    return React.createElement(
+      Wrapper,
+      {
+        className: classes,
+        style,
+      },
+      children
+    );
   }
-
-  return React.createElement(Wrapper, {
-    className: classes,
-    style
-  }, children)
-});
+);

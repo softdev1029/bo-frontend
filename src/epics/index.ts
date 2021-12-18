@@ -1,10 +1,27 @@
-import { dataFeed, adminRisk, wsOnAdminRiskMessageEpic, onWebWorkerEpic, wsOnMessageEpic, wsOnMarketMessageEpic } from './ws.epics';
-import { loginSuccessEpic, loginEpic, login2FAEpic, logoutEpic, logoutSuccessEpic} from './auth.epics';
-import { storageSaveEpic, storageDeleteEpic } from './storage.epics';
-import { uiSettingEpic } from './ui-setting.epics';
-import { initTickerEpic, getFutureTickerEpic, instrumentRequestEpic } from './ticker.epics';
-import { initBookEpic } from './book.epics';
-import { initTradeEpic } from './trade.epics';
+import {
+  dataFeed,
+  adminRisk,
+  wsOnAdminRiskMessageEpic,
+  onWebWorkerEpic,
+  wsOnMessageEpic,
+  wsOnMarketMessageEpic,
+} from "./ws.epics";
+import {
+  loginSuccessEpic,
+  loginEpic,
+  login2FAEpic,
+  logoutEpic,
+  logoutSuccessEpic,
+} from "./auth.epics";
+import { storageSaveEpic, storageDeleteEpic } from "./storage.epics";
+import { uiSettingEpic } from "./ui-setting.epics";
+import {
+  initTickerEpic,
+  getFutureTickerEpic,
+  instrumentRequestEpic,
+} from "./ticker.epics";
+import { initBookEpic } from "./book.epics";
+import { initTradeEpic } from "./trade.epics";
 
 export const rootEpic = {
   adminRisk,
@@ -18,7 +35,7 @@ export const rootEpic = {
   loginSuccessEpic,
   loginEpic,
   login2FAEpic,
-  logoutEpic, 
+  logoutEpic,
   logoutSuccessEpic,
   storageSaveEpic,
   storageDeleteEpic,
@@ -27,5 +44,5 @@ export const rootEpic = {
   getFutureTickerEpic,
   instrumentRequestEpic,
   initBookEpic,
-  initTradeEpic
+  initTradeEpic,
 };

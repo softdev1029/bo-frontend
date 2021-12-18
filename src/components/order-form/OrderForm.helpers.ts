@@ -1,19 +1,31 @@
-import _isEmpty from 'lodash/isEmpty';
-import _get from 'lodash/get';
-import { OrderSide, OrderType } from '@/constants/order-enums';
-import { getMaxAmount, getMaxPrice, getMinAmount, getMinPrice, getSymbols } from '@/exports/ticker.utils';
-import { divide, isGreaterThan, isGreaterThanOrEquals, isLessThan, isLessThanOrEquals, multiply } from '@/exports/math';
-import { formatNumber, sliceTo } from '@/exports/format-number';
-import { WalletType } from '@/constants/balance-enums';
-import { toast } from '@/ui-components';
-
+import _isEmpty from "lodash/isEmpty";
+import _get from "lodash/get";
+import { OrderSide, OrderType } from "@/constants/order-enums";
+import {
+  getMaxAmount,
+  getMaxPrice,
+  getMinAmount,
+  getMinPrice,
+  getSymbols,
+} from "@/exports/ticker.utils";
+import {
+  divide,
+  isGreaterThan,
+  isGreaterThanOrEquals,
+  isLessThan,
+  isLessThanOrEquals,
+  multiply,
+} from "@/exports/math";
+import { formatNumber, sliceTo } from "@/exports/format-number";
+import { WalletType } from "@/constants/balance-enums";
+import { toast } from "@/ui-components";
 
 export function isValidPrice(price) {
   if (!Number(price)) {
     toast.open({
-      type: 'error',
+      type: "error",
       message: `Price required.`,
-      header: 'Order Rejected'
+      header: "Order Rejected",
     });
     return false;
   }
@@ -22,7 +34,11 @@ export function isValidPrice(price) {
 }
 
 export function isLimitOrder(typeId: OrderType) {
-  return typeId === OrderType.LIMIT || typeId === OrderType.HIDDEN || typeId === OrderType.STOP_LMT;
+  return (
+    typeId === OrderType.LIMIT ||
+    typeId === OrderType.HIDDEN ||
+    typeId === OrderType.STOP_LMT
+  );
 }
 
 export function isMarketOrder(typeId) {
@@ -30,7 +46,11 @@ export function isMarketOrder(typeId) {
 }
 
 export function isStopLimitOrder(typeId) {
-  return typeId === OrderType.STOP_LMT || typeId === OrderType.OCO || typeId === OrderType.STOP_MKT;
+  return (
+    typeId === OrderType.STOP_LMT ||
+    typeId === OrderType.OCO ||
+    typeId === OrderType.STOP_MKT
+  );
 }
 
 export function isStopMarketOrder(typeId) {
@@ -39,19 +59,37 @@ export function isStopMarketOrder(typeId) {
 
 // picked price: either is `stopPrice` if typeId = STOP_MARKET or `tickerPrice` if typeId = MARKET otherwise using `price`
 export function getPickedPrice({ typeId, price, tickerPrice, stopPrice }) {
-  if (!tickerPrice)
-    tickerPrice = price;
+  if (!tickerPrice) tickerPrice = price;
 
-  return tickerPrice = isStopMarketOrder(typeId) ? +stopPrice : isMarketOrder(typeId) ? +tickerPrice : +price;
+  return (tickerPrice = isStopMarketOrder(typeId)
+    ? +stopPrice
+    : isMarketOrder(typeId)
+    ? +tickerPrice
+    : +price);
 }
 
-export function calculatedTotal({ typeId, price, stopPrice, tickerPrice, amount }): number {
+export function calculatedTotal({
+  typeId,
+  price,
+  stopPrice,
+  tickerPrice,
+  amount,
+}): number {
   const p = getPickedPrice({ typeId, price, stopPrice, tickerPrice });
 
   return +multiply(p, +amount);
 }
 
-export function validateLimitOrder({ lowestSellPrice, highestBuyPrice, pair, tickerPrice, side, price, amount, available }) {
+export function validateLimitOrder({
+  lowestSellPrice,
+  highestBuyPrice,
+  pair,
+  tickerPrice,
+  side,
+  price,
+  amount,
+  available,
+}) {
   const maxPrice = getMaxPrice(pair);
 
   // console.warn('maxPrice', maxPrice, price);
@@ -77,7 +115,7 @@ export function validateLimitOrder({ lowestSellPrice, highestBuyPrice, pair, tic
 
     const maxPrice = multiply(basedPrice, 1.1);
 
-    console.log('[buy] maxPrice', maxPrice, basedPrice, lowestSellPrice);
+    console.log("[buy] maxPrice", maxPrice, basedPrice, lowestSellPrice);
 
     if (isGreaterThan(price, maxPrice)) {
       // toast.open({
@@ -111,7 +149,15 @@ export function validateLimitOrder({ lowestSellPrice, highestBuyPrice, pair, tic
   return true;
 }
 
-export function validateOCOOrder({ pair, tickerPrice = 0, side, price, amount, available, stopPrice }) {
+export function validateOCOOrder({
+  pair,
+  tickerPrice = 0,
+  side,
+  price,
+  amount,
+  available,
+  stopPrice,
+}) {
   // stopPrice ...
   if (!Number(stopPrice)) {
     // toast.open({
@@ -173,7 +219,7 @@ export function validateOCOOrder({ pair, tickerPrice = 0, side, price, amount, a
 
       return false;
     }
-  }
+  } else if (side === OrderSide.SELL) {
   /*
   - Sell OCO: 
   + Stop-limit price < ticker Price <  Limit price
@@ -181,7 +227,6 @@ export function validateOCOOrder({ pair, tickerPrice = 0, side, price, amount, a
   + stop price >= minPrice
   + amount <= available balance
   */
-  else if (side === OrderSide.SELL) {
     // amount > available balance
     if (!_validateSellingAmount(pair, amount, available)) {
       return false;
@@ -226,7 +271,13 @@ export function validateOCOOrder({ pair, tickerPrice = 0, side, price, amount, a
   return true;
 }
 
-export function validateMarketOrder({ pair, amount, tickerPrice, side, available }) {
+export function validateMarketOrder({
+  pair,
+  amount,
+  tickerPrice,
+  side,
+  available,
+}) {
   if (side === OrderSide.BUY) {
     const maxAmount = divide(available, tickerPrice);
     if (!_validateBuyingAmount(pair, amount, amount, maxAmount)) {
@@ -242,7 +293,15 @@ export function validateMarketOrder({ pair, amount, tickerPrice, side, available
   return true;
 }
 
-export function validateStopLimitOrder({ pair, tickerPrice, side, price, amount, available, stopPrice }) {
+export function validateStopLimitOrder({
+  pair,
+  tickerPrice,
+  side,
+  price,
+  amount,
+  available,
+  stopPrice,
+}) {
   const maxPrice = getMaxPrice(pair);
 
   if (isGreaterThan(price, maxPrice) || isGreaterThan(stopPrice, maxPrice)) {
@@ -330,7 +389,14 @@ export function validateStopLimitOrder({ pair, tickerPrice, side, price, amount,
   return true;
 }
 
-export function validateStopMarketOrder({ pair, tickerPrice, side, amount, available, stopPrice }) {
+export function validateStopMarketOrder({
+  pair,
+  tickerPrice,
+  side,
+  amount,
+  available,
+  stopPrice,
+}) {
   const maxPrice = getMaxPrice(pair);
 
   if (isGreaterThan(stopPrice, maxPrice)) {
@@ -398,9 +464,9 @@ export function validateStopMarketOrder({ pair, tickerPrice, side, amount, avail
 export function isValidAmount(pair, amount) {
   if (!amount) {
     toast.open({
-      type: 'error',
+      type: "error",
       message: `Amount required.`,
-      header: 'Order Rejected'
+      header: "Order Rejected",
     });
 
     return false;
@@ -461,24 +527,26 @@ function _validateSellingAmount(pair, amount, available) {
 }
 
 /**
- * 
+ *
  * @param {string} pair
  * @param {string} side BUY | SELL
  * @param {string} wallet WalletType
  */
-export function getBalanceBySide({ pair, side, balances, wallet }, beautify = false) {
-  if (_isEmpty(balances))
-    return 0;
+export function getBalanceBySide(
+  { pair, side, balances, wallet },
+  beautify = false
+) {
+  if (_isEmpty(balances)) return 0;
 
   if (!wallet) {
-    throw new Error('[getBalanceBySide] wallet is required');
+    throw new Error("[getBalanceBySide] wallet is required");
   }
 
-  const [base, counter] = getSymbols(pair)
+  const [base, counter] = getSymbols(pair);
   const currency = isBuy(side) ? counter : base;
   // const leverage = getLeverage(pair);
 
-  let available = _get(balances, [currency, wallet, 'available'], 0) || 0;
+  let available = _get(balances, [currency, wallet, "available"], 0) || 0;
 
   // if (wallet === "margin") {
   //   available = multiply(leverage, available);
@@ -545,7 +613,7 @@ export function getSideTitleByWallet({ side, wallet }) {
 }
 
 /**
- * @param {OrderSide} side 
+ * @param {OrderSide} side
  * @returns {boolean}
  */
 export function isBuy(side: OrderSide) {
@@ -556,26 +624,30 @@ export function isSell(side: OrderSide) {
   return side === OrderSide.SELL;
 }
 
-
 export function validateBookBeforePlaceMarket(side, asks, bids) {
-  return (side === OrderSide.BUY && !!asks.length) || (side === OrderSide.SELL && !!bids.length);
+  return (
+    (side === OrderSide.BUY && !!asks.length) ||
+    (side === OrderSide.SELL && !!bids.length)
+  );
 }
 
 /**
  * comparation between a position and a coming order
  * to determine this order is wether margin or close
- * @param {object} position 
- * @param {object} order 
- * 
+ * @param {object} position
+ * @param {object} order
+ *
  * @returns {boolean}
  */
 export function isSameSide(position, { sideId }) {
-  if (!position)
-    return true; // if there is no position, we are submitting a new margin order
+  if (!position) return true; // if there is no position, we are submitting a new margin order
 
   const { side } = position; // Long | Short
 
-  return (sideId === OrderSide.BUY && side === 'Long') || (sideId === OrderSide.SELL && side === 'Short');
+  return (
+    (sideId === OrderSide.BUY && side === "Long") ||
+    (sideId === OrderSide.SELL && side === "Short")
+  );
 }
 
 export function commonOrderValidator({
@@ -598,15 +670,26 @@ export function commonOrderValidator({
   ignoreAmountValidate = false,
   executedLongCash,
   executedLongPosition,
-  leverage
+  leverage,
 }) {
   const weightedPrice = price * amount;
 
-  const LP = (((weightedPrice + executedLongCash) / (amount + executedLongPosition)) * leverage) /
-    ((leverage + 1) - (.003 * leverage));
+  const LP =
+    (((weightedPrice + executedLongCash) / (amount + executedLongPosition)) *
+      leverage) /
+    (leverage + 1 - 0.003 * leverage);
 
-  console.log('LP', LP, 'place price', price, 'highest buy', highestBuyPrice, 'lowest sell', lowestSellPrice);
-  // if the LP is lower than the price of the order being sent it will be rejected.  
+  console.log(
+    "LP",
+    LP,
+    "place price",
+    price,
+    "highest buy",
+    highestBuyPrice,
+    "lowest sell",
+    lowestSellPrice
+  );
+  // if the LP is lower than the price of the order being sent it will be rejected.
   // You are checking to ensure the price of the order being sent is lower than the liquidation price.  Why send an order that will be immediately liquidated??
   // if (
   //   (side === OrderSide.BUY && isGreaterThan(price, LP))
@@ -616,7 +699,10 @@ export function commonOrderValidator({
   //   return false;
   // }
 
-  if ((!ignoreAmountValidate && !isValidAmount(pair, amount)) || !isValidPrice(price)) {
+  if (
+    (!ignoreAmountValidate && !isValidAmount(pair, amount)) ||
+    !isValidPrice(price)
+  ) {
     if (onError) {
       onError();
     }
@@ -627,9 +713,9 @@ export function commonOrderValidator({
 
   const available = getBalanceBySide({
     pair,
-    side: side === OrderSide.BUY ? 'Buy' : 'Sell',
+    side: side === OrderSide.BUY ? "Buy" : "Sell",
     balances,
-    wallet
+    wallet,
   });
 
   let validateFunc;
@@ -657,7 +743,6 @@ export function commonOrderValidator({
         //   type: 'error',
         //   message: `Invalid order (Empty orderbook)`
         // });
-
         // EventRegister.emit(ON_ORDER_ERROR);
       }
       break;
@@ -673,10 +758,19 @@ export function commonOrderValidator({
     }
   }
 
-  const valid = validateFunc && validateFunc({
-    lowestSellPrice, highestBuyPrice,
-    pair, tickerPrice, side, price, amount, available, stopPrice
-  });
+  const valid =
+    validateFunc &&
+    validateFunc({
+      lowestSellPrice,
+      highestBuyPrice,
+      pair,
+      tickerPrice,
+      side,
+      price,
+      amount,
+      available,
+      stopPrice,
+    });
 
   if (valid && onSucces) {
     onSucces({ side, pair });
@@ -687,7 +781,10 @@ export function commonOrderValidator({
 }
 
 export function isStopOrder(orderType: OrderType): boolean {
-  return shouldDisplayStopPriceField(orderType) || shouldDisplayStandaloneStopPrice(orderType);
+  return (
+    shouldDisplayStopPriceField(orderType) ||
+    shouldDisplayStandaloneStopPrice(orderType)
+  );
 }
 export function shouldDisplayStopPriceField(orderType: OrderType): boolean {
   return orderType === OrderType.STOP_LMT;
@@ -698,68 +795,83 @@ export function shouldDisplayTrailValueField(orderType: OrderType): boolean {
 }
 
 export function shouldHidePriceField(orderType: OrderType): boolean {
-  return orderType === OrderType.MARKET
-    || orderType === OrderType.STOP_LMT
-    || orderType === OrderType.SNIPER_MKT
-    || orderType === OrderType.STOP_MKT
-    || orderType === OrderType.TSM;
+  return (
+    orderType === OrderType.MARKET ||
+    orderType === OrderType.STOP_LMT ||
+    orderType === OrderType.SNIPER_MKT ||
+    orderType === OrderType.STOP_MKT ||
+    orderType === OrderType.TSM
+  );
 }
 
 export function shouldDisplayTPnSLGroups(orderType: OrderType): boolean {
-  return orderType === OrderType.LIMIT || orderType === OrderType.HIDDEN || orderType === OrderType.MARKET;
+  return (
+    orderType === OrderType.LIMIT ||
+    orderType === OrderType.HIDDEN ||
+    orderType === OrderType.MARKET
+  );
 }
 
 export function shouldDisplayAdvancedGroups(orderType: OrderType): boolean {
-  return orderType === OrderType.LIMIT
-    || orderType === OrderType.HIDDEN
-    || orderType === OrderType.OCO
-    || orderType === OrderType.OCO_ICE
-    || orderType === OrderType.ICE
-    || orderType === OrderType.BRACKET
-    || orderType === OrderType.PEG
-    || orderType === OrderType.MARKET;
+  return (
+    orderType === OrderType.LIMIT ||
+    orderType === OrderType.HIDDEN ||
+    orderType === OrderType.OCO ||
+    orderType === OrderType.OCO_ICE ||
+    orderType === OrderType.ICE ||
+    orderType === OrderType.BRACKET ||
+    orderType === OrderType.PEG ||
+    orderType === OrderType.MARKET
+  );
 }
 
 export function shouldDisplayStopTriggerGroup(orderType: OrderType): boolean {
-  return orderType === OrderType.STOP_LMT
-    || orderType === OrderType.STOP_MKT
-    || orderType === OrderType.TSL
-    || orderType === OrderType.OCO
-    || orderType === OrderType.OCO_ICE
-    || orderType === OrderType.PEG
-    || orderType === OrderType.BRACKET
-    || orderType === OrderType.TSM;
+  return (
+    orderType === OrderType.STOP_LMT ||
+    orderType === OrderType.STOP_MKT ||
+    orderType === OrderType.TSL ||
+    orderType === OrderType.OCO ||
+    orderType === OrderType.OCO_ICE ||
+    orderType === OrderType.PEG ||
+    orderType === OrderType.BRACKET ||
+    orderType === OrderType.TSM
+  );
 }
 
-export function shouldDisplayStandaloneStopPrice(orderType: OrderType): boolean {
-  return orderType === OrderType.OCO
-    || orderType === OrderType.PEG
-    || orderType === OrderType.OCO_ICE;
+export function shouldDisplayStandaloneStopPrice(
+  orderType: OrderType
+): boolean {
+  return (
+    orderType === OrderType.OCO ||
+    orderType === OrderType.PEG ||
+    orderType === OrderType.OCO_ICE
+  );
 }
-
 
 export function shouldDisplayStandaloneOffset(orderType: OrderType): boolean {
   return orderType === OrderType.BRACKET;
 }
 
 export function shouldDisplayTIFOptions(orderType: OrderType): boolean {
-  return orderType === OrderType.LIMIT
-    || orderType === OrderType.STOP_LMT
-    || orderType === OrderType.ICE
-    || orderType === OrderType.OCO_ICE
-    || orderType === OrderType.PEG
-    || orderType === OrderType.BRACKET
-    || orderType === OrderType.SNIPER_LIMIT
-    || orderType === OrderType.SNIPER_MKT
-    || orderType === OrderType.OCO;
+  return (
+    orderType === OrderType.LIMIT ||
+    orderType === OrderType.STOP_LMT ||
+    orderType === OrderType.ICE ||
+    orderType === OrderType.OCO_ICE ||
+    orderType === OrderType.PEG ||
+    orderType === OrderType.BRACKET ||
+    orderType === OrderType.SNIPER_LIMIT ||
+    orderType === OrderType.SNIPER_MKT ||
+    orderType === OrderType.OCO
+  );
 }
 
-export function shouldDisplayPriceIncreAndOffset(orderType: OrderType): boolean {
-  return orderType === OrderType.ICE
-    || orderType === OrderType.OCO_ICE;
+export function shouldDisplayPriceIncreAndOffset(
+  orderType: OrderType
+): boolean {
+  return orderType === OrderType.ICE || orderType === OrderType.OCO_ICE;
 }
 
 export function shouldDisplayLayers(orderType: OrderType): boolean {
-  return orderType === OrderType.ICE
-    || orderType === OrderType.OCO_ICE;
+  return orderType === OrderType.ICE || orderType === OrderType.OCO_ICE;
 }

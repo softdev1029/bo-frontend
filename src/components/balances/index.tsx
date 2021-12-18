@@ -1,1 +1,1 @@
-export { default as Balances } from './Balances.container';
+export { default as Balances } from "./Balances.container";

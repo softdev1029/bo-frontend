@@ -1,5 +1,5 @@
-import { Subject } from 'rxjs'
-import { map } from 'rxjs/operators';
+import { Subject } from "rxjs";
+import { map } from "rxjs/operators";
 
 export const ChartSubject = new Subject();
 
@@ -31,7 +31,7 @@ export function chartSubscriber() {
       }
     }
       */
-    map(payload => ({
+    map((payload) => ({
       pair: payload["s"],
       interval: payload["k"]["i"],
       time: payload["k"]["t"],

@@ -1,10 +1,10 @@
-import React from 'react';
-import className from 'classnames';
-import { OrderBookSide } from './OrderBook.side';
-import { OrderBookSideEnum } from '@/constants/order-book-enums';
-import { OrderBookModel } from '@/models/book.model';
-import { OrderBookLastTick } from './OrderBook.lastTick';
-import { WalletType } from '@/constants/balance-enums';
+import React from "react";
+import className from "classnames";
+import { OrderBookSide } from "./OrderBook.side";
+import { OrderBookSideEnum } from "@/constants/order-book-enums";
+import { OrderBookModel } from "@/models/book.model";
+import { OrderBookLastTick } from "./OrderBook.lastTick";
+import { WalletType } from "@/constants/balance-enums";
 
 export interface OrderBookProps {
   symbol: string;
@@ -17,10 +17,14 @@ export interface OrderBookProps {
   maxSumSize: number;
   windowOpen?: boolean;
   enabled1Click?: boolean;
-  walletType: WalletType
-};
+  walletType: WalletType;
+}
 
-function getSideData(bids: OrderBookModel[], asks: OrderBookModel[], side: OrderBookSideEnum): OrderBookModel[] {
+function getSideData(
+  bids: OrderBookModel[],
+  asks: OrderBookModel[],
+  side: OrderBookSideEnum
+): OrderBookModel[] {
   return side === OrderBookSideEnum.ASK ? asks : bids;
 }
 
@@ -35,15 +39,22 @@ export const OrderBook = ({
   enabled1Click,
   maxSumSize,
   windowOpen,
-  walletType
+  walletType,
 }: Partial<OrderBookProps>) => {
-  const bookClass = className('orderBook', dualColumn ? 'dualColumn' : 'singleColumn', {
-    'scroll-y': windowOpen,
-    'show-order-btns': enabled1Click
-  });
+  const bookClass = className(
+    "orderBook",
+    dualColumn ? "dualColumn" : "singleColumn",
+    {
+      "scroll-y": windowOpen,
+      "show-order-btns": enabled1Click,
+    }
+  );
 
-  const leftSide = dualColumn ? OrderBookSideEnum.BID: OrderBookSideEnum.ASK;
-  const rightSide = leftSide === OrderBookSideEnum.ASK ? OrderBookSideEnum.BID : OrderBookSideEnum.ASK;
+  const leftSide = dualColumn ? OrderBookSideEnum.BID : OrderBookSideEnum.ASK;
+  const rightSide =
+    leftSide === OrderBookSideEnum.ASK
+      ? OrderBookSideEnum.BID
+      : OrderBookSideEnum.ASK;
 
   const generalSideProps = {
     width,
@@ -52,21 +63,31 @@ export const OrderBook = ({
     maxSumSize,
     showDepth,
     enabled1Click,
-    walletType
+    walletType,
   };
-    
-  const lastTick = <OrderBookLastTick price={lastPrice} symbol={symbol}/>;
 
-  const body = (<>
-    <OrderBookSide {...generalSideProps} books={getSideData(bids, asks, leftSide)} side={leftSide}/>
-    {!dualColumn && lastTick}
-    <OrderBookSide {...generalSideProps} books={getSideData(bids, asks, rightSide)} side={rightSide}/>
-  </>) ;
+  const lastTick = <OrderBookLastTick price={lastPrice} symbol={symbol} />;
+
+  const body = (
+    <>
+      <OrderBookSide
+        {...generalSideProps}
+        books={getSideData(bids, asks, leftSide)}
+        side={leftSide}
+      />
+      {!dualColumn && lastTick}
+      <OrderBookSide
+        {...generalSideProps}
+        books={getSideData(bids, asks, rightSide)}
+        side={rightSide}
+      />
+    </>
+  );
 
   return (
     <div className={bookClass}>
       {dualColumn && lastTick}
-      {dualColumn ? <div className="d-flex">{body}</div> : body}    
+      {dualColumn ? <div className="d-flex">{body}</div> : body}
     </div>
   );
-}
+};

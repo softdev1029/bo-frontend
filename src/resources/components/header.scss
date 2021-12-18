@@ -65,12 +65,11 @@
       background-color: var(--dodger-blue);
       border: 1px solid var(--dodger-blue);
       border-radius: var(--border-radius);
-      margin-right: rem(15)
+      margin-right: rem(15);
     }
   }
 
   // select dropdown
-
 }
 
 .cpn-header__help {
@@ -342,7 +341,10 @@
     background-color: var(--shark-400);
   }
 
-  .cpn-header__nav .cpn-dropdown:not(:last-child) .cpn-dropdown__wrapper .cpn-dropdown__button {
+  .cpn-header__nav
+    .cpn-dropdown:not(:last-child)
+    .cpn-dropdown__wrapper
+    .cpn-dropdown__button {
     padding: 15px;
   }
 }

@@ -1,22 +1,26 @@
-import { TIF } from '@/constants/order-enums';
-import { SelectDropdown } from '@/ui-components';
-import React from 'react';
+import { TIF } from "@/constants/order-enums";
+import { SelectDropdown } from "@/ui-components";
+import React from "react";
 
 interface OrderFormTIFOptionsProps {
   onTIFChange: (tif: TIF) => void;
-  selected: TIF | null
+  selected: TIF | null;
 }
 
-const defaultOptions = [{
-  label: 'GTC',
-  value: TIF.GTC,
-}, {
-  label: 'FOK',
-  value: TIF.FOK
-}, {
-  label: 'IOC',
-  value: TIF.IOC
-}];
+const defaultOptions = [
+  {
+    label: "GTC",
+    value: TIF.GTC,
+  },
+  {
+    label: "FOK",
+    value: TIF.FOK,
+  },
+  {
+    label: "IOC",
+    value: TIF.IOC,
+  },
+];
 
 export class OrderFormTIFOptions extends React.PureComponent<OrderFormTIFOptionsProps> {
   constructor(props) {
@@ -34,7 +38,11 @@ export class OrderFormTIFOptions extends React.PureComponent<OrderFormTIFOptions
     const { selected } = this.props;
 
     return (
-      <SelectDropdown options={defaultOptions} value={selected} onChange={this.onTIFChange}/>
+      <SelectDropdown
+        options={defaultOptions}
+        value={selected}
+        onChange={this.onTIFChange}
+      />
     );
   }
 }

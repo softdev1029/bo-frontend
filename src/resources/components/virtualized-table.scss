@@ -53,7 +53,8 @@
 }
 
 .cpn-virtualized-table__wrapper .ReactVirtualized__Grid::-webkit-scrollbar,
-.cpn-virtualized-table__wrapper .ReactVirtualized__Grid__innerScrollContainer::-webkit-scrollbar {
+.cpn-virtualized-table__wrapper
+  .ReactVirtualized__Grid__innerScrollContainer::-webkit-scrollbar {
   // @removed perfect-scrollbar
   visibility: hidden;
   width: 0 !important;
@@ -85,7 +86,9 @@
 }
 
 .cpn-virtualized-table__wrapper .cpn-virtualized-table-row.active,
-.cpn-virtualized-table__wrapper .cpn-virtualized-table-row:hover:not(.cpn-virtualized-table-row--no-hover-effect) {}
+.cpn-virtualized-table__wrapper
+  .cpn-virtualized-table-row:hover:not(.cpn-virtualized-table-row--no-hover-effect) {
+}
 
 // .cpn-virtualized-table__wrapper .cpn-virtualized-table-row:last-child {
 //   border-bottom: none;

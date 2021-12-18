@@ -1,32 +1,32 @@
-import { useQueryString, useQueryStrings } from '@/hooks';
-import { useQMQueryString } from '@/hooks/useQueryString';
-import { Table } from '@/ui-components';
-import { TableInfiniteLoader } from '@/ui-components/ui/Table.Infinite';
-import React, { useEffect, useMemo } from 'react';
-import MarketHistoryEmptyMessage from '../market-history/MarketHistory.emptyMessage';
-import getTradeHistoryColumns from './TradeHistory.columns';
+import { useQueryString, useQueryStrings } from "@/hooks";
+import { useQMQueryString } from "@/hooks/useQueryString";
+import { Table } from "@/ui-components";
+import { TableInfiniteLoader } from "@/ui-components/ui/Table.Infinite";
+import React, { useEffect, useMemo } from "react";
+import MarketHistoryEmptyMessage from "../market-history/MarketHistory.emptyMessage";
+import getTradeHistoryColumns from "./TradeHistory.columns";
 
 interface TradeHistoryProps {
   orders?: any[];
   loading?: boolean;
-};
+}
 
 const a = (amount?: number) => ({
   id: 1,
   uuid: 1,
-  symbol: 'BTCUSDT',
-  pair: 'BTCUSDT',
+  symbol: "BTCUSDT",
+  pair: "BTCUSDT",
   tradeType: 1,
   totalFilled: 1,
   avgPrice: 2,
   stopPrice: 0,
-  ccy: 'BTC',
+  ccy: "BTC",
   type: 1,
   side: 1,
   amount: amount ? amount : 2,
   price: 2.01,
   status: 1,
-  createdAt: Date.now()
+  createdAt: Date.now(),
 });
 
 // function MyTestComponent() {
@@ -101,7 +101,7 @@ export const TradeHistory = ({
   orders = o,
   loading = false,
 }: TradeHistoryProps) => {
-  const [page, setPage] = useQMQueryString('page', 1);
+  const [page, setPage] = useQMQueryString("page", 1);
 
   const columns = useMemo(() => getTradeHistoryColumns(), []);
 
@@ -119,7 +119,7 @@ export const TradeHistory = ({
         maxHeight={90}
         emptyListMessage={"emptyListMessage"}
       />
-      <MarketHistoryEmptyMessage/>
+      <MarketHistoryEmptyMessage />
     </>
   );
 };

@@ -1,17 +1,21 @@
-import React from 'react';
-import { BookCellContainsBar, BookCellNumber, BookCellSize, QuickOrderBtn } from "./OrderBook.cell";
-import { OrderBookModel } from '@/models/book.model';
-import { getAmountDecimals, getPriceDecimals } from '@/exports/ticker.utils';
-import { OrderSide } from '@/constants/order-enums';
+import React from "react";
+import {
+  BookCellContainsBar,
+  BookCellNumber,
+  BookCellSize,
+  QuickOrderBtn,
+} from "./OrderBook.cell";
+import { OrderBookModel } from "@/models/book.model";
+import { getAmountDecimals, getPriceDecimals } from "@/exports/ticker.utils";
+import { OrderSide } from "@/constants/order-enums";
 
 enum OrderBookHeaderTypes {
-  PRICE = 'price',
-  SIZE = 'size',
-  TOTAL = 'total',
-  BUY = 'buy-btn',
-  SELL = 'sell-btn'
-};
-
+  PRICE = "price",
+  SIZE = "size",
+  TOTAL = "total",
+  BUY = "buy-btn",
+  SELL = "sell-btn",
+}
 
 /**
  * [Single column]
@@ -21,7 +25,7 @@ enum OrderBookHeaderTypes {
  * |||||||||||||||||||
  * x--------x-------x    BIDS
  * x--------x-------x
- * 
+ *
  * [Dual Column] => isReverse mode: dual column && side === isBid
  * BIDS                  ASKS
  * Total - Size -Price | Price - Side - Total
@@ -29,10 +33,21 @@ enum OrderBookHeaderTypes {
  * x--------x-------x  | x--------x-------x
  * x--------x-------x  | x--------x-------x
  */
-export function getHeaders({ width, isBid, dualColumn, enabled1Click }): string[] {
-  let headers = [OrderBookHeaderTypes.PRICE, OrderBookHeaderTypes.SIZE, OrderBookHeaderTypes.TOTAL];
+export function getHeaders({
+  width,
+  isBid,
+  dualColumn,
+  enabled1Click,
+}): string[] {
+  let headers = [
+    OrderBookHeaderTypes.PRICE,
+    OrderBookHeaderTypes.SIZE,
+    OrderBookHeaderTypes.TOTAL,
+  ];
   if (enabled1Click) {
-    headers = dualColumn ? [...headers, OrderBookHeaderTypes.BUY, OrderBookHeaderTypes.SELL] : [OrderBookHeaderTypes.SELL, OrderBookHeaderTypes.BUY, ...headers];
+    headers = dualColumn
+      ? [...headers, OrderBookHeaderTypes.BUY, OrderBookHeaderTypes.SELL]
+      : [OrderBookHeaderTypes.SELL, OrderBookHeaderTypes.BUY, ...headers];
   }
 
   // display number of columns by container's width
@@ -40,7 +55,10 @@ export function getHeaders({ width, isBid, dualColumn, enabled1Click }): string[
   // default = 2
   if (dualColumn) {
     const isReverse = dualColumn && isBid;
-    const orginalDirections = width < 500 ? headers.filter(header => header !== OrderBookHeaderTypes.TOTAL) : headers;
+    const orginalDirections =
+      width < 500
+        ? headers.filter((header) => header !== OrderBookHeaderTypes.TOTAL)
+        : headers;
     return isReverse ? orginalDirections.reverse() : orginalDirections;
   }
 
@@ -50,17 +68,17 @@ export function getHeaders({ width, isBid, dualColumn, enabled1Click }): string[
 export function getCellClassByHeader(header: string) {
   switch (header) {
     case OrderBookHeaderTypes.PRICE: {
-      return 'price';
+      return "price";
     }
     case OrderBookHeaderTypes.SIZE: {
-      return 'size';
+      return "size";
     }
     case OrderBookHeaderTypes.TOTAL: {
-      return 'sumSize';
+      return "sumSize";
     }
     case OrderBookHeaderTypes.BUY:
     case OrderBookHeaderTypes.SELL: {
-      return 'btn'
+      return "btn";
     }
   }
 }
@@ -69,7 +87,7 @@ export function getHeaderLabel(header: string): string {
   switch (header) {
     case OrderBookHeaderTypes.BUY:
     case OrderBookHeaderTypes.SELL: {
-      return '';
+      return "";
     }
     default: {
       return header;
@@ -89,8 +107,11 @@ export function getHeaderColWidth(header: string): string {
   }
 }
 
-
-export function getOrderBookCellByHeader(header: string, dualColumn: boolean, { walletType, price, size, total, symbol, maxSumSize }) {
+export function getOrderBookCellByHeader(
+  header: string,
+  dualColumn: boolean,
+  { walletType, price, size, total, symbol, maxSumSize }
+) {
   const classes = getCellClassByHeader(header);
   const priceDecimals = getPriceDecimals(symbol);
   const amountDecimals = getAmountDecimals(symbol);
@@ -98,58 +119,105 @@ export function getOrderBookCellByHeader(header: string, dualColumn: boolean, { 
   switch (header) {
     case OrderBookHeaderTypes.PRICE: {
       if (dualColumn) {
-        const depthPerc = !maxSumSize ? 0 : (total / maxSumSize * 100);
+        const depthPerc = !maxSumSize ? 0 : (total / maxSumSize) * 100;
 
-        return <BookCellContainsBar classes={classes} key={`td-price-${price}`} data={price} decimals={priceDecimals} depthPerc={depthPerc} />;
+        return (
+          <BookCellContainsBar
+            classes={classes}
+            key={`td-price-${price}`}
+            data={price}
+            decimals={priceDecimals}
+            depthPerc={depthPerc}
+          />
+        );
       } else {
-        return <BookCellNumber classes={classes} key={`td-price-${price}`} data={price} decimals={priceDecimals} />;
+        return (
+          <BookCellNumber
+            classes={classes}
+            key={`td-price-${price}`}
+            data={price}
+            decimals={priceDecimals}
+          />
+        );
       }
     }
     case OrderBookHeaderTypes.SIZE: {
-      return <BookCellSize classes={classes} key={`td-size-${price}`} data={size} decimals={amountDecimals} />;
+      return (
+        <BookCellSize
+          classes={classes}
+          key={`td-size-${price}`}
+          data={size}
+          decimals={amountDecimals}
+        />
+      );
     }
     case OrderBookHeaderTypes.TOTAL: {
       if (!dualColumn) {
-        const depthPerc = !maxSumSize ? 0 : (total / maxSumSize * 100);
+        const depthPerc = !maxSumSize ? 0 : (total / maxSumSize) * 100;
 
-        return <BookCellContainsBar classes={classes} key={`td-sumsize-${price}`} data={total} depthPerc={depthPerc} decimals={amountDecimals} />;
+        return (
+          <BookCellContainsBar
+            classes={classes}
+            key={`td-sumsize-${price}`}
+            data={total}
+            depthPerc={depthPerc}
+            decimals={amountDecimals}
+          />
+        );
       } else {
-        return <BookCellNumber classes={classes} key={`td-sumsize-${price}`} data={total} decimals={amountDecimals} />;
+        return (
+          <BookCellNumber
+            classes={classes}
+            key={`td-sumsize-${price}`}
+            data={total}
+            decimals={amountDecimals}
+          />
+        );
       }
     }
     case OrderBookHeaderTypes.BUY:
     case OrderBookHeaderTypes.SELL: {
-      const side = header === OrderBookHeaderTypes.BUY ? OrderSide.BUY : OrderSide.SELL;
+      const side =
+        header === OrderBookHeaderTypes.BUY ? OrderSide.BUY : OrderSide.SELL;
 
-      return <QuickOrderBtn
-        key={`td-btn-${side}-${price}`}
-        classes="td-order-btn"
-        side={side}
-        price={price}
-        qty={size}
-        symbol={symbol}
-        walletType={walletType}
-      />
+      return (
+        <QuickOrderBtn
+          key={`td-btn-${side}-${price}`}
+          classes="td-order-btn"
+          side={side}
+          price={price}
+          qty={size}
+          symbol={symbol}
+          walletType={walletType}
+        />
+      );
     }
   }
 }
 
 type OrderBookGeneralData = {
-  bids: OrderBookModel[],
-  asks: OrderBookModel[],
-}
+  bids: OrderBookModel[];
+  asks: OrderBookModel[];
+};
 
 const BORDER_SPACING = 2;
 const BOOK_ROW_HEIGHT = 20 + BORDER_SPACING;
 const BOOK_HEAD_HEIGHT = 20;
 const BOOK_LAST_PRICE_HEIGHT = 24;
 
-export function getDisplayOrderBookData({ width, height, dualColumn, bids, asks }: OrderBookGeneralData & {
+export function getDisplayOrderBookData({
+  width,
+  height,
+  dualColumn,
+  bids,
+  asks,
+}: OrderBookGeneralData & {
   width: number;
   height: number;
   dualColumn?: boolean;
 }): OrderBookGeneralData {
-  let b = bids, a = asks;
+  let b = bids,
+    a = asks;
 
   const calculableHeight = height - BOOK_HEAD_HEIGHT - BOOK_LAST_PRICE_HEIGHT;
   const numberOfRows = calculableHeight / BOOK_ROW_HEIGHT || 1;
@@ -165,5 +233,5 @@ export function getDisplayOrderBookData({ width, height, dualColumn, bids, asks 
     }
   }
 
-  return { bids: b, asks: a }
+  return { bids: b, asks: a };
 }
