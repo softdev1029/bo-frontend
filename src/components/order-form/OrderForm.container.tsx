@@ -75,14 +75,17 @@ class OrderFormContainer extends React.PureComponent<
   ) {
     let { tickerPrice } = this.state;
 
-    const { price: lowestSellPrice = tickerPrice } = _minBy(
-      this.props.asks,
-      (o) => o.price
-    );
-    const { price: highestBuyPrice = tickerPrice } = _maxBy(
-      this.props.bids,
-      (o) => o.price
-    );
+    let lowestSellPrice = 0;
+    if (this.props.asks.length > 0) {
+      const { price = tickerPrice } = _minBy(this.props.asks, (o) => o.price);
+      lowestSellPrice = price;
+    }
+
+    let highestBuyPrice = 0;
+    if (this.props.bids.length > 0) {
+      const { price = tickerPrice } = _maxBy(this.props.bids, (o) => o.price);
+      highestBuyPrice = price;
+    }
 
     const {
       orderValidationFn,

@@ -7,6 +7,7 @@ import {
   WS_SEND,
 } from "@/actions/ws.actions";
 import { WebSocketKindStateEnum } from "@/constants/websocket.enums";
+import { SingletonWSManager } from "@/internals";
 import { WSReducerState } from "@/models/ws-reducer-state";
 import _set from "lodash/set";
 
@@ -93,6 +94,8 @@ export const wsReducer = (state = initialState, action) => {
       };
     }
     case WS_SEND: {
+      const { payload } = action;
+      SingletonWSManager.send(payload);
     }
     default: {
       return state;

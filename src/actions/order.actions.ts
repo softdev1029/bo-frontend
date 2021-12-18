@@ -65,17 +65,17 @@ export function submitNewOrder({
   tif = TIF.GTC,
   symbolType,
 }: NewOrderParams) {
-  // console.log('>>>>>>>> submit new order params <<<<<<<',
-  // { tradeOptions,
-  //   clientOrderId,
-  //   ordertype: type,
-  //   pair,
-  //   side,
-  //   price,
-  //   amount,
-  //   stopPrice,
-  //   tif
-  // });
+  console.log(">>>>>>>> submit new order params <<<<<<<", {
+    tradeOptions,
+    clientOrderId,
+    ordertype: type,
+    pair,
+    side,
+    price,
+    amount,
+    stopPrice,
+    tif,
+  });
   const symbolEnum = getSymbolId(pair) || SymbolValue.BTC;
 
   const ACCOUNT_ID = 90001;
@@ -104,7 +104,6 @@ export function submitNewOrder({
     ">>> origin data for submit new Order",
     TransactionManner.read(order)
   );
-  console.log("transaction reader:", TransactionManner.read(order, true));
 
   return sendWsData(WebSocketKindEnum.ORDERS, order);
 }
