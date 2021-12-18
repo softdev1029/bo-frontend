@@ -1,17 +1,21 @@
-import { USER_LOGIN_SUCCESS, USER_LOGOUT_SUCCESS, USER_UPDATE } from "@/actions/auth.actions";
+import {
+  USER_LOGIN_SUCCESS,
+  USER_LOGOUT_SUCCESS,
+  USER_UPDATE,
+} from "@/actions/auth.actions";
 import { USER_STORAGE_KEY } from "@/constants/storage-keys";
 import { divide } from "@/exports/math";
 import Storage from "@/internals/Storage";
 
 // guest user is used for admin/risk authorizaton
-export const GUEST_USER = 'guest@user.id';
+export const GUEST_USER = "guest@user.id";
 
 const originalState = {
   email: GUEST_USER,
   loggedIn: false,
   token: null,
-  accountId: 100500,
-  username: 'NAM',
+  accountId: 90001,
+  username: "MTX01",
   //... profile or sth
   // user symbol
   accountEquity: 0,
@@ -25,10 +29,14 @@ const originalState = {
   executedLongPosition: 0,
   executedShortPosition: 0,
   executedLongCash: 0,
-  executedShortCash: 0, 
+  executedShortCash: 0,
 };
 
-const initialState = Object.assign({}, originalState, Storage.get(USER_STORAGE_KEY));
+const initialState = Object.assign(
+  {},
+  originalState,
+  Storage.get(USER_STORAGE_KEY)
+);
 
 export const authReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -40,28 +48,28 @@ export const authReducer = (state = initialState, action) => {
         ...state,
         token,
         email: username,
-        loggedIn: true
+        loggedIn: true,
       };
     }
     case USER_LOGOUT_SUCCESS: {
       return {
         ...state,
-        ...originalState
-      }
+        ...originalState,
+      };
     }
     case USER_UPDATE: {
-      const { 
-        accountEquity, 
-        MMR, 
-        symbolEquity, 
-        tradingDisabled, 
+      const {
+        accountEquity,
+        MMR,
+        symbolEquity,
+        tradingDisabled,
         availableMargin,
-        usedMargin, 
+        usedMargin,
         leverage,
         executedLongPosition,
         executedShortPosition,
         executedLongCash,
-        executedShortCash
+        executedShortCash,
       } = action.payload;
 
       const mmrPercent = +divide(MMR, 100);
@@ -69,18 +77,18 @@ export const authReducer = (state = initialState, action) => {
       return {
         ...state,
         // any data's here
-        accountEquity, 
-        symbolEquity, 
-        tradingDisabled: tradingDisabled === 'Y', 
-        availableMargin, 
-        usedMargin, 
+        accountEquity,
+        symbolEquity,
+        tradingDisabled: tradingDisabled === "Y",
+        availableMargin,
+        usedMargin,
         leverage,
         mmr: mmrPercent,
         executedLongPosition,
         executedShortPosition,
         executedLongCash,
-        executedShortCash 
-      }
+        executedShortCash,
+      };
     }
     default:
       return state;
