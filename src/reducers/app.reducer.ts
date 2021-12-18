@@ -12,7 +12,9 @@ import { EMPTY_ARRAY, shallowCompareObjects } from "@/exports";
 const initialState = {
   modals: EMPTY_ARRAY,
   toasts: EMPTY_ARRAY,
-  socketAddresses: [testurl1],
+  socketAddresses: [
+    /*testurl1*/
+  ],
   adminRiskUrl: riskWsUrl,
   isReady: false,
   //... profile or sth
