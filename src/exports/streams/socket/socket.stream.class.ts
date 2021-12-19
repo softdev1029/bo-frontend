@@ -124,7 +124,9 @@ export class StreamingWS {
     const pongTimeout = 10 * 1000;
     const reconnectInterval = 10 * 1000;
 
-    console.warn(`------initalizing ws ${this._id}.....--------`);
+    console.warn(
+      `------initalizing ws ${this._id}, ${this._url} .....--------`
+    );
 
     let wsConfig: any = {
       url: this._url,

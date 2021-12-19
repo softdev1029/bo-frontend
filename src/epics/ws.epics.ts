@@ -35,9 +35,14 @@ import { RiskSymbolManner } from "@/packets/user-risk.packet";
 import { updateUserInfo } from "@/actions/auth.actions";
 import {
   InstrumentManner,
+  InstrumentRequestManner,
   InstrumentResponseType,
 } from "@/packets/instrument.packet";
 import { initInstrument } from "@/exports/ticker.utils";
+import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
+import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
+import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
+import { ColDataManner } from "@/packets/col-data.packet";
 
 export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
@@ -54,15 +59,14 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
           const serverInfo = ClientLoginManner.read(data);
-          console.log(
-            "ClientLoginManner.read(data);",
-            ClientLoginManner.read(data)
-          );
+          console.log("Received Logon reply", serverInfo);
 
-          SingletonWSManager.addWs(
-            `ws://${serverInfo.orderEntryIp1}`,
-            WebSocketKindEnum.ORDERS
-          );
+          if (serverInfo.orderEntryIp1.replace(/\s/g, "").length) {
+            SingletonWSManager.addWs(
+              `ws://${serverInfo.orderEntryIp1}`,
+              WebSocketKindEnum.ORDERS
+            );
+          }
           // SingletonWSManager.addWs(`ws://123.321.122:123`, WebSocketKindEnum.ORDERS);
           // SingletonWSManager.addWs(`ws://123.321.112:123`, WebSocketKindEnum.MARKET);
           // SingletonWSManager.addWs(`ws://123.321.121:123`, WebSocketKindEnum.MARKET);
@@ -71,6 +75,34 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
 
           SingletonWSManager.acceptEntries();
           return of(updateSocketUrlEntries(saveEntries), wsAuthenticated(wsId));
+        }
+        case PacketHeaderMessageType.INSTRUMENT_REQUEST: {
+          const readData = InstrumentRequestManner.read(data);
+          console.log("Received Instrument request reply", readData);
+        }
+        case PacketHeaderMessageType.TRANSACTION: {
+          const readData = TransactionManner.read(data);
+          console.log("Received Transaction reply", readData);
+        }
+        case PacketHeaderMessageType.COL_UPDATE_REQ: {
+          const readData = ColUpdateReqManner.read(data);
+          console.log("Received Collateral Update Request reply", readData);
+        }
+        case PacketHeaderMessageType.OPEN_ORDER_REQ: {
+          const readData = OpenOrderReqManner.read(data);
+          console.log("Received Open Order Request reply", readData);
+        }
+        case PacketHeaderMessageType.RISK_UPDATE_REQ: {
+          const readData = RiskUpdateReqManner.read(data);
+          console.log("Received Risk Update Request reply", readData);
+        }
+        case PacketHeaderMessageType.RISK_USER_SYMBOL: {
+          const readData = RiskSymbolManner.read(data);
+          console.log("Received Risk User Symbol reply", readData);
+        }
+        case PacketHeaderMessageType.COL_DATA: {
+          const readData = ColDataManner.read(data);
+          console.log("Received Collateral Data reply", readData);
         }
         default: {
           return EMPTY;

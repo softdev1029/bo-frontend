@@ -59,55 +59,27 @@ class WebsocketMananger {
       if (data[0] == "H".charCodeAt(0)) {
         const readData = ClientLoginManner.read(data);
         console.log("Received Logon reply", readData);
-        alert("Received Logon reply, " + JSON.stringify(readData, null, "\t"));
       } else if (data[0] == "Y".charCodeAt(0)) {
         const readData = InstrumentRequestManner.read(data);
         console.log("Received Instrument request reply", readData);
-        alert(
-          "Received Instrument request reply, " +
-            JSON.stringify(readData, null, "\t")
-        );
       } else if (data[0] == "T".charCodeAt(0)) {
         const readData = TransactionManner.read(data);
         console.log("Received Transaction reply", readData);
-        alert(
-          "Received Transaction reply, " + JSON.stringify(readData, null, "\t")
-        );
       } else if (data[0] == "f".charCodeAt(0)) {
         const readData = ColUpdateReqManner.read(data);
         console.log("Received Collateral Update Request reply", readData);
-        alert(
-          "Received Collateral Update Request reply, " +
-            JSON.stringify(readData, null, "\t")
-        );
       } else if (data[0] == "e".charCodeAt(0)) {
         const readData = OpenOrderReqManner.read(data);
         console.log("Received Open Order Request reply", readData);
-        alert(
-          "Received Open Order Request reply, " +
-            JSON.stringify(readData, null, "\t")
-        );
       } else if (data[0] == "w".charCodeAt(0)) {
         const readData = RiskUpdateReqManner.read(data);
         console.log("Received Risk Update Request reply", readData);
-        alert(
-          "Received Risk Update Request reply, " +
-            JSON.stringify(readData, null, "\t")
-        );
       } else if (data[0] == "N".charCodeAt(0)) {
         const readData = RiskSymbolManner.read(data);
         console.log("Received Risk User Symbol reply", readData);
-        alert(
-          "Received Risk User Symbol reply, " +
-            JSON.stringify(readData, null, "\t")
-        );
       } else if (data[0] == "h".charCodeAt(0)) {
         const readData = ColDataManner.read(data);
         console.log("Received Collateral Data reply", readData);
-        alert(
-          "Received Collateral Data reply, " +
-            JSON.stringify(readData, null, "\t")
-        );
       }
     };
   }
