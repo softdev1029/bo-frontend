@@ -28,6 +28,7 @@ import OrderFormStopTrigger from "./OrderForm.stop-trigger";
 import { OrderFormTIFOptions } from "./OrderForm.tif-options";
 import { OrderFormTradeOptions } from "./OrderForm.trade-options";
 import { OrderFormInputDataFlows } from "./OrderForm.types";
+import MultiSelectSort from "@/ui-components/ui/Dropdown/Multi.dropdown";
 
 export default class OrderFormInputs extends React.Component<
   Partial<OrderFormInputDataFlows>,
@@ -113,6 +114,24 @@ export default class OrderFormInputs extends React.Component<
       : numberRegex;
     const step = getMinPrice(pair);
 
+    const counterPartyOptions = [
+      {
+        id: "all",
+        value: "all",
+        label: "All",
+      },
+      {
+        id: "party1",
+        value: "party1",
+        label: "Party 1",
+      },
+      {
+        id: "party2",
+        value: "party2",
+        label: "Party 2",
+      },
+    ];
+
     return (
       <div>
         {orderTypes.length ? (
@@ -126,6 +145,10 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         ) : null}
+
+        <div className="mb-10">
+          <MultiSelectSort options={counterPartyOptions} />
+        </div>
 
         {!shouldHidePriceField(typeId) && (
           <div className="mb-10">
