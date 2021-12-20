@@ -11,7 +11,7 @@ export const defaultWorkspace: WorkspaceSetting = {
   orderbook: false,
   trade: false,
   watchlist: false,
-  marketHistory: false,
+  marketHistory: true,
 };
 
 export const DEFAULT_USER_SETTINGS_MAP = {
