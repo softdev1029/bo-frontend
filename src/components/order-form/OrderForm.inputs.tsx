@@ -132,6 +132,17 @@ export default class OrderFormInputs extends React.Component<
       },
     ];
 
+    const callPutOptions = [
+      {
+        value: "call",
+        label: "Call",
+      },
+      {
+        value: "put",
+        label: "Put",
+      },
+    ];
+
     return (
       <div>
         {orderTypes.length ? (
@@ -148,6 +159,10 @@ export default class OrderFormInputs extends React.Component<
 
         <div className="mb-10">
           <MultiSelectSort options={counterPartyOptions} />
+        </div>
+
+        <div className="mb-10">
+          <SelectDropdown options={callPutOptions} />
         </div>
 
         {!shouldHidePriceField(typeId) && (
