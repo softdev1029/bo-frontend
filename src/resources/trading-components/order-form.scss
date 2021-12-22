@@ -24,6 +24,17 @@
   .tab-radio-buttons {
     font-size: 14px;
   }
+
+  .expiry-date {
+    .react-datepicker-wrapper {
+      .react-datepicker__input-container {
+        input {
+          width: 100%;
+          height: 30px;
+        }
+      }
+    }
+  }
 }
 
 .order-form__quantity__ctn {

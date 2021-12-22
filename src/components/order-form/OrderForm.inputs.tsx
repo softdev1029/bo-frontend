@@ -1,3 +1,6 @@
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import { ICELayers, OrderType } from "@/constants/order-enums";
 import {
   getAmountDecimals,
@@ -43,14 +46,22 @@ export default class OrderFormInputs extends React.Component<
           label: `${v}`,
           value: v,
         })),
+      expiryDate: new Date(),
     };
     this.onLayerChange = this.onLayerChange.bind(this);
+    this.onChangeExpiryDate = this.onChangeExpiryDate.bind(this);
   }
 
   onLayerChange({ value }) {
     const { onLayerChange } = this.props;
 
     onLayerChange(value);
+  }
+
+  onChangeExpiryDate(value) {
+    this.setState((state) => {
+      return { ...state, expiryDate: value };
+    });
   }
 
   render() {
@@ -163,6 +174,13 @@ export default class OrderFormInputs extends React.Component<
 
         <div className="mb-10">
           <SelectDropdown options={callPutOptions} />
+        </div>
+
+        <div className="mb-10 expiry-date">
+          <DatePicker
+            selected={this.state.expiryDate}
+            onChange={(date) => this.onChangeExpiryDate(date)}
+          />
         </div>
 
         {!shouldHidePriceField(typeId) && (
