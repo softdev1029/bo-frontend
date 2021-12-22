@@ -190,7 +190,7 @@ export default class OrderFormInputs extends React.Component<
               value={price}
               onChange={onPriceChange}
               addonAfter={quote}
-              addonBefore={"Price"}
+              addonBefore={"Strike Price"}
               step={step}
             />
           </div>

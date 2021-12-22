@@ -33,6 +33,9 @@ export function getLabelOrderType(orderType: OrderType): string {
     case OrderType.PEG: {
       return "Pegged";
     }
+    case OrderType.MARKET: {
+      return "RFQ";
+    }
     default: {
       return titleCase(OrderType[orderType] as string);
     }
