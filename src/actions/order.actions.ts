@@ -65,7 +65,7 @@ export function submitNewOrder({
   tif = TIF.GTC,
   symbolType,
 }: NewOrderParams) {
-  console.log(">>>>>>>> submit new order params <<<<<<<", {
+  console.log("[order.actions] submitting a new order ...", {
     tradeOptions,
     clientOrderId,
     ordertype: type,
@@ -101,7 +101,7 @@ export function submitNewOrder({
 
   // console.log('transaction buffer:', order);
   console.log(
-    ">>> origin data for submit new Order",
+    "[order.actions] transaction message is built",
     TransactionManner.read(order)
   );
 

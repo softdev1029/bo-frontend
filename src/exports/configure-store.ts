@@ -25,7 +25,7 @@ export function configureStore(reducers, epics = {}) {
 
   const rootEpic = (action$, store$, dependencies) =>
     epic$.pipe(
-      tap(() => console.log("update root epic")),
+      tap(() => console.log("[config.store] update root epic")),
       mergeMap((callEpicFunc: any) =>
         callEpicFunc(action$, store$, dependencies).pipe(
           catchError((error, source) => {
@@ -49,14 +49,14 @@ export function configureStore(reducers, epics = {}) {
   epicMiddleware.run(rootEpic);
 
   SingletonWSManager.getEntries$().subscribe((ids) => {
-    console.log("get entries ids", ids);
+    console.log("[config.store] get entries ids", ids);
     let streams = [];
     ids.forEach((id) => {
       streams.push(initWSStream(id));
     });
 
     if (streams.length) {
-      console.log("streams", streams);
+      console.log("[config.store] streams", streams);
       const wsEpic = (action$, state$) =>
         merge(...streams.map((s) => s(action$, state$))).pipe(
           takeUntil(

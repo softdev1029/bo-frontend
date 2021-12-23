@@ -44,18 +44,18 @@ const SocketProviderMemo = ({
   }, [openWsConnection, closeWs, marketUrls]);
 
   useEffect(() => {
-    console.log("[wsProvider] establish admin risk >>>>> ");
+    console.log("[SocketProvider] opening admin risk ...");
     openWsConnection(adminRiskUrl);
 
     return () => {
-      console.log("[wsProvider] closing admin risk >>>>> ");
+      console.log("[SocketProvider] closing admin risk ...");
       closeWs(adminRiskUrl);
     };
   }, [openWsConnection, closeWs, adminRiskUrl]);
 
   useEffect(() => {
     console.log(
-      "[wsProvider] state updated isLogged",
+      "[SocketProvider] state updated isLogged",
       isLoggedIn,
       "last logged in",
       lastValue
@@ -94,7 +94,7 @@ const mapDispatchToProps = (dispatch) => ({
       const id = SingletonWSManager.getIdFromUrl(url);
 
       if (url && id) {
-        console.log(">>>>[wsProvider] open socket", id, "url", url);
+        console.log("[SocketProvider] open socket", id, "url", url);
         dispatch(establishWsConn({ reconn: false, id, url }));
       }
     }

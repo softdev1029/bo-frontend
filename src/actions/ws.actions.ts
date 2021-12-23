@@ -36,7 +36,7 @@ export const establishWsConn = ({
   reconn = false,
   url,
 }: WsConnectParams): WsActionType<WsConnectParams> => {
-  console.log(">>>>>>>>>ESSSSSTABLISH", id, url);
+  console.log("[ws.actions] WS_CONNECT", id, url);
   return {
     type: WS_CONNECT,
     payload: { reconn: url === testurl1, url },

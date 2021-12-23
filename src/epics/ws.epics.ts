@@ -54,12 +54,12 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
 
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
-      console.log("[ws epic] >>>> msgType", msgType);
+      console.log("[ws.epics] Received msgType", msgType);
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
           const serverInfo = ClientLoginManner.read(data);
-          console.log("Received Logon reply", serverInfo);
+          console.log("[ws.epcis] Received Logon reply", serverInfo);
 
           if (serverInfo.orderEntryIp1.replace(/\s/g, "").length) {
             SingletonWSManager.addWs(

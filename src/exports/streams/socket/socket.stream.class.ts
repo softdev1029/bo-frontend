@@ -124,9 +124,7 @@ export class StreamingWS {
     const pongTimeout = 10 * 1000;
     const reconnectInterval = 10 * 1000;
 
-    console.warn(
-      `------initalizing ws ${this._id}, ${this._url} .....--------`
-    );
+    console.log(`[socket class] initalizing ws ${this._id}, ${this._url} ...`);
 
     let wsConfig: any = {
       url: this._url,
@@ -263,6 +261,14 @@ export class StreamingWS {
   private _createWriteStream(wsSubject): ReduxObservableStreamType {
     return (action$) =>
       action$.ofType(WS_SEND).pipe(
+        tap((action: WsActionType<any>) =>
+          console.log(
+            "[socket class] writing stream ...",
+            action,
+            this._id,
+            wsSubject
+          )
+        ),
         takeUntil(this._stopStream(action$)),
         filter((action: WsActionType<any>) => {
           const { id } = action;
@@ -433,7 +439,7 @@ export class StreamingWS {
     return action$.pipe(
       ofType(WS_REQUEST_AUTH),
       filter(this._wsIdentify),
-      tap((action) => console.log("create auth streammmmmm", action)),
+      tap((action) => console.log("[socket class] create auth stream", action)),
       takeUntil(this._stopStream(action$)),
       withLatestFrom(state$),
       filter(

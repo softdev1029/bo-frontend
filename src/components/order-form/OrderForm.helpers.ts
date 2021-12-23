@@ -220,7 +220,7 @@ export function validateOCOOrder({
       return false;
     }
   } else if (side === OrderSide.SELL) {
-  /*
+    /*
   - Sell OCO: 
   + Stop-limit price < ticker Price <  Limit price
   + min trade <= amount <= max trade
@@ -680,7 +680,7 @@ export function commonOrderValidator({
     (leverage + 1 - 0.003 * leverage);
 
   console.log(
-    "LP",
+    "[OrderForm] validating order, LP",
     LP,
     "place price",
     price,

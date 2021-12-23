@@ -60,19 +60,16 @@ export function spotOrderValidationFn(
   },
   props
 ) {
-  console.log(
-    "{lowestSellPrice, highestBuyPrice, side, stopPrice, price, amount, type, onError},",
-    {
-      lowestSellPrice,
-      highestBuyPrice,
-      side,
-      stopPrice,
-      price,
-      amount,
-      type,
-      onError,
-    }
-  );
+  console.log("[OrderForm] validating order ...", {
+    lowestSellPrice,
+    highestBuyPrice,
+    side,
+    stopPrice,
+    price,
+    amount,
+    type,
+    onError,
+  });
 
   return commonOrderValidator({
     tradeOptions,

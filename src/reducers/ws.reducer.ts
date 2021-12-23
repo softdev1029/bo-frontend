@@ -27,7 +27,7 @@ export const wsReducer = (state = initialState, action) => {
     case WS_CONNECT: {
       const { id } = action;
       const { wsCollection } = state;
-      console.log("[reducer WS_CONNECT] >>> id", id);
+      console.log("[ws.reducer] WS_CONNECT id", id);
 
       if (
         wsCollection[id] === WebSocketKindStateEnum.CONNECTING ||
@@ -47,7 +47,7 @@ export const wsReducer = (state = initialState, action) => {
     }
     case WS_OPEN: {
       const { id } = action;
-      console.log("[WS_OPEN] >>> id", id);
+      console.log("[ws.reducer] WS_OPEN id", id);
       return {
         ...state,
         wsCollection: _set(
@@ -94,6 +94,7 @@ export const wsReducer = (state = initialState, action) => {
       };
     }
     case WS_SEND: {
+      console.log("[ws.reducer] WS_SEND");
       const { payload } = action;
       SingletonWSManager.send(payload);
     }

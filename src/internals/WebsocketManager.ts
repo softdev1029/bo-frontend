@@ -41,56 +41,56 @@ class WebsocketMananger {
 
     this.usingSockets[WebSocketKindEnum.MARKET] = testurl1;
 
-    this.client = new W3CWebSocket(adminRiskUrl);
-    this.client.binaryType = "arraybuffer";
+    // this.client = new W3CWebSocket(adminRiskUrl);
+    // this.client.binaryType = "arraybuffer";
 
-    this.client.onopen = () => {
-      console.log("WebSocket Client Connected");
-    };
+    // this.client.onopen = () => {
+    //   console.log("WebSocket Client Connected");
+    // };
 
-    this.client.onmessage = (message) => {
-      console.log(message.data);
-      const bytearray = new Uint8Array(message.data);
-      const data: number[] = [];
-      for (let i = 0; i < bytearray.length; i++) {
-        data.push(bytearray[i]);
-      }
+    // this.client.onmessage = (message) => {
+    //   console.log(message.data);
+    //   const bytearray = new Uint8Array(message.data);
+    //   const data: number[] = [];
+    //   for (let i = 0; i < bytearray.length; i++) {
+    //     data.push(bytearray[i]);
+    //   }
 
-      if (data[0] == "H".charCodeAt(0)) {
-        const readData = ClientLoginManner.read(data);
-        console.log("Received Logon reply", readData);
-      } else if (data[0] == "Y".charCodeAt(0)) {
-        const readData = InstrumentRequestManner.read(data);
-        console.log("Received Instrument request reply", readData);
-      } else if (data[0] == "T".charCodeAt(0)) {
-        const readData = TransactionManner.read(data);
-        console.log("Received Transaction reply", readData);
-      } else if (data[0] == "f".charCodeAt(0)) {
-        const readData = ColUpdateReqManner.read(data);
-        console.log("Received Collateral Update Request reply", readData);
-      } else if (data[0] == "e".charCodeAt(0)) {
-        const readData = OpenOrderReqManner.read(data);
-        console.log("Received Open Order Request reply", readData);
-      } else if (data[0] == "w".charCodeAt(0)) {
-        const readData = RiskUpdateReqManner.read(data);
-        console.log("Received Risk Update Request reply", readData);
-      } else if (data[0] == "N".charCodeAt(0)) {
-        const readData = RiskSymbolManner.read(data);
-        console.log("Received Risk User Symbol reply", readData);
-      } else if (data[0] == "h".charCodeAt(0)) {
-        const readData = ColDataManner.read(data);
-        console.log("Received Collateral Data reply", readData);
-      }
-    };
+    //   if (data[0] == "H".charCodeAt(0)) {
+    //     const readData = ClientLoginManner.read(data);
+    //     console.log("Received Logon reply", readData);
+    //   } else if (data[0] == "Y".charCodeAt(0)) {
+    //     const readData = InstrumentRequestManner.read(data);
+    //     console.log("Received Instrument request reply", readData);
+    //   } else if (data[0] == "T".charCodeAt(0)) {
+    //     const readData = TransactionManner.read(data);
+    //     console.log("Received Transaction reply", readData);
+    //   } else if (data[0] == "f".charCodeAt(0)) {
+    //     const readData = ColUpdateReqManner.read(data);
+    //     console.log("Received Collateral Update Request reply", readData);
+    //   } else if (data[0] == "e".charCodeAt(0)) {
+    //     const readData = OpenOrderReqManner.read(data);
+    //     console.log("Received Open Order Request reply", readData);
+    //   } else if (data[0] == "w".charCodeAt(0)) {
+    //     const readData = RiskUpdateReqManner.read(data);
+    //     console.log("Received Risk Update Request reply", readData);
+    //   } else if (data[0] == "N".charCodeAt(0)) {
+    //     const readData = RiskSymbolManner.read(data);
+    //     console.log("Received Risk User Symbol reply", readData);
+    //   } else if (data[0] == "h".charCodeAt(0)) {
+    //     const readData = ColDataManner.read(data);
+    //     console.log("Received Collateral Data reply", readData);
+    //   }
+    // };
   }
 
   send(data: any) {
-    const len = data.length;
-    const bytearray = new Uint8Array(len);
-    for (let i = 0; i < len; ++i) {
-      bytearray[i] = data[i];
-    }
-    this.client.send(bytearray);
+    // const len = data.length;
+    // const bytearray = new Uint8Array(len);
+    // for (let i = 0; i < len; ++i) {
+    //   bytearray[i] = data[i];
+    // }
+    // this.client.send(bytearray);
   }
 
   hasInstance(id: number): boolean {
@@ -131,9 +131,9 @@ class WebsocketMananger {
       url && urls.push(url);
     }
 
-    console.warn("url entries", urls);
+    console.log("[sock.mgr] url entries", urls);
 
-    console.log("remaining pendings", { ...this.pendingUrls });
+    console.log("[sock.mgr] remaining pendings", { ...this.pendingUrls });
     return urls;
   }
 
