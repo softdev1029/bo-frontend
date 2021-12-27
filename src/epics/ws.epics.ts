@@ -78,36 +78,50 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
         }
         case PacketHeaderMessageType.INSTRUMENT_REQUEST: {
           const readData = InstrumentRequestManner.read(data);
-          console.log("Received Instrument request reply", readData);
+          console.log("[ws.epcis] Received Instrument request reply", readData);
+          break;
         }
         case PacketHeaderMessageType.TRANSACTION: {
           const readData = TransactionManner.read(data);
-          console.log("Received Transaction reply", readData);
+          console.log("[ws.epcis] Received Transaction reply", readData);
+          break;
         }
         case PacketHeaderMessageType.COL_UPDATE_REQ: {
           const readData = ColUpdateReqManner.read(data);
-          console.log("Received Collateral Update Request reply", readData);
+          console.log(
+            "[ws.epcis] Received Collateral Update Request reply",
+            readData
+          );
+          break;
         }
         case PacketHeaderMessageType.OPEN_ORDER_REQ: {
           const readData = OpenOrderReqManner.read(data);
-          console.log("Received Open Order Request reply", readData);
+          console.log("[ws.epcis] Received Open Order Request reply", readData);
+          break;
         }
         case PacketHeaderMessageType.RISK_UPDATE_REQ: {
           const readData = RiskUpdateReqManner.read(data);
-          console.log("Received Risk Update Request reply", readData);
+          console.log(
+            "[ws.epcis] Received Risk Update Request reply",
+            readData
+          );
+          break;
         }
         case PacketHeaderMessageType.RISK_USER_SYMBOL: {
           const readData = RiskSymbolManner.read(data);
-          console.log("Received Risk User Symbol reply", readData);
+          console.log("[ws.epcis] Received Risk User Symbol reply", readData);
+          break;
         }
         case PacketHeaderMessageType.COL_DATA: {
           const readData = ColDataManner.read(data);
-          console.log("Received Collateral Data reply", readData);
+          console.log("[ws.epcis] Received Collateral Data reply", readData);
+          break;
         }
         default: {
           return EMPTY;
         }
       }
+      return EMPTY;
       // wsOnMessageSrc$.next(data);
     })
   );
