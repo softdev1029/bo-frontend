@@ -66,6 +66,11 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
               `ws://${serverInfo.orderEntryIp1}`,
               WebSocketKindEnum.ORDERS
             );
+          } else {
+            SingletonWSManager.addWs(
+              `ws://localhost:8081`,
+              WebSocketKindEnum.ORDERS
+            );
           }
           // SingletonWSManager.addWs(`ws://123.321.122:123`, WebSocketKindEnum.ORDERS);
           // SingletonWSManager.addWs(`ws://123.321.112:123`, WebSocketKindEnum.MARKET);
