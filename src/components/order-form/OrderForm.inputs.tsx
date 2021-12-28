@@ -84,7 +84,9 @@ export default class OrderFormInputs extends React.Component<
       stopLossTradePriceType,
       trailValue,
       counterParty,
+      counterPartyTimeout,
       onCounterPartyChange,
+      onCounterPartyTimeoutChange,
       onStopPriceChange,
       onAmountChange,
       onUpdateAmountByBalancePercent,
@@ -170,12 +172,19 @@ export default class OrderFormInputs extends React.Component<
           </div>
         ) : null}
 
-        <div className="mb-10">
+        <div className="d-flex mb-10">
+          <div className="mr-10">
+            <GroupInput
+              value={counterParty}
+              onChange={onCounterPartyChange}
+              addonBefore={"Counter Party"}
+            />
+          </div>
           <GroupInput
-            value={counterParty}
-            onChange={onCounterPartyChange}
-            addonBefore={"Counter Party"}
-            step={step}
+            value={counterPartyTimeout}
+            onChange={onCounterPartyTimeoutChange}
+            addonBefore={"Timeout"}
+            addonAfter="sec"
           />
         </div>
 
