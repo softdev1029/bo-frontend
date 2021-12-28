@@ -83,6 +83,8 @@ export default class OrderFormInputs extends React.Component<
       takeProfitTradePriceType,
       stopLossTradePriceType,
       trailValue,
+      counterParty,
+      onCounterPartyChange,
       onStopPriceChange,
       onAmountChange,
       onUpdateAmountByBalancePercent,
@@ -169,7 +171,12 @@ export default class OrderFormInputs extends React.Component<
         ) : null}
 
         <div className="mb-10">
-          <MultiSelectSort options={counterPartyOptions} />
+          <GroupInput
+            value={counterParty}
+            onChange={onCounterPartyChange}
+            addonBefore={"Counter Party"}
+            step={step}
+          />
         </div>
 
         <div className="mb-10">

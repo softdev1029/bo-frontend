@@ -91,6 +91,7 @@ export interface OrderFormControlsState {
   priceIncrement: number;
   selectedLayer?: ICELayers;
   qtyIncrement: number;
+  counterParty: string;
 }
 
 export interface OrderFormControlsProps {
@@ -142,6 +143,7 @@ export type OrderFormInputDataFlows = OrderFormControlsState & {
     percent: number,
     side: any
   ) => void;
+  onCounterPartyChange: (counterParty: string) => void;
   onOrderTypeChange: (orderType: string) => void;
   onTIFChange: (tif: TIF) => void;
   onTradeOptionChange: (tradeOptions: TradeOption[]) => void;

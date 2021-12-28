@@ -63,6 +63,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       priceIncrement: 0,
       selectedLayer: 0,
       qtyIncrement: 0,
+      counterParty: "",
     };
 
     this.tickerPrice = this.props.initialPrice;
@@ -95,6 +96,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     this.onPriceIncrementChange = this.onPriceIncrementChange.bind(this);
     this.onLayerChange = this.onLayerChange.bind(this);
     this.onQtyIncrementChange = this.onQtyIncrementChange.bind(this);
+    this.onCounterPartyChange = this.onCounterPartyChange.bind(this);
   }
 
   onLayerChange(layer: ICELayers) {
@@ -124,6 +126,12 @@ class OrderFormInputControlsContainer extends React.PureComponent<
   onTrailValueChange(value: number) {
     this.setState({
       trailValue: value,
+    });
+  }
+
+  onCounterPartyChange(value: string) {
+    this.setState({
+      counterParty: value,
     });
   }
 
@@ -521,6 +529,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       onPriceIncrementChange: this.onPriceIncrementChange,
       onLayerChange: this.onLayerChange,
       onQtyIncrementChange: this.onQtyIncrementChange,
+      onCounterPartyChange: this.onCounterPartyChange,
     };
     return _isFunction(this.props.children) ? this.props.children(props) : null;
   }
