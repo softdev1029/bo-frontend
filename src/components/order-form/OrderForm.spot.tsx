@@ -88,6 +88,11 @@ export class OrderFormSpot extends React.Component<
 
     return (
       <div className="order-form__wrapper">
+        <OrderBook
+          symbol={pair}
+          windowOpen={true}
+          tradeType={AppTradeType.SPOT}
+        />
         <div className="mb-10">{this.renderTab()}</div>
         <OrderFormInputs
           balance={balanceAmount}
@@ -126,11 +131,6 @@ export class OrderFormSpot extends React.Component<
             </div>
           </div>
         </div>
-        <OrderBook
-          symbol={pair}
-          windowOpen={true}
-          tradeType={AppTradeType.SPOT}
-        />
       </div>
     );
   }
