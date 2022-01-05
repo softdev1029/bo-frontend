@@ -8,7 +8,7 @@ export const defaultWorkspace: WorkspaceSetting = {
   contract: false,
   balance: false,
   market: false,
-  orderbook: true,
+  orderbook: false,
   trade: false,
   watchlist: false,
   marketHistory: true,
