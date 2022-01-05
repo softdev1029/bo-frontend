@@ -11,6 +11,8 @@ import { AdditionPopupData, OrderFormProps } from "./OrderForm.types";
 import { isBuy } from "./OrderForm.helpers";
 import _get from "lodash/get";
 import { walletNameFromId } from "@/constants/balance-enums";
+import { OrderBook } from "../order-book";
+import { AppTradeType } from "@/constants/trade-type";
 
 interface OrderFormSpotState {
   selectedTab: string;
@@ -124,6 +126,11 @@ export class OrderFormSpot extends React.Component<
             </div>
           </div>
         </div>
+        <OrderBook
+          symbol={pair}
+          windowOpen={true}
+          tradeType={AppTradeType.SPOT}
+        />
       </div>
     );
   }
