@@ -53,7 +53,7 @@ export function subscribeMarketData({
   const msg = SubscribeManner.send(params);
 
   console.log(
-    "[order.actions] subscribe message is built",
+    "[book.actions] subscribe message is built",
     SubscribeManner.read(msg)
   );
 
