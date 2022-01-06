@@ -1,6 +1,15 @@
-import { OrderBookDepthLimitEnum } from "@/constants/order-book-enums";
+import {
+  OrderBookDepthLimitEnum,
+  SubscribeType,
+  SubscribeUnsubscribe,
+} from "@/constants/order-book-enums";
+import { SymbolValue } from "@/constants/symbol-enums";
+import { WebSocketKindEnum } from "@/constants/websocket.enums";
+import { getSymbolId } from "@/exports/ticker.utils";
 import { BookData } from "@/models/book.model";
+import { SubscribeManner } from "@/packets/subscribe.packet";
 import { convertToBookData } from "@/transformers/book.transformer";
+import { sendWsData } from "./ws.actions";
 
 export const BOOK_INIT = "@book/INIT";
 export const BOOK_INITIALIZED = "@book/INITIALIZED";
@@ -11,6 +20,44 @@ export function initBook({ symbol, limit = OrderBookDepthLimitEnum.LVL3 }) {
     type: BOOK_INIT,
     payload: { symbol, limit },
   };
+}
+
+interface SubscribeMDParams {
+  symbol: string;
+  limit: OrderBookDepthLimitEnum;
+}
+
+export function subscribeMarketData({
+  symbol,
+  limit = OrderBookDepthLimitEnum.LVL3,
+}: SubscribeMDParams) {
+  console.log("[book.actions] submitting a MDSubscribe message ...", {
+    symbol,
+    limit,
+  });
+
+  const symbolEnum = getSymbolId(symbol) || SymbolValue.BTC;
+
+  const ACCOUNT_ID = 90001;
+  // const USER_NAME = "MTX01";
+  const SESSION_ID = 901;
+
+  const params = {
+    subscribeUnsubscribe: SubscribeUnsubscribe.SUBSCRIBE,
+    symbolEnum: symbolEnum,
+    subscribeType: SubscribeType.THREELAYERS,
+    account: ACCOUNT_ID,
+    sessionId: SESSION_ID,
+    sendingTime: Date.now(),
+  };
+  const msg = SubscribeManner.send(params);
+
+  console.log(
+    "[order.actions] subscribe message is built",
+    SubscribeManner.read(msg)
+  );
+
+  return sendWsData(WebSocketKindEnum.ORDERS, msg);
 }
 
 interface BookInitializedParams {

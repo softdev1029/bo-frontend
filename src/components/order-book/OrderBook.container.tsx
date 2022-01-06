@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { OrderBook } from "./OrderBook";
 import { OrderBookModel } from "@/models/book.model";
 import { getDisplayOrderBookData } from "./OrderBook.helpers";
-import { initBook } from "@/actions/book.action";
+import { subscribeMarketData } from "@/actions/book.action";
 import {
   getAsksSelector,
   getBidsSelector,
@@ -122,7 +122,8 @@ const mapStateToProps = (state, props: Partial<OrderBookContainerProps>) => {
 
 const mapDispatchToProps = (dispatch) => ({
   loadBook: function ({ symbol, limit }: { symbol: string; limit?: number }) {
-    dispatch(initBook({ symbol, limit }));
+    // dispatch(initBook({ symbol, limit }));
+    dispatch(subscribeMarketData({ symbol, limit }));
   },
 });
 

@@ -61,7 +61,8 @@ class SubscribeCustomByte
     return subscribe;
   }
 }
-const TRADE_MESSAGE_STRUCTURE = [
+
+export const SUBSCRIBE_MESSAGE_STRUCTURE = [
   new DataByte("type", TypedData.CHAR, 2), // 4
   new DataByte("padding", TypedData.SHORT), // 6
   new DataByte("accountId", TypedData.INT), // 8
@@ -72,7 +73,19 @@ const TRADE_MESSAGE_STRUCTURE = [
   new SubscribeCustomByte("bit24Subscribe", TypedData.CUSTOM_DATA, 115), // 40
 ];
 
+const SUBSCRIBE_MESSAGE_STRUCTURE_2022 = [
+  new DataByte("type", TypedData.CHAR, 2), // 4
+  new DataByte("subscribeUnsubscribe", TypedData.SHORT), // 6
+  new DataByte("symbolEnum", TypedData.SHORT), // 8
+  new DataByte("subscribeType", TypedData.SHORT), // 10
+  new DataByte("account", TypedData.INT), // 12
+  new DataByte("key", TypedData.INT), // 16
+  new DataByte("sessionId", TypedData.INT), // 20
+  new DataByte("sendingTime", TypedData.LONG), // 24
+  new DataByte("MsgSeqNum", TypedData.INT), // 32
+];
+
 export const SubscribeManner = new PacketManner(
   PacketHeaderMessageType.SUBSCRIBE,
-  TRADE_MESSAGE_STRUCTURE
+  SUBSCRIBE_MESSAGE_STRUCTURE_2022
 );

@@ -26,3 +26,19 @@ export enum OrderBookStartLayer {
   L2 = 2,
   L3 = 3,
 }
+
+export enum SubscribeUnsubscribe {
+  SUBSCRIBE = 1,
+  UNSUBSCRIBE,
+}
+
+export enum SubscribeType {
+  TOB = 1,
+  THREELAYERS,
+  FIVELAYERS,
+  TENLAYERS,
+  TWENTYLAYERS,
+  THIRTYLAYERS,
+  FOB_DATA,
+  FLB_DATA,
+}
