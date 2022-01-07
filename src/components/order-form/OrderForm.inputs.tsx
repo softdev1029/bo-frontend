@@ -172,7 +172,7 @@ export default class OrderFormInputs extends React.Component<
           </div>
         ) : null}
 
-        <div className="d-flex mb-10">
+        {/* <div className="d-flex mb-10">
           <div className="mr-10">
             <GroupInput
               value={counterParty}
@@ -186,7 +186,7 @@ export default class OrderFormInputs extends React.Component<
             addonBefore={"Timeout"}
             addonAfter="sec"
           />
-        </div>
+        </div> */}
 
         <div className="mb-10">
           <SelectDropdown options={callPutOptions} />
