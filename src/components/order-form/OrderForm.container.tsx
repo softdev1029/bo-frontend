@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { OrderFormContainerProps, OrderFormProps } from "./OrderForm.types";
 import { isTradeLoaded } from "@/selectors/trade.selectors";
 import { WalletType } from "@/constants/balance-enums";
-import { OrderFormCalculator, CalculatorBody } from "./OrderForm.Calculator";
+import { CalculatorBody, OrderFormToolbar } from "./OrderForm.Calculator";
 import _maxBy from "lodash/maxBy";
 import _minBy from "lodash/minBy";
 import { getBalances } from "@/selectors/balance.selectors";
@@ -214,7 +214,7 @@ class OrderFormContainer extends React.PureComponent<
     return (
       <Collapsible
         title="New Order"
-        toolbar={this._isDerivative() && <OrderFormCalculator />}
+        toolbar={<OrderFormToolbar isDerivative={this._isDerivative()} />}
         overlay={showCalculator && this._isDerivative() && <CalculatorBody />}
         closeOverlay={this.closeCalculator}
       >

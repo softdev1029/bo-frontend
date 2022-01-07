@@ -10,6 +10,7 @@ import {
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import GroupInput from "./OrderForm.group-input";
+import { OrderSettingDropdown } from "./OrderForm.setting";
 
 const tabConfig = [
   {
@@ -200,9 +201,18 @@ export class CalculatorBody extends React.Component<
   }
 }
 
-const CalculatorIcon = ({ toggleCalculator }) => {
+const CalculatorIcon = ({ isDerivative, toggleCalculator }) => {
   return (
-    <IconButton cssmodule="fas" id="calculator" onClick={toggleCalculator} />
+    <>
+      {isDerivative && (
+        <IconButton
+          cssmodule="fas"
+          id="calculator"
+          onClick={toggleCalculator}
+        />
+      )}
+      <OrderSettingDropdown />
+    </>
   );
 };
 
@@ -217,7 +227,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-export const OrderFormCalculator = connect(
+export const OrderFormToolbar = connect(
   null,
   mapDispatchToProps
 )(CalculatorIcon);
