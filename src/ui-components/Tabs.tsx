@@ -105,7 +105,7 @@ export const Tabs = React.memo(
       )}
       style={containerStyle}
     >
-      {elements.map((elm) => {
+      {elements.map((elm, index) => {
         const {
           active,
           onClick,
@@ -167,7 +167,14 @@ export const Tabs = React.memo(
             };
         }
 
-        return <div {...props}> {item} </div>;
+        return (
+          <>
+            <div {...props}> {item} </div>
+            {tabType === TabTypes.BIG_BOX && index === 0 && (
+              <div className="tab-big-box__spread">22</div>
+            )}
+          </>
+        );
       })}
     </div>
   )

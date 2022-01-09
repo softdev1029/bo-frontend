@@ -34,7 +34,7 @@ export class OrderFormSpot extends React.Component<
       title: "Sell",
       to: `${OrderSide.SELL}`,
       meta: {
-        price: "42,380",
+        price: "42,378",
       },
       // className: redText(),
     },

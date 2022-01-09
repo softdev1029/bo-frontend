@@ -6,9 +6,11 @@
   font-weight: var(--font-semi-bold);
   border-bottom: 1px solid var(--tuatara-300);
   justify-content: center;
+  align-items: center;
 
   &.tab-big-box {
     border-bottom: 0;
+
     .tab {
       &.active {
         border-bottom: 0;
@@ -22,6 +24,10 @@
         padding: 10px;
         &.buy {
           border: 1px solid var(--mountain-meadow);
+        }
+
+        &__spread {
+          margin-right: 1rem;
         }
 
         &.sell {
