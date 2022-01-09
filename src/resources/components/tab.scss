@@ -5,6 +5,38 @@
   font-size: 14px;
   font-weight: var(--font-semi-bold);
   border-bottom: 1px solid var(--tuatara-300);
+  justify-content: center;
+
+  &.tab-big-box {
+    border-bottom: 0;
+    .tab {
+      &.active {
+        border-bottom: 0;
+      }
+
+      &-big-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        &.buy {
+          border: 1px solid var(--mountain-meadow);
+        }
+
+        &.sell {
+          border: 1px solid var(--tamarillo);
+        }
+
+        &__title {
+        }
+
+        &__price {
+          font-size: 24px;
+        }
+      }
+    }
+  }
 
   .tab {
     color: var(--silver-chalice-100);

@@ -12,6 +12,7 @@ export enum TabTypes {
   RADIO_BUTTONS = 1,
   NORMAL = 2,
   DASHED_BUTTONS = 3,
+  BIG_BOX = 4,
 }
 
 interface TabContainerProps<T = string> {
@@ -39,6 +40,7 @@ export interface TabProps<T = string> {
   style?: CSSProperties;
   className?: string;
   dropdownOptions?: TabDropdownOptions[];
+  meta?: any;
 }
 
 function getTabClassesByType(tabType: TabTypes): string {
@@ -52,7 +54,32 @@ function getTabClassesByType(tabType: TabTypes): string {
     case TabTypes.DASHED_BUTTONS: {
       return "tab-dashed-options";
     }
+    case TabTypes.BIG_BOX: {
+      return "tab-big-box";
+    }
   }
+}
+
+function getBigBoxClassesByType(type: string): string {
+  switch (type) {
+    case "1": {
+      return "buy";
+    }
+    case "2": {
+      return "sell";
+    }
+  }
+}
+
+function getBigBoxItem(elm: TabProps) {
+  const { active, to = "", title, meta } = elm;
+
+  return (
+    <div className={classNames("tab-big-box", getBigBoxClassesByType(to))}>
+      <div className="tab-big-box__title">{title}</div>
+      <div className="tab-big-box__price">{meta.price}</div>
+    </div>
+  );
 }
 
 export const Tabs = React.memo(
@@ -93,6 +120,9 @@ export const Tabs = React.memo(
         let item = _isString(title) ? <span>{title}</span> : title;
         let isActive = active || selected === to;
 
+        if (tabType === TabTypes.BIG_BOX) {
+          item = getBigBoxItem(elm);
+        }
         if (isDropdown) {
           let found = dropdownOptions.find(({ value }) =>
             _isEqual(value, selected)

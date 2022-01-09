@@ -25,11 +25,17 @@ export class OrderFormSpot extends React.Component<
     {
       title: "Buy",
       to: `${OrderSide.BUY}`,
+      meta: {
+        price: "42,400",
+      },
       // className: greenText(),
     },
     {
       title: "Sell",
       to: `${OrderSide.SELL}`,
+      meta: {
+        price: "42,380",
+      },
       // className: redText(),
     },
   ];
@@ -58,7 +64,7 @@ export class OrderFormSpot extends React.Component<
         elements={this._spotTabConfig}
         selected={this.state.selectedTab}
         onChange={this.onTabChanged}
-        tabType={TabTypes.RADIO_BUTTONS}
+        tabType={TabTypes.BIG_BOX}
         containerClassName="border-radius"
       />
     );
@@ -88,11 +94,11 @@ export class OrderFormSpot extends React.Component<
 
     return (
       <div className="order-form__wrapper">
-        <OrderBook
+        {/* <OrderBook
           symbol={pair}
           windowOpen={true}
           tradeType={AppTradeType.SPOT}
-        />
+        /> */}
         <div className="mb-10">{this.renderTab()}</div>
         <OrderFormInputs
           balance={balanceAmount}
