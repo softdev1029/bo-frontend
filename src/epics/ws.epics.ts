@@ -15,7 +15,11 @@ import {
 } from "@/constants/websocket.enums";
 import { tickerUpdate2, updateInstrument } from "@/actions/ticker.actions";
 import { tradeUpdate2 } from "@/actions/trade.actions";
-import { bookUpdate2 } from "@/actions/book.action";
+import {
+  bookUpdate2,
+  sendMDInfoReq,
+  subscribeMarketData,
+} from "@/actions/book.action";
 import { ChartSubject } from "@/components/chart";
 import { PacketReader, SingletonWSManager } from "@/internals";
 import { updateSocketUrlEntries } from "@/actions/app.actions";
@@ -43,6 +47,7 @@ import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
 import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
 import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
 import { ColDataManner } from "@/packets/col-data.packet";
+import { MdInfoResManner } from "@/packets/md-info-res.packet";
 
 export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
@@ -54,12 +59,12 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
 
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
-      console.log("[ws.epics] Received msgType", msgType);
+      console.log("[ws.epics] Received msgType via AES", msgType);
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
           const serverInfo = ClientLoginManner.read(data);
-          console.log("[ws.epcis] Received Logon reply", serverInfo);
+          console.log("[ws.epcis] Received Logon reply via AES", serverInfo);
 
           if (serverInfo.orderEntryIp1.replace(/\s/g, "").length) {
             SingletonWSManager.addWs(
@@ -81,45 +86,39 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
           SingletonWSManager.acceptEntries();
           return of(updateSocketUrlEntries(saveEntries), wsAuthenticated(wsId));
         }
-        case PacketHeaderMessageType.INSTRUMENT_REQUEST: {
-          const readData = InstrumentRequestManner.read(data);
-          console.log("[ws.epcis] Received Instrument request reply", readData);
-          break;
-        }
-        case PacketHeaderMessageType.TRANSACTION: {
-          const readData = TransactionManner.read(data);
-          console.log("[ws.epcis] Received Transaction reply", readData);
-          break;
-        }
-        case PacketHeaderMessageType.COL_UPDATE_REQ: {
-          const readData = ColUpdateReqManner.read(data);
-          console.log(
-            "[ws.epcis] Received Collateral Update Request reply",
-            readData
+        case PacketHeaderMessageType.MD_INFO_RES: {
+          const serverInfo = MdInfoResManner.read(data);
+          console.log("[ws.epcis] Received MdInfoRes via AES", serverInfo);
+
+          const symbol = serverInfo.symbolEnum;
+
+          if (serverInfo.mdPrimary.replace(/\s/g, "").length) {
+            SingletonWSManager.addWs(
+              `ws://${serverInfo.mdPrimary}`,
+              WebSocketKindEnum.MARKET
+            );
+          } else {
+            SingletonWSManager.addWs(
+              `ws://localhost:8081`,
+              WebSocketKindEnum.MARKET
+            );
+          }
+
+          if (serverInfo.mdSecondary.replace(/\s/g, "").length) {
+            SingletonWSManager.addWs(
+              `ws://${serverInfo.mdSecondary}`,
+              WebSocketKindEnum.MARKET
+            );
+          }
+
+          const saveEntries = SingletonWSManager.getUrlEntries();
+
+          SingletonWSManager.acceptEntries();
+
+          return of(
+            updateSocketUrlEntries(saveEntries),
+            subscribeMarketData({ symbol: "BTCUSDT" })
           );
-          break;
-        }
-        case PacketHeaderMessageType.OPEN_ORDER_REQ: {
-          const readData = OpenOrderReqManner.read(data);
-          console.log("[ws.epcis] Received Open Order Request reply", readData);
-          break;
-        }
-        case PacketHeaderMessageType.RISK_UPDATE_REQ: {
-          const readData = RiskUpdateReqManner.read(data);
-          console.log(
-            "[ws.epcis] Received Risk Update Request reply",
-            readData
-          );
-          break;
-        }
-        case PacketHeaderMessageType.RISK_USER_SYMBOL: {
-          const readData = RiskSymbolManner.read(data);
-          console.log("[ws.epcis] Received Risk User Symbol reply", readData);
-          break;
-        }
-        case PacketHeaderMessageType.COL_DATA: {
-          const readData = ColDataManner.read(data);
-          console.log("[ws.epcis] Received Collateral Data reply", readData);
           break;
         }
         default: {

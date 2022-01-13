@@ -42,4 +42,6 @@ export enum PacketHeaderMessageType {
   OPEN_ORDER_REQ = "e",
   RISK_UPDATE_REQ = "w",
   COL_DATA = "h",
+  MD_INFO_REQ = "a",
+  MD_INFO_RES = "a",
 }

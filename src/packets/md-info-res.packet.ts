@@ -5,7 +5,7 @@ import { PacketManner } from "./packet-manner";
 const MD_INFO_RES_MESSAGE_STRUCTURE = [
   new DataByte("type", TypedData.CHAR, 2), // 4
   new DataByte("symbolEnum", TypedData.SHORT), // 6
-  new DataByte("protoColType", TypedData.SHORT), // 8
+  new DataByte("protocolType", TypedData.SHORT), // 8
   new DataByte("bookType", TypedData.SHORT), // 10
   new DataByte("mdPrimary", TypedData.CHAR, 24), // 12
   new DataByte("mdSecondary", TypedData.CHAR, 24), // 36
@@ -17,6 +17,6 @@ const MD_INFO_RES_MESSAGE_STRUCTURE = [
 ];
 
 export const MdInfoResManner = new PacketManner(
-  PacketHeaderMessageType.SUBSCRIBE,
+  PacketHeaderMessageType.MD_INFO_RES,
   MD_INFO_RES_MESSAGE_STRUCTURE
 );

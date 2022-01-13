@@ -4,7 +4,11 @@ import { connect } from "react-redux";
 import { OrderBook } from "./OrderBook";
 import { OrderBookModel } from "@/models/book.model";
 import { getDisplayOrderBookData } from "./OrderBook.helpers";
-import { subscribeMarketData } from "@/actions/book.action";
+import {
+  initBook,
+  sendMDInfoReq,
+  subscribeMarketData,
+} from "@/actions/book.action";
 import {
   getAsksSelector,
   getBidsSelector,
@@ -123,7 +127,8 @@ const mapStateToProps = (state, props: Partial<OrderBookContainerProps>) => {
 const mapDispatchToProps = (dispatch) => ({
   loadBook: function ({ symbol, limit }: { symbol: string; limit?: number }) {
     // dispatch(initBook({ symbol, limit }));
-    dispatch(subscribeMarketData({ symbol, limit }));
+    // dispatch(subscribeMarketData({ symbol, limit }));
+    dispatch(sendMDInfoReq({ symbol }));
   },
 });
 

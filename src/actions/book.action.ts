@@ -1,12 +1,15 @@
+import { BookType } from "@/constants/book-enums";
 import {
   OrderBookDepthLimitEnum,
   SubscribeType,
   SubscribeUnsubscribe,
 } from "@/constants/order-book-enums";
+import { ProtocolType } from "@/constants/protocol-enums";
 import { SymbolValue } from "@/constants/symbol-enums";
 import { WebSocketKindEnum } from "@/constants/websocket.enums";
 import { getSymbolId } from "@/exports/ticker.utils";
 import { BookData } from "@/models/book.model";
+import { MdInfoReqManner } from "@/packets/md-info-req.packet";
 import { SubscribeManner } from "@/packets/subscribe.packet";
 import { convertToBookData } from "@/transformers/book.transformer";
 import { sendWsData } from "./ws.actions";
@@ -22,9 +25,48 @@ export function initBook({ symbol, limit = OrderBookDepthLimitEnum.LVL3 }) {
   };
 }
 
+interface MDInfoReqParams {
+  symbol: string;
+}
+
+/**
+ * The market data is going to be run on channels,
+ * so you will need to send a message to the admin server
+ * and it will tell you the IP and port of the market data server
+ * to connect to to get that data.
+ */
+export function sendMDInfoReq({ symbol }: MDInfoReqParams) {
+  console.log("[book.actions] sending a MDInfoReq message ...", {
+    symbol,
+  });
+
+  const symbolEnum = getSymbolId(symbol) || SymbolValue.BTC;
+
+  const ACCOUNT_ID = 90001;
+  // const USER_NAME = "MTX01";
+  const SESSION_ID = 901;
+
+  const params = {
+    symbolEnum: symbolEnum,
+    protocolType: ProtocolType.WS_BINARY,
+    bookType: BookType.LBS,
+    account: ACCOUNT_ID,
+    sessionId: SESSION_ID,
+    sendingTime: Date.now(),
+  };
+  const msg = MdInfoReqManner.send(params);
+
+  console.log(
+    "[book.actions] MDInfoReq message is built",
+    MdInfoReqManner.read(msg)
+  );
+
+  return sendWsData(WebSocketKindEnum.ADMIN_RISK, msg);
+}
+
 interface SubscribeMDParams {
   symbol: string;
-  limit: OrderBookDepthLimitEnum;
+  limit?: OrderBookDepthLimitEnum;
 }
 
 export function subscribeMarketData({
