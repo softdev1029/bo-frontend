@@ -9,6 +9,10 @@
   align-items: center;
 }
 
+.cpn-header__left {
+  display: flex;
+}
+
 .cpn-header__logo {
   font-size: 26px;
   display: flex;
@@ -33,6 +37,10 @@
   font-size: rem(12);
   background-color: var(--tuatara-200);
   color: #fff;
+}
+
+.cpn-header__menu {
+  margin-left: 10px;
 }
 
 .cpn-header__nav {

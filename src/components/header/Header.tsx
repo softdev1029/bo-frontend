@@ -8,6 +8,7 @@ import { Link, matchPath, withRouter } from "react-router-dom";
 import _get from "lodash/get";
 import { Market } from "../market/Market";
 import { AppTradeType } from "@/constants/trade-type";
+import { HeaderMenuSection } from "./Header.menu.section";
 // import { MarketBalance } from '../market/Market.balance';
 
 interface HeaderProps {
@@ -38,14 +39,21 @@ export const Header = React.memo(
 
     return (
       <div className="cpn-header">
-        <div className="cpn-header__logo">
-          <Link to="/">
-            <span></span>
-            <span></span>
-          </Link>
-          {getHeaderItems(marketHeader)}
+        <div className="cpn-header__left">
+          <div className="cpn-header__logo">
+            <Link to="/">
+              <span></span>
+              <span></span>
+            </Link>
+            {getHeaderItems(marketHeader)}
+          </div>
+
+          {/* {symbol && <Market symbol={symbol} tradeType={tradeType} />} */}
+          <div className="cpn-header__menu">
+            <HeaderMenuSection />
+          </div>
         </div>
-        {symbol && <Market symbol={symbol} tradeType={tradeType} />}
+
         <div className="cpn-header__nav">
           {getHeaderItems(configs)}
           <HeaderUserSection />

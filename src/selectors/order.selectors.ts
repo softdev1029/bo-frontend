@@ -45,3 +45,8 @@ export const getStopOrdersCount = createSelector(
   getOpenOrdersArray,
   (orders) => orders.length
 );
+
+export const getOrderEntries = createSelector(
+  _getOrderState,
+  (order) => order.orderEntries
+);

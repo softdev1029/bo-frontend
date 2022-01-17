@@ -14,12 +14,14 @@ import { AppTradeType } from "@/constants/trade-type";
 import { OrderForm } from "./order-form";
 import { getWalletIdFromName } from "@/constants/balance-enums";
 import { isUserLoggedIn } from "@/selectors/auth.selectors";
+import { getOrderEntries } from "@/selectors/order.selectors";
 
 interface Props {
   tradeType: AppTradeType;
   enabledWorkspaces: WorkspaceSetting;
   symbol: string;
   isLoggedIn: boolean;
+  orderEntries: [];
 }
 
 const TradingControlsCol = ({
@@ -27,12 +29,15 @@ const TradingControlsCol = ({
   tradeType,
   enabledWorkspaces = {},
   isLoggedIn,
+  orderEntries,
 }: Partial<Props>) => {
   return (
     <div className="trading-main-vertical-grid">
       <div className="trading-main-layout__paddingwrapper">
         <div className="trading-main-layout__item">
-          <OrderForm wallet={getWalletIdFromName(tradeType)} pair={symbol} />
+          {orderEntries.map((e) => (
+            <OrderForm wallet={getWalletIdFromName(tradeType)} pair={symbol} />
+          ))}
         </div>
 
         {enabledWorkspaces[WorkspaceSettingEnum.BALANCE] && isLoggedIn && (
@@ -69,6 +74,7 @@ export function omitWorkspace(workpsaces: WorkspaceSetting): WorkspaceSetting {
 const mapStateToProps = (state) => ({
   enabledWorkspaces: omitWorkspace(getSetting(state)("enabled_workspaces")),
   isLoggedIn: isUserLoggedIn(state),
+  orderEntries: getOrderEntries(state),
 });
 
 export default connect(mapStateToProps)(TradingControlsCol);

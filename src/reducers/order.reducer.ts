@@ -1,4 +1,8 @@
-import { ORDER_NEW_ACCEPTED, ORDER_UPDATED } from "@/actions/order.actions";
+import {
+  ORDER_CREATE_NEW_ORDER_ENTRY,
+  ORDER_NEW_ACCEPTED,
+  ORDER_UPDATED,
+} from "@/actions/order.actions";
 import { MessageType } from "@/constants/order-enums";
 import { USER_STORAGE_KEY } from "@/constants/storage-keys";
 import { EMPTY_OBJ, formatNumber, strTemplate } from "@/exports";
@@ -15,6 +19,7 @@ export const GUEST_USER = "guest@user.id";
 const originalState = {
   orders: EMPTY_OBJ,
   updatedOrder: EMPTY_OBJ,
+  orderEntries: [],
 };
 
 const initialState = Object.assign(
@@ -133,6 +138,14 @@ export const orderReducer = (state = initialState, action) => {
           return state;
         }
       }
+    }
+    case ORDER_CREATE_NEW_ORDER_ENTRY: {
+      const { orderEntries } = state;
+      orderEntries.push({ symbol: "BTCUSDT" });
+      return {
+        ...state,
+        orderEntries,
+      };
     }
 
     default:

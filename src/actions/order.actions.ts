@@ -23,6 +23,9 @@ export const EXECUTION_PARTIAL = "@order/EXECUTION_PARTIAL";
 export const ORDER_REJECTED = "@order/ORDER_REJECTED";
 export const ORDER_CANCELLED = "@order/ORDER_CANCELLED";
 
+export const ORDER_CREATE_NEW_ORDER_ENTRY =
+  "@order/ORDER_CREATE_NEW_ORDER_ENTRY";
+
 export function orderUpdated(msgType: MessageType, newOrder: OrderItem) {
   return {
     type: ORDER_UPDATED,
@@ -178,4 +181,11 @@ export function replaceOrder({
   );
 
   return sendWsData(WebSocketKindEnum.ORDERS, orderSender);
+}
+
+export function createNewOrderEntry() {
+  return {
+    type: ORDER_CREATE_NEW_ORDER_ENTRY,
+    payload: {},
+  };
 }
