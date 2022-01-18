@@ -149,7 +149,7 @@ class OrderFormContainer extends React.PureComponent<
   }
 
   render() {
-    const { isLoggedIn } = this.props;
+    const { isLoggedIn, isDraggable } = this.props;
     if (!isLoggedIn) {
       return (
         <div className="orderform__login">
@@ -217,6 +217,7 @@ class OrderFormContainer extends React.PureComponent<
         toolbar={<OrderFormToolbar isDerivative={this._isDerivative()} />}
         overlay={showCalculator && this._isDerivative() && <CalculatorBody />}
         closeOverlay={this.closeCalculator}
+        isDraggable={isDraggable}
       >
         <OrderFormInputControlsContainer {...orderFormProps}>
           {this.renderForm}

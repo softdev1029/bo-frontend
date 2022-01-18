@@ -42,6 +42,7 @@ interface CollapsibleProps {
   tabIndex?: number;
   overlay?: ReactNode;
   closeOverlay?: () => void;
+  isDraggable: boolean;
 }
 
 interface CollapsibleState {
@@ -90,6 +91,7 @@ class Collapsible extends Component<
     onOpening: () => {},
     onClosing: () => {},
     tabIndex: null,
+    isDraggable: false,
   };
 
   innerRef = null;
@@ -291,6 +293,7 @@ class Collapsible extends Component<
       `${this.props.classParentString}__header__container`,
       {
         "collapsible__header__container--closed": this.state.isClosed,
+        "card__title__ctn draggable": this.props.isDraggable,
       }
     );
     const triggerClasses = classNames(

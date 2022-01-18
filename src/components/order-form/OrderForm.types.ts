@@ -64,6 +64,7 @@ export interface OrderFormContainerProps {
   executedLongPosition: number;
   leverage: number;
   mmr: number;
+  isDraggable: boolean;
 }
 
 export interface OrderFormControlsState {
