@@ -27,6 +27,7 @@ import { isUserLoggedIn } from "@/selectors/auth.selectors";
 import { getOrderEntries } from "@/selectors/order.selectors";
 import { OrderForm } from "../order-form";
 import { getWalletIdFromName } from "@/constants/balance-enums";
+import { OrderEntry } from "@/models/order.model";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -38,7 +39,7 @@ interface OrderTradingGridProps {
   margin?: number[];
   breakpoints: object;
   layouts: object;
-  orderEntries: [];
+  orderEntries: OrderEntry[];
 }
 
 interface OrderTradingGridState {
@@ -192,6 +193,7 @@ class OrderTradingGrid extends React.Component<
     const layout = [];
 
     for (let _i = 0; _i < orderEntries.length; _i++) {
+      const entry = orderEntries[_i];
       layout.push(
         <div
           key={_i}
@@ -199,7 +201,8 @@ class OrderTradingGrid extends React.Component<
         >
           <OrderForm
             wallet={getWalletIdFromName(tradeType)}
-            pair={symbol}
+            formId={entry.formId}
+            pair={entry.symbol}
             isDraggable={true}
           />
         </div>

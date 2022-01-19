@@ -201,7 +201,7 @@ export class CalculatorBody extends React.Component<
   }
 }
 
-const CalculatorIcon = ({ isDerivative, toggleCalculator }) => {
+const CalculatorIcon = ({ isDerivative, toggleCalculator, pair, formId }) => {
   return (
     <>
       {isDerivative && (
@@ -211,7 +211,7 @@ const CalculatorIcon = ({ isDerivative, toggleCalculator }) => {
           onClick={toggleCalculator}
         />
       )}
-      <OrderSettingDropdown />
+      <OrderSettingDropdown pair={pair} formId={formId} />
     </>
   );
 };

@@ -40,6 +40,7 @@ export interface OrderFormContainerProps {
   dispatch: (action: any) => void;
   isLoggedIn: boolean;
   pair: string;
+  formId: number;
   wallet: WalletType;
   balances?: object;
   tradingFee: number;

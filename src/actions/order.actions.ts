@@ -9,7 +9,7 @@ import {
 import { SymbolType, SymbolValue } from "@/constants/symbol-enums";
 import { WebSocketKindEnum } from "@/constants/websocket.enums";
 import { getSymbolId } from "@/exports/ticker.utils";
-import { OrderItem } from "@/models/order.model";
+import { OrderEntry, OrderItem } from "@/models/order.model";
 import { TransactionManner } from "@/packets/transaction.packet";
 import { sendWsData } from "./ws.actions";
 
@@ -25,6 +25,7 @@ export const ORDER_CANCELLED = "@order/ORDER_CANCELLED";
 
 export const ORDER_CREATE_NEW_ORDER_ENTRY =
   "@order/ORDER_CREATE_NEW_ORDER_ENTRY";
+export const ORDER_UPDATE_ORDER_ENTRY = "@order/ORDER_UPDATE_ORDER_ENTRY";
 
 export function orderUpdated(msgType: MessageType, newOrder: OrderItem) {
   return {
@@ -187,5 +188,12 @@ export function createNewOrderEntry() {
   return {
     type: ORDER_CREATE_NEW_ORDER_ENTRY,
     payload: {},
+  };
+}
+
+export function updateOrderEntry(payload: OrderEntry) {
+  return {
+    type: ORDER_UPDATE_ORDER_ENTRY,
+    payload,
   };
 }

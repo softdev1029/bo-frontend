@@ -185,6 +185,7 @@ class OrderFormContainer extends React.PureComponent<
       isAuthenticated,
       showCalculator,
       pair,
+      formId,
       tickerPrice,
       balances,
       wallet,
@@ -213,8 +214,14 @@ class OrderFormContainer extends React.PureComponent<
 
     return (
       <Collapsible
-        title="New Order"
-        toolbar={<OrderFormToolbar isDerivative={this._isDerivative()} />}
+        title={pair}
+        toolbar={
+          <OrderFormToolbar
+            pair={pair}
+            formId={formId}
+            isDerivative={this._isDerivative()}
+          />
+        }
         overlay={showCalculator && this._isDerivative() && <CalculatorBody />}
         closeOverlay={this.closeCalculator}
         isDraggable={isDraggable}

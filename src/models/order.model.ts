@@ -45,3 +45,8 @@ export type TransactionModel = OrderItem & {
   rejectReason: number;
   orderMessageType: MessageType;
 };
+
+export type OrderEntry = {
+  formId: number;
+  symbol: string;
+};

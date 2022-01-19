@@ -1,3 +1,4 @@
+import { updateOrderEntry } from "@/actions/order.actions";
 import {
   Dropdown,
   FixedDropdown,
@@ -7,9 +8,11 @@ import {
   SelectDropdown,
 } from "@/ui-components";
 import React from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 
-const OrderSetting = ({}) => {
+const OrderSetting = ({ pair, formId }) => {
+  const dispatch = useDispatch();
+
   const options = [
     {
       value: "BTCUSDT",
@@ -20,6 +23,12 @@ const OrderSetting = ({}) => {
       label: "ETHUSDT",
     },
   ];
+
+  const selected = options.find((e) => e.value === pair);
+
+  const onOptionChange = ({ value }) => {
+    dispatch(updateOrderEntry({ formId, symbol: value }));
+  };
 
   return (
     <FixedDropdown
@@ -34,7 +43,11 @@ const OrderSetting = ({}) => {
             <div className="orderbook__level-group">
               <div className="orderbook__input-group">
                 <label className="label">Option</label>
-                <SelectDropdown options={options} />
+                <SelectDropdown
+                  options={options}
+                  value={selected}
+                  onChange={onOptionChange}
+                />
               </div>
             </div>
           }

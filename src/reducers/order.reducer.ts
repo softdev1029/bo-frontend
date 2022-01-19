@@ -2,6 +2,7 @@ import {
   ORDER_CREATE_NEW_ORDER_ENTRY,
   ORDER_NEW_ACCEPTED,
   ORDER_UPDATED,
+  ORDER_UPDATE_ORDER_ENTRY,
 } from "@/actions/order.actions";
 import { MessageType } from "@/constants/order-enums";
 import { USER_STORAGE_KEY } from "@/constants/storage-keys";
@@ -9,7 +10,7 @@ import { EMPTY_OBJ, formatNumber, strTemplate } from "@/exports";
 import { getLabelOrderSide, getLabelOrderType } from "@/exports/order.utils";
 import { getAmountDecimals, getPriceDecimals } from "@/exports/ticker.utils";
 import Storage from "@/internals/Storage";
-import { OrderItem } from "@/models/order.model";
+import { OrderEntry, OrderItem } from "@/models/order.model";
 import _set from "lodash/set";
 import _unset from "lodash/unset";
 
@@ -141,10 +142,26 @@ export const orderReducer = (state = initialState, action) => {
     }
     case ORDER_CREATE_NEW_ORDER_ENTRY: {
       const { orderEntries } = state;
-      orderEntries.push({ symbol: "BTCUSDT" });
+      orderEntries.push({ key: new Date().getTime(), symbol: "BTCUSDT" });
       return {
         ...state,
         orderEntries,
+      };
+    }
+    case ORDER_UPDATE_ORDER_ENTRY: {
+      const { orderEntries } = state;
+      const { formId, symbol } = action.payload as OrderEntry;
+      const entry = orderEntries.find((e) => e.formId === formId);
+      if (entry) {
+        entry.symbol = symbol;
+      }
+
+      return {
+        ...state,
+        orderEntries: [
+          ...orderEntries.filter((e) => e.formId !== formId),
+          entry,
+        ],
       };
     }
 
