@@ -28,6 +28,7 @@ import { toggleBooleanSetting } from "@/actions/ui-setting.actions";
 import { getLabelOrderType } from "@/exports/order.utils";
 import { Link } from "react-router-dom";
 import { RoutePaths } from "@/constants/route-paths";
+import moment from "moment";
 
 class OrderFormContainer extends React.PureComponent<
   OrderFormContainerProps,
@@ -186,6 +187,7 @@ class OrderFormContainer extends React.PureComponent<
       showCalculator,
       pair,
       formId,
+      expiryDate,
       tickerPrice,
       balances,
       wallet,
@@ -214,11 +216,10 @@ class OrderFormContainer extends React.PureComponent<
 
     return (
       <Collapsible
-        title={pair}
+        title={`${pair} (${moment(expiryDate).format("DD/MM/YYYY")})`}
         toolbar={
           <OrderFormToolbar
-            pair={pair}
-            formId={formId}
+            formSetting={{ symbol: pair, formId, expiryDate }}
             isDerivative={this._isDerivative()}
           />
         }

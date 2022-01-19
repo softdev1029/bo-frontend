@@ -1,3 +1,5 @@
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { updateOrderEntry } from "@/actions/order.actions";
 import {
   Dropdown,
@@ -10,7 +12,8 @@ import {
 import React from "react";
 import { connect, useDispatch } from "react-redux";
 
-const OrderSetting = ({ pair, formId }) => {
+const OrderSetting = ({ formSetting }) => {
+  const { pair, formId, expiryDate } = formSetting;
   const dispatch = useDispatch();
 
   const options = [
@@ -27,7 +30,11 @@ const OrderSetting = ({ pair, formId }) => {
   const selected = options.find((e) => e.value === pair);
 
   const onOptionChange = ({ value }) => {
-    dispatch(updateOrderEntry({ formId, symbol: value }));
+    dispatch(updateOrderEntry({ formId, symbol: value, expiryDate }));
+  };
+
+  const onChangeExpiryDate = (date) => {
+    dispatch(updateOrderEntry({ formId, symbol: pair, expiryDate: date }));
   };
 
   return (
@@ -40,13 +47,20 @@ const OrderSetting = ({ pair, formId }) => {
         <MenuItem
           spaceBottom={true}
           content={
-            <div className="orderbook__level-group">
-              <div className="orderbook__input-group">
+            <div className="orderform_setting">
+              <div className="orderform_setting__input-group">
                 <label className="label">Option</label>
                 <SelectDropdown
                   options={options}
                   value={selected}
                   onChange={onOptionChange}
+                />
+              </div>
+              <div className="orderform_setting__input-group">
+                <label className="label">Expired Date</label>
+                <DatePicker
+                  selected={expiryDate}
+                  onChange={onChangeExpiryDate}
                 />
               </div>
             </div>

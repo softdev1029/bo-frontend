@@ -49,4 +49,5 @@ export type TransactionModel = OrderItem & {
 export type OrderEntry = {
   formId: number;
   symbol: string;
+  expiryDate: Date;
 };

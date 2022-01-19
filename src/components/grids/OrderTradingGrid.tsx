@@ -146,20 +146,12 @@ class OrderTradingGrid extends React.Component<
     prevProps: OrderTradingGridProps,
     prevState: OrderTradingGridState
   ) {
-    console.log(
-      "1=",
-      prevProps.orderEntries,
-      this.props.orderEntries,
-      !shallowCompareArrays(prevProps.orderEntries, this.props.orderEntries)
-    );
-
     if (
       !shallowCompareArrays(prevProps.orderEntries, this.props.orderEntries) ||
       !shallowCompareObjects(prevProps.layouts, this.props.layouts) ||
       prevState.currentBreakpoint !== this.state.currentBreakpoint ||
       prevState.dragKey !== this.state.dragKey
     ) {
-      console.log("2=");
       this.setState({
         gridLayout: this.updateLayout(
           this.props.enabledWorkspaces,
@@ -203,6 +195,7 @@ class OrderTradingGrid extends React.Component<
             wallet={getWalletIdFromName(tradeType)}
             formId={entry.formId}
             pair={entry.symbol}
+            expiryDate={entry.expiryDate}
             isDraggable={true}
           />
         </div>

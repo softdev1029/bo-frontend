@@ -566,3 +566,20 @@
     background-color: var(--dodger-blue);
   }
 }
+
+// orderform setting popup
+.orderform_setting {
+  border: 1px solid var(--alto-100);
+  border-radius: var(--border-radius);
+
+  &__input-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+
+    .react-datepicker-wrapper {
+      width: unset;
+    }
+  }
+}

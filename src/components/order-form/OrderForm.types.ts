@@ -41,6 +41,7 @@ export interface OrderFormContainerProps {
   isLoggedIn: boolean;
   pair: string;
   formId: number;
+  expiryDate: Date;
   wallet: WalletType;
   balances?: object;
   tradingFee: number;

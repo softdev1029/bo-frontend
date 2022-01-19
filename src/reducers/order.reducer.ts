@@ -142,7 +142,11 @@ export const orderReducer = (state = initialState, action) => {
     }
     case ORDER_CREATE_NEW_ORDER_ENTRY: {
       const { orderEntries } = state;
-      orderEntries.push({ key: new Date().getTime(), symbol: "BTCUSDT" });
+      orderEntries.push({
+        formId: new Date().getTime(),
+        symbol: "BTCUSDT",
+        expiryDate: new Date(),
+      });
       return {
         ...state,
         orderEntries,
@@ -150,10 +154,11 @@ export const orderReducer = (state = initialState, action) => {
     }
     case ORDER_UPDATE_ORDER_ENTRY: {
       const { orderEntries } = state;
-      const { formId, symbol } = action.payload as OrderEntry;
+      const { formId, symbol, expiryDate } = action.payload as OrderEntry;
       const entry = orderEntries.find((e) => e.formId === formId);
       if (entry) {
         entry.symbol = symbol;
+        entry.expiryDate = expiryDate;
       }
 
       return {
