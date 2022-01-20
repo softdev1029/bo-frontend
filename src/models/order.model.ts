@@ -56,3 +56,9 @@ export enum CallPutOption {
   CALL = 1,
   PUT = 2,
 }
+
+export enum Symbols {
+  OPTION = "Option",
+  FUTURES = "Futures",
+  SPOT = "Spot",
+}

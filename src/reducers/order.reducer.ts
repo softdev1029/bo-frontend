@@ -10,7 +10,7 @@ import { EMPTY_OBJ, formatNumber, strTemplate } from "@/exports";
 import { getLabelOrderSide, getLabelOrderType } from "@/exports/order.utils";
 import { getAmountDecimals, getPriceDecimals } from "@/exports/ticker.utils";
 import Storage from "@/internals/Storage";
-import { OrderEntry, OrderItem } from "@/models/order.model";
+import { OrderEntry, OrderItem, Symbols } from "@/models/order.model";
 import _set from "lodash/set";
 import _unset from "lodash/unset";
 
@@ -144,7 +144,7 @@ export const orderReducer = (state = initialState, action) => {
       const { orderEntries } = state;
       orderEntries.push({
         formId: new Date().getTime(),
-        symbol: "BTCUSDT",
+        symbol: Symbols.OPTION,
         expiryDate: new Date(),
       });
       return {

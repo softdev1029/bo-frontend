@@ -11,6 +11,7 @@ import {
 } from "@/ui-components";
 import React from "react";
 import { connect, useDispatch } from "react-redux";
+import { Symbols } from "@/models/order.model";
 
 const OrderSetting = ({ formSetting }) => {
   const { pair, formId, expiryDate } = formSetting;
@@ -18,12 +19,16 @@ const OrderSetting = ({ formSetting }) => {
 
   const options = [
     {
-      value: "BTCUSDT",
-      label: "BTCUSDT",
+      value: Symbols.OPTION,
+      label: Symbols.OPTION,
     },
     {
-      value: "ETHUSDT",
-      label: "ETHUSDT",
+      value: Symbols.FUTURES,
+      label: Symbols.FUTURES,
+    },
+    {
+      value: Symbols.SPOT,
+      label: Symbols.SPOT,
     },
   ];
 
