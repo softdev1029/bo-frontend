@@ -51,3 +51,8 @@ export type OrderEntry = {
   symbol: string;
   expiryDate: Date;
 };
+
+export enum CallPutOption {
+  CALL = 1,
+  PUT = 2,
+}

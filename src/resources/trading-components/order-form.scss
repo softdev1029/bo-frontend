@@ -25,6 +25,16 @@
     font-size: 14px;
   }
 
+  .call-put-option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .call-put-group {
+      width: 60%;
+    }
+  }
+
   .expiry-date {
     .react-datepicker-wrapper {
       .react-datepicker__input-container {

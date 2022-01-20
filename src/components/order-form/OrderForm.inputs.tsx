@@ -8,7 +8,13 @@ import {
   getPriceDecimals,
   getSymbols,
 } from "@/exports/ticker.utils";
-import { Tabs, InputCheckboxInline, SelectDropdown } from "@/ui-components";
+import {
+  Tabs,
+  InputCheckboxInline,
+  SelectDropdown,
+  RadioGroup,
+  RadioButton,
+} from "@/ui-components";
 import React from "react";
 import OrderFormCollapseArea from "./OrderForm.collapse-area";
 import GroupInput from "./OrderForm.group-input";
@@ -32,6 +38,7 @@ import { OrderFormTIFOptions } from "./OrderForm.tif-options";
 import { OrderFormTradeOptions } from "./OrderForm.trade-options";
 import { OrderFormInputDataFlows } from "./OrderForm.types";
 import MultiSelectSort from "@/ui-components/ui/Dropdown/Multi.dropdown";
+import { CallPutOption } from "@/models/order.model";
 
 export default class OrderFormInputs extends React.Component<
   Partial<OrderFormInputDataFlows>,
@@ -47,9 +54,11 @@ export default class OrderFormInputs extends React.Component<
           value: v,
         })),
       expiryDate: new Date(),
+      selectedCallPutOption: CallPutOption.CALL,
     };
     this.onLayerChange = this.onLayerChange.bind(this);
     this.onChangeExpiryDate = this.onChangeExpiryDate.bind(this);
+    this.onCallPutChange = this.onCallPutChange.bind(this);
   }
 
   onLayerChange({ value }) {
@@ -61,6 +70,12 @@ export default class OrderFormInputs extends React.Component<
   onChangeExpiryDate(value) {
     this.setState((state) => {
       return { ...state, expiryDate: value };
+    });
+  }
+
+  onCallPutChange(value: CallPutOption) {
+    this.setState((state) => {
+      return { ...state, selectedCallPutOption: value };
     });
   }
 
@@ -188,16 +203,25 @@ export default class OrderFormInputs extends React.Component<
           />
         </div> */}
 
-        <div className="mb-10">
-          <SelectDropdown options={callPutOptions} />
+        <div className="mb-10 call-put-option">
+          {/* <SelectDropdown options={callPutOptions} /> */}
+          <RadioGroup
+            className="call-put-group"
+            name="callPutOptions"
+            selectedValue={this.state.selectedCallPutOption}
+            onChange={this.onCallPutChange}
+          >
+            <RadioButton label="Call" value={CallPutOption.CALL} />
+            <RadioButton label="Put" value={CallPutOption.PUT} />
+          </RadioGroup>
         </div>
 
-        <div className="mb-10 expiry-date">
+        {/* <div className="mb-10 expiry-date">
           <DatePicker
             selected={this.state.expiryDate}
             onChange={(date) => this.onChangeExpiryDate(date)}
           />
-        </div>
+        </div> */}
 
         {!shouldHidePriceField(typeId) && (
           <div className="mb-10">
