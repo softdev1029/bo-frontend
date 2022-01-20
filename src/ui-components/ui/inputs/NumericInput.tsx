@@ -1,10 +1,13 @@
 import React from "react";
 import classNames from "classnames";
-import { Icon } from "../Icon";
+import { ReactComponent as SpinUp } from "../../../resources/img/spin-up.svg";
+import { ReactComponent as SpinDown } from "../../../resources/img/spin-down.svg";
 
 enum KeyCode {
   BACKSPACE = 8,
   DELETE = 9,
+  DOWN = 40,
+  UP = 38,
 }
 
 type ISize = "large" | "middle" | "small";
@@ -40,8 +43,8 @@ interface NumericInputProps {
   name?: string;
   placeholder?: string;
   title?: string;
-  upHandler: React.ReactElement;
-  downHandler: React.ReactElement;
+  upHandler: any;
+  downHandler: any;
   tabIndex?: number;
   [key: string]: any;
 }
@@ -148,130 +151,150 @@ class NumericInput extends React.Component<
       inputValue: this.toPrecisionAsStep(validValue),
       value: validValue,
     };
+
+    this.onChange = this.onChange.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onFocus = this.onFocus.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+    this.getRatio = this.getRatio.bind(this);
+    this.getFullNum = this.getFullNum.bind(this);
+    this.getPrecision = this.getPrecision.bind(this);
+    this.recordCursorPosition = this.recordCursorPosition.bind(this);
+    this.restoreByAfter = this.restoreByAfter.bind(this);
+    this.partRestoreByAfter = this.partRestoreByAfter.bind(this);
+    this.isNotCompleteNumber = this.isNotCompleteNumber.bind(this);
+    this.stop = this.stop.bind(this);
+    this.down = this.down.bind(this);
+    this.up = this.up.bind(this);
+    this.saveInput = this.saveInput.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
   }
 
-  // componentDidMount() {
-  //   this.componentDidUpdate(null);
-  // }
+  componentDidMount() {
+    this.componentDidUpdate(null);
+  }
 
-  // componentDidUpdate(prevProps) {
-  //   const { value, onChange, max, min } = this.props;
-  //   const { focused } = this.state;
+  componentDidUpdate(prevProps) {
+    const { value, onChange, max, min } = this.props;
+    const { focused } = this.state;
 
-  //   // Don't trigger in componentDidMount
-  //   if (prevProps) {
-  //     if (
-  //       !isEqual(prevProps.value, value) ||
-  //       !isEqual(prevProps.max, max) ||
-  //       !isEqual(prevProps.min, min)
-  //     ) {
-  //       const validValue = focused ? value : this.getValidValue(value);
-  //       let nextInputValue;
-  //       if (this.pressingUpOrDown) {
-  //         nextInputValue = validValue;
-  //       } else if (this.inputting) {
-  //         nextInputValue = this.rawInput;
-  //       } else {
-  //         nextInputValue = this.toPrecisionAsStep(validValue);
-  //       }
-  //       this.setState({
-  //         // eslint-disable-line
-  //         value: validValue,
-  //         inputValue: nextInputValue,
-  //       });
-  //     }
+    // Don't trigger in componentDidMount
+    if (prevProps) {
+      if (
+        !isEqual(prevProps.value, value) ||
+        !isEqual(prevProps.max, max) ||
+        !isEqual(prevProps.min, min)
+      ) {
+        const validValue = focused ? value : this.getValidValue(value);
+        let nextInputValue;
+        if (this.pressingUpOrDown) {
+          nextInputValue = validValue;
+        } else if (this.inputting) {
+          nextInputValue = this.rawInput;
+        } else {
+          nextInputValue = this.toPrecisionAsStep(validValue);
+        }
+        this.setState({
+          // eslint-disable-line
+          value: validValue,
+          // inputValue: nextInputValue,
+          inputValue: this.toPrecisionAsStep(validValue),
+        });
+      }
 
-  //     // Trigger onChange when max or min change
-  //     // https://github.com/ant-design/ant-design/issues/11574
-  //     const nextValue = 'value' in this.props ? value : this.state.value;
-  //     // ref: null < 20 === true
-  //     // https://github.com/ant-design/ant-design/issues/14277
-  //     if (
-  //       'max' in this.props &&
-  //       prevProps.max !== max &&
-  //       typeof nextValue === 'number' &&
-  //       nextValue > max &&
-  //       onChange
-  //     ) {
-  //       onChange(max);
-  //     }
-  //     if (
-  //       'min' in this.props &&
-  //       prevProps.min !== min &&
-  //       typeof nextValue === 'number' &&
-  //       nextValue < min &&
-  //       onChange
-  //     ) {
-  //       onChange(min);
-  //     }
-  //   }
+      // Trigger onChange when max or min change
+      // https://github.com/ant-design/ant-design/issues/11574
+      const nextValue = "value" in this.props ? value : this.state.value;
+      // ref: null < 20 === true
+      // https://github.com/ant-design/ant-design/issues/14277
+      if (
+        "max" in this.props &&
+        prevProps.max !== max &&
+        typeof nextValue === "number" &&
+        nextValue > max &&
+        onChange
+      ) {
+        onChange(max);
+      }
+      if (
+        "min" in this.props &&
+        prevProps.min !== min &&
+        typeof nextValue === "number" &&
+        nextValue < min &&
+        onChange
+      ) {
+        onChange(min);
+      }
+    }
 
-  //   // Restore cursor
-  //   try {
-  //     // Firefox set the input cursor after it get focused.
-  //     // This caused that if an input didn't init with the selection,
-  //     // set will cause cursor not correct when first focus.
-  //     // Safari will focus input if set selection. We need skip this.
-  //     if (this.cursorStart !== undefined && this.state.focused) {
-  //       // In most cases, the string after cursor is stable.
-  //       // We can move the cursor before it
+    // Restore cursor
+    try {
+      // Firefox set the input cursor after it get focused.
+      // This caused that if an input didn't init with the selection,
+      // set will cause cursor not correct when first focus.
+      // Safari will focus input if set selection. We need skip this.
+      if (this.cursorStart !== undefined && this.state.focused) {
+        // In most cases, the string after cursor is stable.
+        // We can move the cursor before it
 
-  //       if (
-  //         // If not match full str, try to match part of str
-  //         !this.partRestoreByAfter(this.cursorAfter) &&
-  //         this.state.value !== this.props.value
-  //       ) {
-  //         // If not match any of then, let's just keep the position
-  //         // TODO: Logic should not reach here, need check if happens
-  //         let pos = this.cursorStart + 1;
+        if (
+          // If not match full str, try to match part of str
+          !this.partRestoreByAfter(this.cursorAfter) &&
+          this.state.value !== this.props.value
+        ) {
+          // If not match any of then, let's just keep the position
+          // TODO: Logic should not reach here, need check if happens
+          let pos = this.cursorStart + 1;
 
-  //         // If not have last string, just position to the end
-  //         if (!this.cursorAfter) {
-  //           pos = this.input.value.length;
-  //         } else if (this.lastKeyCode === KeyCode.BACKSPACE) {
-  //           pos = this.cursorStart - 1;
-  //         } else if (this.lastKeyCode === KeyCode.DELETE) {
-  //           pos = this.cursorStart;
-  //         }
-  //         this.fixCaret(pos, pos);
-  //       } else if (this.currentValue === this.input.value) {
-  //         // Handle some special key code
-  //         switch (this.lastKeyCode) {
-  //           case KeyCode.BACKSPACE:
-  //             this.fixCaret(this.cursorStart - 1, this.cursorStart - 1);
-  //             break;
-  //           case KeyCode.DELETE:
-  //             this.fixCaret(this.cursorStart + 1, this.cursorStart + 1);
-  //             break;
-  //           default:
-  //           // Do nothing
-  //         }
-  //       }
-  //     }
-  //   } catch (e) {
-  //     // Do nothing
-  //   }
+          // If not have last string, just position to the end
+          if (!this.cursorAfter) {
+            pos = this.input.value.length;
+          } else if (this.lastKeyCode === KeyCode.BACKSPACE) {
+            pos = this.cursorStart - 1;
+          } else if (this.lastKeyCode === KeyCode.DELETE) {
+            pos = this.cursorStart;
+          }
+          this.fixCaret(pos, pos);
+        } else if (this.currentValue === this.input.value) {
+          // Handle some special key code
+          switch (this.lastKeyCode) {
+            case KeyCode.BACKSPACE:
+              this.fixCaret(this.cursorStart - 1, this.cursorStart - 1);
+              break;
+            case KeyCode.DELETE:
+              this.fixCaret(this.cursorStart + 1, this.cursorStart + 1);
+              break;
+            default:
+            // Do nothing
+          }
+        }
+      }
+    } catch (e) {
+      // Do nothing
+    }
 
-  //   // Reset last key
-  //   this.lastKeyCode = null;
+    // Reset last key
+    this.lastKeyCode = null;
 
-  //   // pressingUpOrDown is true means that someone just click up or down button
-  //   if (!this.pressingUpOrDown) {
-  //     return;
-  //   }
-  //   if (this.props.focusOnUpDown && this.state.focused) {
-  //     if (document.activeElement !== this.input) {
-  //       this.focus();
-  //     }
-  //   }
-  // }
+    // pressingUpOrDown is true means that someone just click up or down button
+    if (!this.pressingUpOrDown) {
+      return;
+    }
+    if (this.props.focusOnUpDown && this.state.focused) {
+      if (document.activeElement !== this.input) {
+        this.focus();
+      }
+    }
+  }
 
   componentWillUnmount() {
     this.stop();
   }
 
-  onChange = (e) => {
+  onChange(e) {
     const { onChange } = this.props;
+
     if (this.state.focused) {
       this.inputting = true;
     }
@@ -291,12 +314,13 @@ class NumericInput extends React.Component<
     }
 
     const emitVal = +this.getValidValue(this.rawInput);
+
     if (!isNaN(emitVal)) {
       onChange(emitVal); // valid number or invalid string
     }
-  };
+  }
 
-  onMouseUp = (...args) => {
+  onMouseUp(...args) {
     const { onMouseUp } = this.props;
 
     this.recordCursorPosition();
@@ -304,16 +328,16 @@ class NumericInput extends React.Component<
     if (onMouseUp) {
       onMouseUp(...args);
     }
-  };
+  }
 
-  onFocus = (...args) => {
+  onFocus(...args) {
     this.setState({
       focused: true,
     });
     this.props.onFocus(...args);
-  };
+  }
 
-  onBlur = (...args) => {
+  onBlur(...args) {
     const { onBlur } = this.props;
     this.inputting = false;
     this.setState({
@@ -332,7 +356,7 @@ class NumericInput extends React.Component<
       onBlur(...args);
       this.input.value = originValue;
     }
-  };
+  }
 
   getCurrentValidValue(value) {
     let val = value;
@@ -346,7 +370,7 @@ class NumericInput extends React.Component<
     return this.toNumber(val);
   }
 
-  getRatio = (e) => {
+  getRatio(e) {
     let ratio = 1;
     if (e.metaKey || e.ctrlKey) {
       ratio = 0.1;
@@ -354,18 +378,22 @@ class NumericInput extends React.Component<
       ratio = 10;
     }
     return ratio;
-  };
+  }
 
   getValueFromEvent(e) {
-    // optimize for chinese input expierence
-    // https://github.com/ant-design/ant-design/issues/8196
-    let value = e.target.value.trim().replace(/。/g, ".");
+    if (e.target.validity.valid) {
+      // optimize for chinese input expierence
+      // https://github.com/ant-design/ant-design/issues/8196
+      let value = e.target.value.trim().replace(/。/g, ".");
 
-    if (isValidProps(this.props.decimalSeparator)) {
-      value = value.replace(this.props.decimalSeparator, ".");
+      if (isValidProps(this.props.decimalSeparator)) {
+        value = value.replace(this.props.decimalSeparator, ".");
+      }
+
+      return value;
     }
 
-    return value;
+    return this.state.value;
   }
 
   getValidValue(value, min = this.props.min, max = this.props.max): number {
@@ -398,6 +426,7 @@ class NumericInput extends React.Component<
       typeof newValue === "number"
         ? newValue.toFixed(precision)
         : `${newValue}`;
+
     const changed = newValue !== value || newValueInString !== `${inputValue}`;
     if (!("value" in this.props)) {
       this.setState(
@@ -424,7 +453,7 @@ class NumericInput extends React.Component<
     return newValue;
   }
 
-  getFullNum = (num) => {
+  getFullNum(num) {
     if (isNaN(num)) {
       return 0;
     }
@@ -434,9 +463,9 @@ class NumericInput extends React.Component<
     return Number(num)
       .toFixed(18)
       .replace(/\.?0+$/, "");
-  };
+  }
 
-  getPrecision = (value) => {
+  getPrecision(value) {
     if (isValidProps(this.props.precision)) {
       return this.props.precision;
     }
@@ -449,7 +478,7 @@ class NumericInput extends React.Component<
       precision = valueString.length - valueString.indexOf(".") - 1;
     }
     return precision;
-  };
+  }
 
   // step={1.0} value={1.51}
   // press +
@@ -475,7 +504,7 @@ class NumericInput extends React.Component<
     return 10 ** precision;
   }
 
-  getInputDisplayValue = (state) => {
+  getInputDisplayValue(state) {
     const { focused, inputValue, value } = state || this.state;
     let inputDisplayValue;
     if (focused) {
@@ -496,9 +525,9 @@ class NumericInput extends React.Component<
     }
 
     return inputDisplayValueFormat;
-  };
+  }
 
-  recordCursorPosition = () => {
+  recordCursorPosition() {
     // Record position
     try {
       this.cursorStart = this.input.selectionStart;
@@ -511,9 +540,9 @@ class NumericInput extends React.Component<
       // Failed to read the 'selectionStart' property from 'HTMLInputElement'
       // http://stackoverflow.com/q/21177489/3040605
     }
-  };
+  }
 
-  restoreByAfter = (str) => {
+  restoreByAfter(str) {
     if (str === undefined) return false;
 
     const fullStr = this.input.value;
@@ -536,9 +565,9 @@ class NumericInput extends React.Component<
       return true;
     }
     return false;
-  };
+  }
 
-  partRestoreByAfter = (str) => {
+  partRestoreByAfter(str) {
     if (str === undefined) return false;
 
     // For loop from full str to the str with last char to map. e.g. 123
@@ -550,7 +579,7 @@ class NumericInput extends React.Component<
 
       return this.restoreByAfter(partStr);
     });
-  };
+  }
 
   focus() {
     this.input.focus();
@@ -586,14 +615,14 @@ class NumericInput extends React.Component<
   }
 
   // '1.' '1x' 'xx' '' => are not complete numbers
-  isNotCompleteNumber = (num) => {
+  isNotCompleteNumber(num) {
     return (
       isNaN(num) ||
       num === "" ||
       num === null ||
       (num && num.toString().indexOf(".") === num.toString().length - 1)
     );
-  };
+  }
 
   toNumber(num) {
     const { precision } = this.props;
@@ -672,21 +701,41 @@ class NumericInput extends React.Component<
     );
   }
 
-  stop = () => {
+  /** This binds the Up/Down arrow key listeners */
+  onKeyDown(e): void {
+    // let e = args[0]
+    if (e.keyCode === KeyCode.UP) {
+      e.preventDefault();
+      this.up(e);
+    } else if (e.keyCode === KeyCode.DOWN) {
+      e.preventDefault();
+      this.down(e);
+    }
+  }
+
+  onKeyUp(e): void {
+    // let e = args[0]
+    if (e.keyCode === KeyCode.UP || e.keyCode === KeyCode.DOWN) {
+      e.preventDefault();
+      this.stop();
+    }
+  }
+
+  stop() {
     if (this.autoStepTimer) {
       clearTimeout(this.autoStepTimer);
     }
-  };
+  }
 
-  down = (e, ratio, recursive) => {
+  down(e, ratio?: any, recursive?: any) {
     this.pressingUpOrDown = true;
     this.step("down", e, ratio, recursive);
-  };
+  }
 
-  up = (e, ratio, recursive) => {
+  up(e, ratio?: any, recursive?: any) {
     this.pressingUpOrDown = true;
     this.step("up", e, ratio, recursive);
-  };
+  }
 
   saveInput = (node) => {
     this.input = node;
@@ -749,6 +798,8 @@ class NumericInput extends React.Component<
       name,
       onPaste,
       onInput,
+      precision,
+      value: propValue,
       ...rest
     } = this.props;
     const { value, focused } = this.state;
@@ -815,6 +866,12 @@ class NumericInput extends React.Component<
           onMouseLeave: this.stop,
         };
 
+    const floatNumberRegex =
+      pattern ||
+      (precision
+        ? `^[+]?([0-9]+([.][0-9]{0,${precision}})?|[.][0-9]{1,${precision}})`
+        : null);
+
     return (
       <div
         className={classes}
@@ -841,9 +898,10 @@ class NumericInput extends React.Component<
                 <span
                   unselectable="on"
                   className={`${prefixCls}-handler-up-inner`}
-                  onClick={preventDefault}
+                  onClick={upHandler}
                 >
-                  <Icon cssmodule="fas" id="angle-up" />
+                  {/* <Icon cssmodule="fas" id="angle-up" /> */}
+                  <SpinUp />
                 </span>
               )}
             </span>
@@ -859,9 +917,10 @@ class NumericInput extends React.Component<
                 <span
                   unselectable="on"
                   className={`${prefixCls}-handler-down-inner`}
-                  onClick={preventDefault}
+                  onClick={downHandler}
                 >
-                  <Icon cssmodule="fas" id="angle-down" />
+                  {/* <Icon cssmodule="fas" id="angle-down" /> */}
+                  <SpinDown />
                 </span>
               )}
             </span>
@@ -883,6 +942,8 @@ class NumericInput extends React.Component<
             tabIndex={tabIndex}
             autoComplete={autoComplete}
             onFocus={this.onFocus}
+            onKeyDown={this.onKeyDown}
+            onKeyUp={this.onKeyUp}
             // onBlur={this.onBlur}
             autoFocus={autoFocus}
             maxLength={maxLength}
@@ -897,7 +958,7 @@ class NumericInput extends React.Component<
             onChange={this.onChange}
             ref={this.saveInput}
             value={this.getFullNum(inputDisplayValue)}
-            pattern={pattern}
+            pattern={floatNumberRegex}
             inputMode={inputMode}
             onInput={onInput}
             {...dataOrAriaAttributeProps}

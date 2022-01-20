@@ -3,12 +3,12 @@
   padding: 0;
   line-height: 22px;
   font-size: 12px;
-  height: 22px;
+  // height: 22px;
   display: inline-block;
   vertical-align: middle;
   border: 1px solid var(--emperor);
   border-radius: var(--input-border-radius);
-  background-color: var(--cod-gray-300);
+  // background-color: var(--cod-gray-300);
 
   &-focused {
     border-color: rgba(62, 120, 204, 0.6);
@@ -16,8 +16,8 @@
 
   &-handler {
     text-align: center;
-    line-height: 8px;
-    height: 8px;
+    line-height: 13px;
+    height: 13px;
     overflow: hidden;
     display: block;
     touch-action: none;
@@ -41,6 +41,10 @@
   &-input-wrap {
     overflow: hidden;
     height: 100%;
+
+    input {
+      height: 100% !important;
+    }
   }
 
   &-input {

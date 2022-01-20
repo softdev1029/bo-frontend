@@ -15,7 +15,7 @@ const GroupInput = (props) => {
           {props.addonBefore && (
             <span className="form-input__addonBefore">{props.addonBefore}</span>
           )}
-          <InputTextInline type="text" useHandlers={false} {...props} />
+          <InputTextInline type="number" useHandlers={true} {...props} />
           {props.addonAfter && (
             <span className="form-input__addonAfter">{props.addonAfter}</span>
           )}

@@ -19,6 +19,8 @@ interface InputProps {
   style?: CSSProperties;
   // following props is used in numeric input
   useHandlers?: boolean;
+  upHandler?: any;
+  downHandler?: any;
   precision?: number;
   step?: number;
   max?: number;
@@ -40,6 +42,8 @@ export const InputTextInline = ({
   disabled,
   precision,
   useHandlers = true,
+  upHandler,
+  downHandler,
   step,
   max,
 }: Partial<InputProps>) => {
@@ -89,6 +93,8 @@ export const InputTextInline = ({
       precision={precision}
       step={step}
       useHandlers={useHandlers}
+      upHandler={upHandler}
+      downHandler={downHandler}
       max={max}
     />
   );

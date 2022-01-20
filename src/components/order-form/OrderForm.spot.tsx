@@ -113,7 +113,7 @@ export class OrderFormSpot extends React.Component<
           balance={balanceAmount}
           side={+selectedTab}
           {...this.props}
-          price={this.strikePrice()}
+          // price={this.strikePrice()}
         />
         <div className="btn-order__wrapper mb-10">
           <OrderSubmitButton
