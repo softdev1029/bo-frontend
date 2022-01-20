@@ -76,6 +76,15 @@ export class OrderFormSpot extends React.Component<
     onOrderBtnClick(clientOrderId, { side }, cb);
   }
 
+  private strikePrice() {
+    const cfg = this._spotTabConfig.find(
+      (e) => e.to === this.state.selectedTab
+    );
+    const p = cfg.meta.price;
+
+    return parseInt(p.replace(",", ""));
+  }
+
   render() {
     const { amount, balances, pair, wallet } = this.props;
     const { selectedTab } = this.state;
@@ -104,6 +113,7 @@ export class OrderFormSpot extends React.Component<
           balance={balanceAmount}
           side={+selectedTab}
           {...this.props}
+          price={this.strikePrice()}
         />
         <div className="btn-order__wrapper mb-10">
           <OrderSubmitButton
