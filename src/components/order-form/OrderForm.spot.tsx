@@ -56,6 +56,8 @@ export class OrderFormSpot extends React.Component<
     this.setState({
       selectedTab: to,
     });
+
+    this.props.onPriceChange(this.strikePrice(to));
   }
 
   private renderTab() {
@@ -76,10 +78,8 @@ export class OrderFormSpot extends React.Component<
     onOrderBtnClick(clientOrderId, { side }, cb);
   }
 
-  private strikePrice() {
-    const cfg = this._spotTabConfig.find(
-      (e) => e.to === this.state.selectedTab
-    );
+  private strikePrice(to: string) {
+    const cfg = this._spotTabConfig.find((e) => e.to === to);
     const p = cfg.meta.price;
 
     return parseInt(p.replace(",", ""));
