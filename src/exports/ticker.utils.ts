@@ -69,6 +69,7 @@ export function getSvgUrl(ccy: string = "", size: number = 24) {
 // ------ @deprecated end--------
 
 export function getSymbols(ccy: string): string[] {
+  return ["Opt.", "USD"];
   if (_includes(ccy, "/")) {
     // XXX/YYY[Y] format
     return _split(ccy, "/", 2);
