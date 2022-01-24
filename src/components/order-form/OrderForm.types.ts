@@ -96,6 +96,7 @@ export interface OrderFormControlsState {
   qtyIncrement: number;
   counterParty: string;
   counterPartyTimeout: number;
+  showPopup: boolean;
 }
 
 export interface OrderFormControlsProps {
@@ -170,6 +171,7 @@ export type OrderFormInputDataFlows = OrderFormControlsState & {
   onPriceIncrementChange: (n: number) => void;
   onLayerChange: (layer: ICELayers) => void;
   onQtyIncrementChange: (n: number) => void;
+  onPopupClose: () => void;
 };
 
 export type OrderFormProps = OrderFormControlsState &

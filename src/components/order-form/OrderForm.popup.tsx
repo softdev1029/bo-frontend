@@ -14,6 +14,7 @@ import {
   SelectDropdown,
   RadioGroup,
   RadioButton,
+  Button,
 } from "@/ui-components";
 import React from "react";
 import OrderFormCollapseArea from "./OrderForm.collapse-area";
@@ -40,7 +41,7 @@ import { OrderFormInputDataFlows } from "./OrderForm.types";
 import MultiSelectSort from "@/ui-components/ui/Dropdown/Multi.dropdown";
 import { CallPutOption } from "@/models/order.model";
 
-export default class OrderFormInputs extends React.Component<
+export default class OrderFormPopup extends React.Component<
   Partial<OrderFormInputDataFlows>,
   any
 > {
@@ -100,6 +101,7 @@ export default class OrderFormInputs extends React.Component<
       trailValue,
       counterParty,
       counterPartyTimeout,
+      showPopup,
       onCounterPartyChange,
       onCounterPartyTimeoutChange,
       onStopPriceChange,
@@ -125,6 +127,7 @@ export default class OrderFormInputs extends React.Component<
       qtyIncrement,
       selectedLayer,
       onQtyIncrementChange,
+      onPopupClose,
     } = this.props;
 
     const [base, quote] = getSymbols(pair);
@@ -173,36 +176,12 @@ export default class OrderFormInputs extends React.Component<
       },
     ];
 
+    if (!showPopup) {
+      return <></>;
+    }
+
     return (
-      <div>
-        {orderTypes.length ? (
-          <div className="mb-10 tab-order-type_ctn">
-            <Tabs
-              elements={orderTypes}
-              selected={`${typeId}`}
-              onChange={onOrderTypeChange}
-              tabClassName="r-font-size-12 font-medium"
-              containerClassName="tab-order-type"
-            />
-          </div>
-        ) : null}
-
-        {/* <div className="d-flex mb-10">
-          <div className="mr-10">
-            <GroupInput
-              value={counterParty}
-              onChange={onCounterPartyChange}
-              addonBefore={"Counter Party"}
-            />
-          </div>
-          <GroupInput
-            value={counterPartyTimeout}
-            onChange={onCounterPartyTimeoutChange}
-            addonBefore={"Timeout"}
-            addonAfter="sec"
-          />
-        </div> */}
-
+      <div className="order-form-popup__wrapper">
         <div className="mb-10 call-put-option">
           {/* <SelectDropdown options={callPutOptions} /> */}
           <RadioGroup
@@ -215,13 +194,6 @@ export default class OrderFormInputs extends React.Component<
             <RadioButton label="Put" value={CallPutOption.PUT} />
           </RadioGroup>
         </div>
-
-        {/* <div className="mb-10 expiry-date">
-          <DatePicker
-            selected={this.state.expiryDate}
-            onChange={(date) => this.onChangeExpiryDate(date)}
-          />
-        </div> */}
 
         {!shouldHidePriceField(typeId) && (
           <div className="mb-10">
@@ -236,6 +208,44 @@ export default class OrderFormInputs extends React.Component<
           </div>
         )}
 
+        {shouldDisplayStopPriceField(typeId) && (
+          <div className="mb-10">
+            <GroupInput
+              value={stopPrice}
+              pattern={priceRegex}
+              onChange={onStopPriceChange}
+              addonAfter={quote}
+              addonBefore={"Stop Price"}
+              step={step}
+            />
+          </div>
+        )}
+        {shouldDisplayPriceIncreAndOffset(typeId) && (
+          <div className="mb-10 order-form__input-wraper--1-1">
+            <OrderFormInputWithInfo
+              pattern={priceRegex}
+              placeholder="Price Increment"
+              value={priceIncrement || ""}
+              onChange={onPriceIncrementChange}
+            />
+            <OrderFormInputWithInfo
+              pattern={priceRegex}
+              placeholder="Offset"
+              value={offset || ""}
+              onChange={onOffsetChange}
+            />
+          </div>
+        )}
+        {shouldDisplayStandaloneOffset(typeId) && (
+          <div className="mb-10">
+            <GroupInput
+              value={offset}
+              pattern={priceRegex}
+              onChange={onOffsetChange}
+              addonBefore={"Offset"}
+            />
+          </div>
+        )}
         <div className="mb-10">
           <GroupInput
             value={amount}
@@ -245,6 +255,121 @@ export default class OrderFormInputs extends React.Component<
             addonBefore={"Quantity"}
           />
         </div>
+        {shouldDisplayTrailValueField(typeId) && (
+          <div className="mb-10">
+            <GroupInput
+              value={trailValue}
+              pattern={amountRegex}
+              onChange={onTrailValueChange}
+              addonAfter={base}
+              addonBefore={"Trail Value"}
+            />
+          </div>
+        )}
+        {shouldDisplayLayers(typeId) && (
+          <div className="mb-10 order-form__input-wraper--1-1">
+            <SelectDropdown
+              placeholder="Layers"
+              options={layers}
+              value={selectedLayer}
+              onChange={this.onLayerChange}
+            />
+            <OrderFormInputWithInfo
+              pattern={amountRegex}
+              placeholder="Offset"
+              value={qtyIncrement || ""}
+              onChange={onQtyIncrementChange}
+            />
+          </div>
+        )}
+        <div className="mb-10">
+          <OrderFormQuantityButtons
+            balance={balance}
+            side={side}
+            onClick={onUpdateAmountByBalancePercent}
+          />
+        </div>
+        {/* 
+        {shouldDisplayTIFOptions(typeId) && (
+          <div className="mb-10 d-flex d-justify-content-space-between">
+            <InputCheckboxInline
+              value={OrderType.HIDDEN}
+              checked={typeId === OrderType.HIDDEN}
+              onChange={onOrderTypeChange}
+              label="Hidden"
+            />
+            <OrderFormTradeOptions
+              orderType={typeId}
+              selectedOptions={tradeOptions}
+              onTradeOptionChange={onTradeOptionChange}
+            />
+            <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
+          </div>
+        )}
+        */}
+        {shouldDisplayStopTriggerGroup(typeId) && (
+          <OrderFormStopTrigger
+            enabledStopTrigger={enabledStopTrigger}
+            onToggleStopTrigger={onToggleStopTrigger}
+            selectedCloseTrigger={selectedCloseTrigger}
+            onCloseTriggerOptionChange={onCloseTriggerOptionChange}
+          />
+        )}
+        {shouldDisplayStandaloneStopPrice(typeId) && (
+          <div className="mb-10">
+            <OrderFormInputWithInfo
+              inputClass="border-radius"
+              placeholder="Stop Price"
+              value={stopPrice || ""}
+              pattern={priceRegex}
+              onChange={onStopPriceChange}
+            />
+          </div>
+        )}
+
+        {shouldDisplayTPnSLGroups(typeId) && (
+          <OrderFormCollapseArea
+            title="Add Take Profit / Stop Loss"
+            expandedTitle="Remove Take Profit / Stop Loss"
+          >
+            <div className="order-form__input-wraper--2-1">
+              <GroupInput
+                value={takeProfit}
+                pattern={priceRegex}
+                onChange={onTakeProfitChange}
+                addonAfter={quote}
+                addonBefore={"Take Profit"}
+              />
+              <OrderFormLastTradePriceOptions
+                selected={takeProfitTradePriceType}
+                onLastTradePriceTypeChange={
+                  onTakeProfitLastTradePriceTypeChange
+                }
+              />
+            </div>
+            <div className="order-form__input-wraper--2-1">
+              <GroupInput
+                value={stopLoss}
+                pattern={priceRegex}
+                onChange={onStopLossChange}
+                addonAfter={quote}
+                addonBefore={"Stop Loss"}
+              />
+              <OrderFormLastTradePriceOptions
+                selected={stopLossTradePriceType}
+                onLastTradePriceTypeChange={onStopLossLastTradePriceTypeChange}
+              />
+            </div>
+          </OrderFormCollapseArea>
+        )}
+        <Button
+          loading={false}
+          classes={""}
+          disabled={false}
+          onClick={onPopupClose}
+        >
+          {"Close"}
+        </Button>
       </div>
     );
   }

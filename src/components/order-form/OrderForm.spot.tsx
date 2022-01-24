@@ -13,6 +13,7 @@ import _get from "lodash/get";
 import { walletNameFromId } from "@/constants/balance-enums";
 import { OrderBook } from "../order-book";
 import { AppTradeType } from "@/constants/trade-type";
+import OrderFormPopup from "./OrderForm.popup";
 
 interface OrderFormSpotState {
   selectedTab: string;
@@ -103,6 +104,11 @@ export class OrderFormSpot extends React.Component<
 
     return (
       <div className="order-form__wrapper">
+        <OrderFormPopup
+          balance={balanceAmount}
+          side={+selectedTab}
+          {...this.props}
+        />
         {/* <OrderBook
           symbol={pair}
           windowOpen={true}

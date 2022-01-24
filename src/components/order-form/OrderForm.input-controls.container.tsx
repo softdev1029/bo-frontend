@@ -65,6 +65,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       qtyIncrement: 0,
       counterParty: "",
       counterPartyTimeout: 0,
+      showPopup: false,
     };
 
     this.tickerPrice = this.props.initialPrice;
@@ -100,6 +101,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     this.onCounterPartyChange = this.onCounterPartyChange.bind(this);
     this.onCounterPartyTimeoutChange =
       this.onCounterPartyTimeoutChange.bind(this);
+    this.onPopupClose = this.onPopupClose.bind(this);
   }
 
   onLayerChange(layer: ICELayers) {
@@ -412,23 +414,30 @@ class OrderFormInputControlsContainer extends React.PureComponent<
   onOrderTypeChange(value: string) {
     this.setState({
       typeId: +value,
-      stopPrice: 0,
-      amount: 0,
-      total: 0,
-      refreshSize: undefined,
-      displaySize: undefined,
-      takeProfit: 0,
-      stopLoss: 0,
-      takeProfitTradePriceType: LastTradePriceType.MARK_PRICE,
-      stopLossTradePriceType: LastTradePriceType.MARK_PRICE,
-      tradeOptions: [],
-      enabledStopTrigger: false,
-      selectedCloseTrigger: StopTrigger.LAST_PRICE,
-      trailValue: 0,
-      offset: 0,
-      priceIncrement: 0,
-      selectedLayer: undefined,
-      qtyIncrement: 0,
+      // stopPrice: 0,
+      // amount: 0,
+      // total: 0,
+      // refreshSize: undefined,
+      // displaySize: undefined,
+      // takeProfit: 0,
+      // stopLoss: 0,
+      // takeProfitTradePriceType: LastTradePriceType.MARK_PRICE,
+      // stopLossTradePriceType: LastTradePriceType.MARK_PRICE,
+      // tradeOptions: [],
+      // enabledStopTrigger: false,
+      // selectedCloseTrigger: StopTrigger.LAST_PRICE,
+      // trailValue: 0,
+      // offset: 0,
+      // priceIncrement: 0,
+      // selectedLayer: undefined,
+      // qtyIncrement: 0,
+      showPopup: true,
+    });
+  }
+
+  onPopupClose() {
+    this.setState({
+      showPopup: false,
     });
   }
 
@@ -540,6 +549,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       onQtyIncrementChange: this.onQtyIncrementChange,
       onCounterPartyChange: this.onCounterPartyChange,
       onCounterPartyTimeoutChange: this.onCounterPartyTimeoutChange,
+      onPopupClose: this.onPopupClose,
     };
     return _isFunction(this.props.children) ? this.props.children(props) : null;
   }
