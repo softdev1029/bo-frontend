@@ -13,15 +13,20 @@ import _get from "lodash/get";
 import { walletNameFromId } from "@/constants/balance-enums";
 import { OrderBook } from "../order-book";
 import { AppTradeType } from "@/constants/trade-type";
-import OrderFormPopup from "./OrderForm.popup";
+import OrderFormModal from "./OrderForm.modal";
+import { connect } from "react-redux";
+import { showModal } from "@/actions/app.actions";
+import { ReactNode } from "react";
 
 interface OrderFormSpotState {
   selectedTab: string;
 }
-export class OrderFormSpot extends React.Component<
-  Partial<OrderFormProps>,
-  any
-> {
+
+interface OrderFormSpotProps extends Partial<OrderFormProps> {
+  showModal: (mid: string, component: ReactNode, props) => void;
+}
+
+class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
   private _spotTabConfig = [
     {
       title: "Buy",
@@ -51,6 +56,7 @@ export class OrderFormSpot extends React.Component<
 
     this.onTabChanged = this.onTabChanged.bind(this);
     this.sendOrder = this.sendOrder.bind(this);
+    this.onOrderTypeChange = this.onOrderTypeChange.bind(this);
   }
 
   private onTabChanged(to: string) {
@@ -86,6 +92,33 @@ export class OrderFormSpot extends React.Component<
     return parseInt(p.replace(",", ""));
   }
 
+  onOrderTypeChange(value: string) {
+    const { balances, pair, wallet, onOrderTypeChange, showModal } = this.props;
+    const { selectedTab } = this.state;
+
+    onOrderTypeChange(value);
+
+    const [base, quote] = getSymbols(pair);
+    const isBuyOrder = isBuy(+selectedTab);
+
+    const balanceCCy = isBuyOrder ? quote : base;
+    const balanceAmount = _get(
+      balances,
+      [balanceCCy, walletNameFromId(wallet), "available"],
+      0
+    );
+
+    showModal("order-form-modal-popup", OrderFormModal, {
+      popupId: "order-form-modal-popup",
+      sendSubmit: (newOrder) => {
+        // console.log("newOrder", newOrder);
+      },
+      balance: balanceAmount,
+      side: +selectedTab,
+      ...this.props,
+    });
+  }
+
   render() {
     const { amount, balances, pair, wallet } = this.props;
     const { selectedTab } = this.state;
@@ -104,11 +137,6 @@ export class OrderFormSpot extends React.Component<
 
     return (
       <div className="order-form__wrapper">
-        <OrderFormPopup
-          balance={balanceAmount}
-          side={+selectedTab}
-          {...this.props}
-        />
         {/* <OrderBook
           symbol={pair}
           windowOpen={true}
@@ -119,6 +147,7 @@ export class OrderFormSpot extends React.Component<
           balance={balanceAmount}
           side={+selectedTab}
           {...this.props}
+          onOrderTypeChange={this.onOrderTypeChange}
           // price={this.strikePrice()}
         />
         <div className="btn-order__wrapper mb-10">
@@ -157,3 +186,11 @@ export class OrderFormSpot extends React.Component<
     );
   }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  showModal: function (id, component, props) {
+    dispatch(showModal(id, component, props));
+  },
+});
+
+export default connect(null, mapDispatchToProps)(OrderFormSpot);

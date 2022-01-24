@@ -1,5 +1,7 @@
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { connect } from "react-redux";
+import { closeModal } from "@/actions/app.actions";
 
 import { ICELayers, OrderType } from "@/constants/order-enums";
 import {
@@ -15,8 +17,9 @@ import {
   RadioGroup,
   RadioButton,
   Button,
+  ConfirmModal,
 } from "@/ui-components";
-import React from "react";
+import React, { ReactNode } from "react";
 import OrderFormCollapseArea from "./OrderForm.collapse-area";
 import GroupInput from "./OrderForm.group-input";
 import {
@@ -41,10 +44,12 @@ import { OrderFormInputDataFlows } from "./OrderForm.types";
 import MultiSelectSort from "@/ui-components/ui/Dropdown/Multi.dropdown";
 import { CallPutOption } from "@/models/order.model";
 
-export default class OrderFormPopup extends React.Component<
-  Partial<OrderFormInputDataFlows>,
-  any
-> {
+interface OrderFormModalProps extends Partial<OrderFormInputDataFlows> {
+  closePopup?: (id?: string) => void;
+  popupId?: string;
+}
+
+class OrderFormModal extends React.Component<OrderFormModalProps, any> {
   constructor(props) {
     super(props);
     this.state = {
@@ -60,6 +65,7 @@ export default class OrderFormPopup extends React.Component<
     this.onLayerChange = this.onLayerChange.bind(this);
     this.onChangeExpiryDate = this.onChangeExpiryDate.bind(this);
     this.onCallPutChange = this.onCallPutChange.bind(this);
+    this.renderBody = this.renderBody.bind(this);
   }
 
   onLayerChange({ value }) {
@@ -80,7 +86,7 @@ export default class OrderFormPopup extends React.Component<
     });
   }
 
-  render() {
+  renderBody({ renderButtons }): ReactNode {
     const { layers } = this.state;
 
     const {
@@ -128,6 +134,8 @@ export default class OrderFormPopup extends React.Component<
       selectedLayer,
       onQtyIncrementChange,
       onPopupClose,
+      closePopup,
+      popupId,
     } = this.props;
 
     const [base, quote] = getSymbols(pair);
@@ -175,10 +183,6 @@ export default class OrderFormPopup extends React.Component<
         label: "Put",
       },
     ];
-
-    if (!showPopup) {
-      return <></>;
-    }
 
     return (
       <div className="order-form-popup__wrapper">
@@ -290,23 +294,23 @@ export default class OrderFormPopup extends React.Component<
           />
         </div>
         {/* 
-        {shouldDisplayTIFOptions(typeId) && (
-          <div className="mb-10 d-flex d-justify-content-space-between">
-            <InputCheckboxInline
-              value={OrderType.HIDDEN}
-              checked={typeId === OrderType.HIDDEN}
-              onChange={onOrderTypeChange}
-              label="Hidden"
-            />
-            <OrderFormTradeOptions
-              orderType={typeId}
-              selectedOptions={tradeOptions}
-              onTradeOptionChange={onTradeOptionChange}
-            />
-            <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
-          </div>
-        )}
-        */}
+  {shouldDisplayTIFOptions(typeId) && (
+    <div className="mb-10 d-flex d-justify-content-space-between">
+      <InputCheckboxInline
+        value={OrderType.HIDDEN}
+        checked={typeId === OrderType.HIDDEN}
+        onChange={onOrderTypeChange}
+        label="Hidden"
+      />
+      <OrderFormTradeOptions
+        orderType={typeId}
+        selectedOptions={tradeOptions}
+        onTradeOptionChange={onTradeOptionChange}
+      />
+      <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
+    </div>
+  )}
+  */}
         {shouldDisplayStopTriggerGroup(typeId) && (
           <OrderFormStopTrigger
             enabledStopTrigger={enabledStopTrigger}
@@ -366,11 +370,36 @@ export default class OrderFormPopup extends React.Component<
           loading={false}
           classes={""}
           disabled={false}
-          onClick={onPopupClose}
+          onClick={() => closePopup(popupId)}
         >
           {"Close"}
         </Button>
       </div>
     );
   }
+
+  render() {
+    const { popupId } = this.props;
+
+    return (
+      <ConfirmModal
+        title={"Order Entry"}
+        mId={popupId}
+        initWidth={280}
+        useLegacyBtns={false}
+        // popupData={this.getCurrentValue()}
+      >
+        {this.renderBody}
+      </ConfirmModal>
+    );
+  }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  closePopup(id) {
+    console.log("1=", id);
+    dispatch(closeModal(id));
+  },
+});
+
+export default connect(null, mapDispatchToProps)(OrderFormModal);

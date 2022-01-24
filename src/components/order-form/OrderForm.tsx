@@ -1,7 +1,7 @@
 import { WalletType } from "@/constants/balance-enums";
 import React from "react";
 import { OrderFormDerivative } from "./OrderForm.derivative";
-import { OrderFormSpot } from "./OrderForm.spot";
+import OrderFormSpot from "./OrderForm.spot";
 import { OrderFormProps } from "./OrderForm.types";
 
 export const OrderForm = (props: OrderFormProps) => {
