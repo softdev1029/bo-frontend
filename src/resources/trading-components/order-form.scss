@@ -112,6 +112,10 @@
   margin-bottom: 5px;
   color: var(--silver-300);
 
+  &--no-input {
+    background-color: unset;
+  }
+
   &__group__container {
     display: inline-block;
     vertical-align: top;

@@ -9,13 +9,21 @@ const GroupInput = (props) => {
 
   // const inputProps = _pick(props, ['pattern', 'value', 'onChange', 'disabled'])
   return (
-    <div className="form-input">
+    <div
+      className={classNames("form-input", {
+        "form-input--no-input": props.noInput,
+      })}
+    >
       <span className={inputGroupWrapperClasses}>
         <span className="form-input__wrapper">
           {props.addonBefore && (
             <span className="form-input__addonBefore">{props.addonBefore}</span>
           )}
-          <InputTextInline type="number" useHandlers={true} {...props} />
+          <InputTextInline
+            type="number"
+            useHandlers={!props.noInput}
+            {...props}
+          />
           {props.addonAfter && (
             <span className="form-input__addonAfter">{props.addonAfter}</span>
           )}

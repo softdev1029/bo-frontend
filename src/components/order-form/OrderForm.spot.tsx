@@ -116,6 +116,7 @@ class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
       balance: balanceAmount,
       side: +selectedTab,
       ...this.props,
+      typeId: +value,
     });
   }
 

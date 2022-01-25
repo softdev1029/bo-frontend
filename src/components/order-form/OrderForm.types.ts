@@ -180,4 +180,5 @@ export type OrderFormProps = OrderFormControlsState &
     balances: object;
     maxLeverage: number;
     wallet: WalletType;
+    formId: number;
   };
