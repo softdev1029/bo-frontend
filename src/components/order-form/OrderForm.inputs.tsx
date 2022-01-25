@@ -39,6 +39,7 @@ import { OrderFormTradeOptions } from "./OrderForm.trade-options";
 import { OrderFormInputDataFlows } from "./OrderForm.types";
 import MultiSelectSort from "@/ui-components/ui/Dropdown/Multi.dropdown";
 import { CallPutOption } from "@/models/order.model";
+import { getLabelOrderType } from "@/exports/order.utils";
 
 export default class OrderFormInputs extends React.Component<
   Partial<OrderFormInputDataFlows>,
@@ -212,6 +213,7 @@ export default class OrderFormInputs extends React.Component<
             onChange={this.onCallPutChange}
           >
             <RadioButton label="Call" value={CallPutOption.CALL} />
+            <div>{getLabelOrderType(typeId)}</div>
             <RadioButton label="Put" value={CallPutOption.PUT} />
           </RadioGroup>
         </div>
