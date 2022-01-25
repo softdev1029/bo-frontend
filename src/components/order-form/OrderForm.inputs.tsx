@@ -314,13 +314,13 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        <div className="mb-10">
+        {/* <div className="mb-10">
           <OrderFormQuantityButtons
             balance={balance}
             side={side}
             onClick={onUpdateAmountByBalancePercent}
           />
-        </div>
+        </div> */}
         {/* 
   {shouldDisplayTIFOptions(typeId) && (
     <div className="mb-10 d-flex d-justify-content-space-between">
@@ -339,14 +339,14 @@ export default class OrderFormInputs extends React.Component<
     </div>
   )}
   */}
-        {shouldDisplayStopTriggerGroup(typeId) && (
+        {/* {shouldDisplayStopTriggerGroup(typeId) && (
           <OrderFormStopTrigger
             enabledStopTrigger={enabledStopTrigger}
             onToggleStopTrigger={onToggleStopTrigger}
             selectedCloseTrigger={selectedCloseTrigger}
             onCloseTriggerOptionChange={onCloseTriggerOptionChange}
           />
-        )}
+        )} */}
         {shouldDisplayStandaloneStopPrice(typeId) && !!stopPrice && (
           <div className="mb-10">
             <OrderFormInputWithInfo
