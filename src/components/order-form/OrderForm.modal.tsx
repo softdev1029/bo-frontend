@@ -368,14 +368,6 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
             </div>
           </OrderFormCollapseArea>
         )}
-        <Button
-          loading={false}
-          classes={""}
-          disabled={false}
-          onClick={() => closePopup(popupId)}
-        >
-          {"Close"}
-        </Button>
       </div>
     );
   }
@@ -388,7 +380,9 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
         title={"Order Entry"}
         mId={popupId}
         initWidth={280}
-        useLegacyBtns={false}
+        useLegacyBtns={true}
+        cancelText="Cancel"
+        okText="Save"
         // popupData={this.getCurrentValue()}
       >
         {this.renderBody}
