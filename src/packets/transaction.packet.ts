@@ -4,9 +4,11 @@ import { DataByte, TypedData } from "@/message-structures/typed-data";
 import { TransactionModel } from "@/models/order.model";
 import { PacketManner } from "./packet-manner";
 
+export const TRANSACTION_ATTRIBUTE_LENGTH = 12;
+
 const TRANSACTION_MESSAGE_STRUCTURE = [
   new DataByte("orderMessageType", TypedData.SHORT), // 4
-  new DataByte("padding", TypedData.SHORT), // 6
+  new DataByte("updateType", TypedData.SHORT), // 6
   new DataByte("accountId", TypedData.INT), // 8
   new DataByte("clientOrderId", TypedData.LONG), // 12
   new DataByte("symbolEnum", TypedData.SHORT), // 20
@@ -17,13 +19,13 @@ const TRANSACTION_MESSAGE_STRUCTURE = [
   new DataByte("qty", TypedData.DOUBLE), // 36
   new DataByte("tif", TypedData.SHORT), // 44
   new DataByte("stopPrice", TypedData.DOUBLE), // 46
-  new DataByte("symbol", TypedData.CHAR, 12), // 54
+  new DataByte("symbolName", TypedData.CHAR, 12), // 54
   new DataByte("orderId", TypedData.LONG), // 66
   new DataByte("cancelShares", TypedData.DOUBLE), // 74
   new DataByte("execId", TypedData.LONG), // 82
   new DataByte("execShares", TypedData.DOUBLE), // 90
   new DataByte("remainQty", TypedData.DOUBLE), // 98
-  new DataByte("execFee", TypedData.DOUBLE), // 106
+  new DataByte("limitCross", TypedData.DOUBLE), // 106
   new DataByte("expiredDate", TypedData.CHAR, 12), // 114
   new DataByte("tradeId", TypedData.CHAR, 6), // 126
   new DataByte("rejectReason", TypedData.SHORT), // 132
@@ -41,7 +43,10 @@ const TRANSACTION_MESSAGE_STRUCTURE = [
   new DataByte("seqId", TypedData.LONG), // 208
   new DataByte("takeProfitPrice", TypedData.DOUBLE), // 216
   new DataByte("triggerType", TypedData.SHORT), // 224
-  new DataByte("attributes", TypedData.CHAR, 12), // 226
+  new DataByte("secondLegPrice", TypedData.DOUBLE), // 226
+  new DataByte("routeEnum", TypedData.SHORT), // 234
+  new DataByte("modifyType", TypedData.SHORT), // 236
+  new DataByte("attributes", TypedData.CHAR, TRANSACTION_ATTRIBUTE_LENGTH), // 238
 ];
 
 export const TransactionManner = new PacketManner<TransactionModel>(

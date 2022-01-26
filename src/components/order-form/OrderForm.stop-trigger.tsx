@@ -1,4 +1,4 @@
-import { StopTrigger } from "@/constants/order-enums";
+import { StopTrigger } from "@/constants/system-enums";
 import { InputCheckboxInline, Tabs, TabTypes } from "@/ui-components";
 import React from "react";
 

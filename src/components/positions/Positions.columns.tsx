@@ -6,7 +6,7 @@ import ClosePositionBtn from "./Positions.close";
 import { PositionSide } from "@/constants/position-enums";
 import DisplayConfirmModalBtn from "../DisplayConfirmModalBtn";
 import PositionsUpdateMarginModal from "./Positions.update-margin.modal";
-import { LastTradePriceType } from "@/constants/order-enums";
+import { LastTradePriceType } from "@/constants/system-enums";
 import PoisitonTpSlModal from "./Poisiton.tp-sl.modal";
 
 const getPositionColumns = function () {

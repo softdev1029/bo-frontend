@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { invariant, makeRequest } from "./exports";
+import { invariant } from "./exports";
 import { Interceptor, Ioc } from "./internals";
 import { store } from "./store-wrapper";
 import { BrowserRouter } from "react-router-dom";
@@ -9,11 +9,12 @@ import { routes } from "./config";
 import { Provider } from "react-redux";
 import { ConnectedRouter } from "connected-react-router";
 import { history } from "./exports";
-import { filter, map, tap } from "rxjs/operators";
-import { initCurrency } from "./exports/ticker.utils";
-import { Observable } from "rxjs";
-import { Init } from "./components/Init";
+import { delay, map } from "rxjs/operators";
+import { Observable, of } from "rxjs";
 import { ToastContainer } from "./ui-components";
+
+import _set from "lodash/set";
+import { requestLogoutAction } from "./actions/auth.actions";
 
 function loadTheme() {
   const elms = document.getElementsByTagName("body");
@@ -32,7 +33,6 @@ function onCompleted(element: HTMLDivElement) {
         <Provider store={store}>
           <ConnectedRouter history={history}>
             {renderRoutes(routes)}
-            <Init />
             <ToastContainer />
           </ConnectedRouter>
         </Provider>
@@ -45,13 +45,11 @@ function onCompleted(element: HTMLDivElement) {
 function createApp(element: HTMLDivElement): Observable<HTMLDivElement> {
   invariant(!!element, `[app] need to provide an element but got: ${element}`);
 
-  return makeRequest("exchangeInfo", { retry: true }).pipe(
-    // @todo spinner while loading
-    filter(({ error }) => !error),
-    tap((ticker) => {
-      // const { symbols } = ticker;
-      // initCurrency(symbols);
-    }),
+  // I removed the promise since there is no HTTP in any part of this app
+  // instead, I put an empty stream here, for any purpose in future
+
+  return of({}).pipe(
+    delay(0),
     map(() => element)
   );
 }
@@ -67,7 +65,6 @@ export const App = {
 
     // register fetch interceptors
     registerInterceptors();
-
     // init ticker utils
     return createApp(element).subscribe(onCompleted);
   },
@@ -99,24 +96,33 @@ export function getState(reducer: string, key: string, log?) {
 function registerInterceptors() {
   Interceptor.register({
     onRequest: function (url, config) {
-      // todo add access token here
-      // const token = getState('user', 'token', true);
+      // @todo remove api.binance
+      const iKey = "Authorization";
 
-      // // clear token
-      // if (config.headers["access_token"]) {
-      //   if (token && config.headers["access_token"] !== token) {
-      //     config.headers["access_token"] = token;
-      //   } else {
-      //     delete config.headers["access_token"];
-      //   }
-      // }
+      if (!url.includes("api.binance")) {
+        const token = getState("user", "token");
 
-      // // add Authorization to every requests
-      // if (token && (!config.headers || !config.headers["access_token"])) {
-      //   config.headers["access_token"] = token;
-      // }
+        const nConfig = Object.assign({}, config);
 
-      // console.warn('request', config)
+        // clear token
+        if (nConfig.headers[iKey]) {
+          if (token && nConfig.headers[iKey] !== token) {
+            nConfig.headers[iKey] = token;
+          } else {
+            delete nConfig.headers[iKey];
+          }
+        }
+
+        // add Authorization to every requests
+        if (nConfig && (!nConfig.headers || !nConfig.headers[iKey])) {
+          _set(nConfig, ["headers", iKey], token);
+        }
+
+        return [url, nConfig];
+      } else {
+        config["headers"] = {};
+      }
+
       // Modify the url or config here
       return [url, config];
     },

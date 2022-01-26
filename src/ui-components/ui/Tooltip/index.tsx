@@ -1,11 +1,11 @@
 import React, { ReactNode } from "react";
 import ReactDOM from "react-dom";
 import classNames from "classnames";
-import ReactToolTip, { Offset } from "react-tooltip";
+import ReactToolTip, { Offset, Place } from "react-tooltip";
 import _uniqueId2 from "lodash/uniqueId";
 import "./styles.scss";
 
-var PERSISTENT_HIDE_DELAY = 1000;
+var PERSISTENT_HIDE_DELAY = 100;
 
 type TooltipProps = {
   children: ReactNode;
@@ -18,6 +18,7 @@ type TooltipProps = {
   offset?: Offset;
   // move tooltip to highest layer
   global: boolean;
+  place: Place;
 };
 
 class Tooltip extends React.PureComponent<Partial<TooltipProps>> {
@@ -28,6 +29,7 @@ class Tooltip extends React.PureComponent<Partial<TooltipProps>> {
     persistent: false,
     cursorPointer: false,
     preFormatted: false,
+    place: "top",
   };
 
   tooltipId = _uniqueId2("tooltip-");
@@ -42,6 +44,7 @@ class Tooltip extends React.PureComponent<Partial<TooltipProps>> {
       preFormatted,
       offset,
       global,
+      place,
     } = this.props;
 
     if (!tooltipContent) return this.props.children;
@@ -59,6 +62,7 @@ class Tooltip extends React.PureComponent<Partial<TooltipProps>> {
           effect={"solid"}
           delayHide={persistent ? PERSISTENT_HIDE_DELAY : undefined}
           offset={offset}
+          place={place}
         >
           {tooltipContent}
         </ReactToolTip>

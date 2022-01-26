@@ -1,4 +1,4 @@
-import { LastTradePriceType } from "@/constants/order-enums";
+import { LastTradePriceType } from "@/constants/system-enums";
 import { SelectDropdown } from "@/ui-components";
 import React from "react";
 

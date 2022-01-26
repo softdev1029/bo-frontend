@@ -4,7 +4,7 @@ import moment from "moment";
 import { greenText, insertsAt, redText } from "@/exports";
 import CancelOrderBtn from "./Orders.cancel-order";
 import CancelAllOrderBtn from "./Orders.cancel-all";
-import { LastTradePriceType, OrderSide } from "@/constants/order-enums";
+import { LastTradePriceType, OrderSide } from "@/constants/system-enums";
 import { getLabelOrderType } from "@/exports/order.utils";
 import DisplayConfirmModalBtn from "../DisplayConfirmModalBtn";
 import EditOrderBtn from "./Orders.edit.modal";

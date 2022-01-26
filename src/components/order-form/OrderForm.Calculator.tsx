@@ -1,5 +1,5 @@
 import { toggleBooleanSetting } from "@/actions/ui-setting.actions";
-import { OrderSide } from "@/constants/order-enums";
+import { OrderSide } from "@/constants/system-enums";
 import {
   IconButton,
   RadioButton,

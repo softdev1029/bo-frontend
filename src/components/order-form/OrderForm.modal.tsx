@@ -3,7 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { connect } from "react-redux";
 import { closeModal } from "@/actions/app.actions";
 
-import { ICELayers, OrderType } from "@/constants/order-enums";
+import { ICELayers, OrderType } from "@/constants/system-enums";
 import {
   getAmountDecimals,
   getMinPrice,
@@ -106,11 +106,6 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
       takeProfitTradePriceType,
       stopLossTradePriceType,
       trailValue,
-      counterParty,
-      counterPartyTimeout,
-      showPopup,
-      onCounterPartyChange,
-      onCounterPartyTimeoutChange,
       onStopPriceChange,
       onAmountChange,
       onUpdateAmountByBalancePercent,
@@ -134,8 +129,6 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
       qtyIncrement,
       selectedLayer,
       onQtyIncrementChange,
-      onPopupClose,
-      closePopup,
       popupId,
     } = this.props;
 

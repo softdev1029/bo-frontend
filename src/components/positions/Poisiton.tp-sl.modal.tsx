@@ -1,5 +1,5 @@
 import { closeModal } from "@/actions/app.actions";
-import { LastTradePriceType } from "@/constants/order-enums";
+import { LastTradePriceType } from "@/constants/system-enums";
 import { greenText, redText } from "@/exports";
 import { getPriceDecimals, lastInPair } from "@/exports/ticker.utils";
 import { ConfirmModal } from "@/ui-components";

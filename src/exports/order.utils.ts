@@ -4,7 +4,7 @@ import {
   OrderType,
   StopTrigger,
   TIF,
-} from "@/constants/order-enums";
+} from "@/constants/system-enums";
 import { titleCase } from ".";
 
 export function getLabelOrderType(orderType: OrderType): string {
@@ -33,11 +33,72 @@ export function getLabelOrderType(orderType: OrderType): string {
     case OrderType.PEG: {
       return "Pegged";
     }
-    case OrderType.MARKET: {
-      return "RFQ";
+    default: {
+      return titleCase(OrderType[orderType] as string);
+    }
+  }
+}
+
+export function getShortLabelOrderType(orderType: OrderType): string {
+  switch (orderType) {
+    case OrderType.TSL: {
+      return "TSL";
+    }
+    case OrderType.TSM: {
+      return "TSM";
+    }
+    case OrderType.STOP_LMT: {
+      return "Stop Limit";
+    }
+    case OrderType.STOP_MKT: {
+      return "Stop Mkt";
+    }
+    case OrderType.OCO: {
+      return "OCO";
+    }
+    case OrderType.OCO_ICE: {
+      return "OCO Iceberg";
+    }
+    case OrderType.ICE: {
+      return "Iceberg";
+    }
+    case OrderType.PEG: {
+      return "Pegged";
     }
     default: {
       return titleCase(OrderType[orderType] as string);
+    }
+  }
+}
+
+export function getOrderTypeShortLabelFromLabel(label: string): string {
+  switch (label) {
+    case "Trailing Stop Lmt": {
+      return getShortLabelOrderType(OrderType.TSL);
+    }
+    case "Trailing Stop Mkt": {
+      return getShortLabelOrderType(OrderType.TSM);
+    }
+    case "Stop Limit": {
+      return getShortLabelOrderType(OrderType.STOP_LMT);
+    }
+    case "Stop Market": {
+      return getShortLabelOrderType(OrderType.STOP_MKT);
+    }
+    case "OCO": {
+      return getShortLabelOrderType(OrderType.OCO);
+    }
+    case "OCO Iceberg": {
+      return getShortLabelOrderType(OrderType.OCO_ICE);
+    }
+    case "Iceberg": {
+      return getShortLabelOrderType(OrderType.ICE);
+    }
+    case "Pegged": {
+      return getShortLabelOrderType(OrderType.PEG);
+    }
+    default: {
+      return label;
     }
   }
 }

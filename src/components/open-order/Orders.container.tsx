@@ -1,4 +1,4 @@
-import { OrderType } from "@/constants/order-enums";
+import { OrderType } from "@/constants/system-enums";
 import { getOpenOrdersArray } from "@/selectors/order.selectors";
 import { connect } from "react-redux";
 import Orders from "./Orders";

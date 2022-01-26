@@ -43,7 +43,7 @@ import { commonOrderValidator } from "./OrderForm.helpers";
 //   }
 // ];
 
-export function spotOrderValidationFn(
+export function orderValidationFn(
   {
     tradeOptions,
     lowestSellPrice,
@@ -60,16 +60,19 @@ export function spotOrderValidationFn(
   },
   props
 ) {
-  console.log("[OrderForm] validating order ...", {
-    lowestSellPrice,
-    highestBuyPrice,
-    side,
-    stopPrice,
-    price,
-    amount,
-    type,
-    onError,
-  });
+  // console.log(
+  //   "{lowestSellPrice, highestBuyPrice, side, stopPrice, price, amount, type, onError},",
+  //   {
+  //     lowestSellPrice,
+  //     highestBuyPrice,
+  //     side,
+  //     stopPrice,
+  //     price,
+  //     amount,
+  //     type,
+  //     onError,
+  //   }
+  // );
 
   return commonOrderValidator({
     tradeOptions,
@@ -100,7 +103,7 @@ export function spotOrderValidationFn(
   });
 }
 
-export function spotSubmitOrderFn(
+export function submitOrderFn(
   {
     tradeOptions,
     clientOrderId,
@@ -111,21 +114,43 @@ export function spotSubmitOrderFn(
     amount,
     stopPrice,
     dispatch,
+    stopLoss,
+    takeProfit,
+    displaySize,
+    refreshSize,
+    priceIncrement,
+    sizeIncrement,
+    offset,
+    selectedLayer,
+    secondLegPrice,
+    limitCross,
+    ...state
   },
   props
 ) {
-  // dispatch()
   dispatch(
     submitNewOrder({
       tradeOptions,
       clientOrderId,
       type,
-      pair: props.pair,
       side,
       price,
       amount,
       stopPrice,
       tif,
+      sessionId: props.sessionId,
+      accountId: props.accountId,
+      pair: props.pair,
+      stopLoss,
+      takeProfit,
+      displaySize,
+      refreshSize,
+      priceIncrement,
+      sizeIncrement,
+      offset,
+      layers: selectedLayer,
+      secondLegPrice: secondLegPrice,
+      limitCross,
     })
   );
 }

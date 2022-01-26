@@ -1,5 +1,5 @@
 import { walletNameFromId } from "@/constants/balance-enums";
-import { MarginType, OrderSide, OrderType } from "@/constants/order-enums";
+import { MarginType, OrderSide, OrderType } from "@/constants/system-enums";
 import { formatNumber, greenText, redText } from "@/exports";
 import {
   getAmountDecimals,

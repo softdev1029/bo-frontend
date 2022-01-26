@@ -1,3 +1,8 @@
+import { OrderBookStartLayer } from "@/constants/order-book-enums";
+import { SymbolType, SymbolValue } from "@/constants/symbol-enums";
+import { OrderSide } from "@/constants/system-enums";
+import { PacketHeaderMessageType } from "@/constants/websocket.enums";
+
 export interface OrderBookRaw {
   price: number;
   size: number;
@@ -23,3 +28,23 @@ export type BookItem = {
 };
 
 export type BookData = Partial<BookItem>;
+
+export type OrderBookStruct = {
+  price: number;
+  volume: number;
+  numOrders: number;
+  side: "B" | "S";
+};
+export interface IBookResponse {
+  type: PacketHeaderMessageType;
+  symbolEnum: SymbolValue;
+  side: OrderSide;
+  symbolType?: SymbolType;
+  symbolName?: string;
+  sendingTime?: number;
+  seqNum?: number;
+  startLayer?: OrderBookStartLayer;
+  markBidPrice?: number;
+  markOfferPrice?: number;
+  orderbooks?: OrderBookStruct[];
+}

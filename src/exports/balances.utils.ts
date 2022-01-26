@@ -5,7 +5,8 @@ import _each from "lodash/each";
 import { wallets } from "@/components/balances/Balances.constants";
 import { add, multiply } from "lodash";
 import { sliceTo } from "./format-number";
-import { findRelevantsByCurrency } from "./ticker.utils";
+import { SymbolType, SymbolValue } from "@/constants/symbol-enums";
+import { CurrencyInfo, ICollateralData } from "@/models/balance.model";
 
 // export const EQUIV_CCY = 'USDT';
 export const EQUIV_CCY = "USDT";
@@ -274,11 +275,4 @@ export function getTotalEquivalent({ balancesTotal = {}, ticker, to }) {
 
     return add(total, equiv);
   }, 0);
-}
-
-export function isEnabledMargin(ccy) {
-  const symbols = findRelevantsByCurrency(ccy);
-
-  //@ts-ignore
-  return symbols.some(({ marginable }) => marginable === 1);
 }

@@ -1,18 +1,7 @@
-import { BookType } from "@/constants/book-enums";
-import {
-  OrderBookDepthLimitEnum,
-  SubscribeType,
-  SubscribeUnsubscribe,
-} from "@/constants/order-book-enums";
-import { ProtocolType } from "@/constants/protocol-enums";
+import { OrderBookDepthLimitEnum } from "@/constants/order-book-enums";
 import { SymbolValue } from "@/constants/symbol-enums";
-import { WebSocketKindEnum } from "@/constants/websocket.enums";
-import { getSymbolId } from "@/exports/ticker.utils";
-import { BookData } from "@/models/book.model";
-import { MdInfoReqManner } from "@/packets/md-info-req.packet";
-import { SubscribeManner } from "@/packets/subscribe.packet";
-import { convertToBookData } from "@/transformers/book.transformer";
-import { sendWsData } from "./ws.actions";
+import { OrderSide } from "@/constants/system-enums";
+import { BookData, OrderBookStruct } from "@/models/book.model";
 
 export const BOOK_INIT = "@book/INIT";
 export const BOOK_INITIALIZED = "@book/INITIALIZED";
@@ -40,28 +29,28 @@ export function sendMDInfoReq({ symbol }: MDInfoReqParams) {
     symbol,
   });
 
-  const symbolEnum = getSymbolId(symbol) || SymbolValue.BTC;
+  // const symbolEnum = getSymbolId(symbol) || SymbolValue.BTC;
 
-  const ACCOUNT_ID = 90001;
-  // const USER_NAME = "MTX01";
-  const SESSION_ID = 901;
+  // const ACCOUNT_ID = 90001;
+  // // const USER_NAME = "MTX01";
+  // const SESSION_ID = 901;
 
-  const params = {
-    symbolEnum: symbolEnum,
-    protocolType: ProtocolType.WS_BINARY,
-    bookType: BookType.LBS,
-    account: ACCOUNT_ID,
-    sessionId: SESSION_ID,
-    sendingTime: Date.now(),
-  };
-  const msg = MdInfoReqManner.send(params);
+  // const params = {
+  //   symbolEnum: symbolEnum,
+  //   protocolType: ProtocolType.WS_BINARY,
+  //   bookType: BookType.LBS,
+  //   account: ACCOUNT_ID,
+  //   sessionId: SESSION_ID,
+  //   sendingTime: Date.now(),
+  // };
+  // const msg = MdInfoReqManner.send(params);
 
-  console.log(
-    "[book.actions] MDInfoReq message is built",
-    MdInfoReqManner.read(msg)
-  );
+  // console.log(
+  //   "[book.actions] MDInfoReq message is built",
+  //   MdInfoReqManner.read(msg)
+  // );
 
-  return sendWsData(WebSocketKindEnum.ADMIN_RISK, msg);
+  // return sendWsData(WebSocketKindEnum.ADMIN_RISK, msg);
 }
 
 interface SubscribeMDParams {
@@ -78,28 +67,28 @@ export function subscribeMarketData({
     limit,
   });
 
-  const symbolEnum = getSymbolId(symbol) || SymbolValue.BTC;
+  // const symbolEnum = getSymbolId(symbol) || SymbolValue.BTC;
 
-  const ACCOUNT_ID = 90001;
-  // const USER_NAME = "MTX01";
-  const SESSION_ID = 901;
+  // const ACCOUNT_ID = 90001;
+  // // const USER_NAME = "MTX01";
+  // const SESSION_ID = 901;
 
-  const params = {
-    subscribeUnsubscribe: SubscribeUnsubscribe.SUBSCRIBE,
-    symbolEnum: symbolEnum,
-    subscribeType: SubscribeType.THREELAYERS,
-    account: ACCOUNT_ID,
-    sessionId: SESSION_ID,
-    sendingTime: Date.now(),
-  };
-  const msg = SubscribeManner.send(params);
+  // const params = {
+  //   subscribeUnsubscribe: SubscribeUnsubscribe.SUBSCRIBE,
+  //   symbolEnum: symbolEnum,
+  //   subscribeType: SubscribeType.THREELAYERS,
+  //   account: ACCOUNT_ID,
+  //   sessionId: SESSION_ID,
+  //   sendingTime: Date.now(),
+  // };
+  // const msg = SubscribeManner.send(params);
 
-  console.log(
-    "[book.actions] subscribe message is built",
-    SubscribeManner.read(msg)
-  );
+  // console.log(
+  //   "[book.actions] subscribe message is built",
+  //   SubscribeManner.read(msg)
+  // );
 
-  return sendWsData(WebSocketKindEnum.ORDERS, msg);
+  // return sendWsData(WebSocketKindEnum.ORDERS, msg);
 }
 
 interface BookInitializedParams {
@@ -119,32 +108,23 @@ export function bookInitialized({
   };
 }
 
-// {
-//   "lastUpdateId": 1027024,
-//   "bids": [
-//     [
-//       "4.00000000",     // PRICE
-//       "431.00000000"    // QTY
-//     ]
-//   ],
-//   "asks": [
-//     [
-//       "4.00000200",
-//       "12.00000000"
-//     ]
-//   ]
-// }
-export function bookUpdate({ bids, asks, lastUpdateId }) {
+type BookUpdateParams = {
+  data: OrderBookStruct[];
+  side: OrderSide;
+  lastUpdateId: number;
+};
+export function bookUpdate({ data, side, lastUpdateId }: BookUpdateParams) {
   return {
     type: BOOK_RECEIVED_UPDATE,
     payload: {
-      asks: convertToBookData(asks),
-      bids: convertToBookData(bids),
+      data: [],
+      // bids: convertToBookData(bids),
       lastUpdateId,
     },
   };
 }
 
+// outdated, used in the worker
 export function bookUpdate2({ bids, asks, lastUpdateId }) {
   return {
     type: BOOK_RECEIVED_UPDATE,

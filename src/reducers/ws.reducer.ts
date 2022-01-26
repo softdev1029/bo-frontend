@@ -4,10 +4,8 @@ import {
   WS_AUTH,
   WS_UNAUTH,
   WS_CONNECT,
-  WS_SEND,
 } from "@/actions/ws.actions";
 import { WebSocketKindStateEnum } from "@/constants/websocket.enums";
-import { SingletonWSManager } from "@/internals";
 import { WSReducerState } from "@/models/ws-reducer-state";
 import _set from "lodash/set";
 
@@ -27,7 +25,7 @@ export const wsReducer = (state = initialState, action) => {
     case WS_CONNECT: {
       const { id } = action;
       const { wsCollection } = state;
-      console.log("[ws.reducer] WS_CONNECT id", id);
+      // console.log("[reducer WS_CONNECT] >>> id", id);
 
       if (
         wsCollection[id] === WebSocketKindStateEnum.CONNECTING ||
@@ -47,7 +45,7 @@ export const wsReducer = (state = initialState, action) => {
     }
     case WS_OPEN: {
       const { id } = action;
-      console.log("[ws.reducer] WS_OPEN id", id);
+      // console.log("[WS_OPEN] >>> id", id);
       return {
         ...state,
         wsCollection: _set(
@@ -59,6 +57,7 @@ export const wsReducer = (state = initialState, action) => {
     }
     case WS_DISCONNECTED: {
       const { id } = action;
+      console.log("WS_DISCONNECTED", id, { ...state.wsCollection });
 
       return {
         ...state,
@@ -71,6 +70,7 @@ export const wsReducer = (state = initialState, action) => {
     }
     case WS_AUTH: {
       const { id } = action.payload;
+      console.log("WS_AUTH", id, { ...state.wsCollection });
 
       return {
         ...state,
@@ -83,6 +83,7 @@ export const wsReducer = (state = initialState, action) => {
     }
     case WS_UNAUTH: {
       const { id } = action;
+      console.log("WS_UNAUTH", id, { ...state.wsCollection });
 
       return {
         ...state,
@@ -92,11 +93,6 @@ export const wsReducer = (state = initialState, action) => {
           WebSocketKindStateEnum.OPENED
         ),
       };
-    }
-    case WS_SEND: {
-      console.log("[ws.reducer] WS_SEND");
-      const { payload } = action;
-      SingletonWSManager.send(payload);
     }
     default: {
       return state;

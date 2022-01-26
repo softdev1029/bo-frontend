@@ -5,18 +5,15 @@ import {
   UPDATE_WS_ENTRY,
 } from "@/actions/app.actions";
 import { USER_LOGOUT_SUCCESS } from "@/actions/auth.actions";
-import { TICKER_INITIALIZED } from "@/actions/ticker.actions";
-import { riskWsUrl, testurl1 } from "@/config/config";
+import { riskWsUrl } from "@/config/config";
 import { EMPTY_ARRAY, shallowCompareObjects } from "@/exports";
 
 const initialState = {
   modals: EMPTY_ARRAY,
   toasts: EMPTY_ARRAY,
-  socketAddresses: [
-    /*testurl1*/
-  ],
+  // socketAddresses: [testurl1],
+  socketAddresses: [],
   adminRiskUrl: riskWsUrl,
-  isReady: false,
   //... profile or sth
 };
 
@@ -28,12 +25,6 @@ export const appReducer = (state = initialState, action) => {
       return {
         ...state,
         socketAddresses: [...state.socketAddresses, ...entries],
-      };
-    }
-    case TICKER_INITIALIZED: {
-      return {
-        ...state,
-        isReady: true,
       };
     }
     case OPEN_MODAL: {

@@ -1,21 +1,8 @@
 import { riskWsUrl, testurl1 } from "@/config/config";
-import {
-  WebSocketChannelEnum,
-  WebSocketKindEnum,
-  WebSocketKindStateEnum,
-} from "@/constants/websocket.enums";
+import { WebSocketKindEnum } from "@/constants/websocket.enums";
 import { shallowCompareObjects } from "@/exports";
-import { ClientLoginManner } from "@/packets/client-login.packet";
-import { ColDataManner } from "@/packets/col-data.packet";
-import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
-import { InstrumentRequestManner } from "@/packets/instrument.packet";
-import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
-import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
-import { TransactionManner } from "@/packets/transaction.packet";
-import { RiskSymbolManner } from "@/packets/user-risk.packet";
 import { Observable, Subject } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
-import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 interface WSInfo {
   url: string;
@@ -34,63 +21,10 @@ class WebsocketMananger {
 
   wsEntriesSubject = new Subject();
 
-  private client: any = null;
-
   constructor(adminRiskUrl: string) {
     this.usingSockets[WebSocketKindEnum.ADMIN_RISK] = adminRiskUrl;
 
     this.usingSockets[WebSocketKindEnum.MARKET] = testurl1;
-
-    // this.client = new W3CWebSocket(adminRiskUrl);
-    // this.client.binaryType = "arraybuffer";
-
-    // this.client.onopen = () => {
-    //   console.log("WebSocket Client Connected");
-    // };
-
-    // this.client.onmessage = (message) => {
-    //   console.log(message.data);
-    //   const bytearray = new Uint8Array(message.data);
-    //   const data: number[] = [];
-    //   for (let i = 0; i < bytearray.length; i++) {
-    //     data.push(bytearray[i]);
-    //   }
-
-    //   if (data[0] == "H".charCodeAt(0)) {
-    //     const readData = ClientLoginManner.read(data);
-    //     console.log("Received Logon reply", readData);
-    //   } else if (data[0] == "Y".charCodeAt(0)) {
-    //     const readData = InstrumentRequestManner.read(data);
-    //     console.log("Received Instrument request reply", readData);
-    //   } else if (data[0] == "T".charCodeAt(0)) {
-    //     const readData = TransactionManner.read(data);
-    //     console.log("Received Transaction reply", readData);
-    //   } else if (data[0] == "f".charCodeAt(0)) {
-    //     const readData = ColUpdateReqManner.read(data);
-    //     console.log("Received Collateral Update Request reply", readData);
-    //   } else if (data[0] == "e".charCodeAt(0)) {
-    //     const readData = OpenOrderReqManner.read(data);
-    //     console.log("Received Open Order Request reply", readData);
-    //   } else if (data[0] == "w".charCodeAt(0)) {
-    //     const readData = RiskUpdateReqManner.read(data);
-    //     console.log("Received Risk Update Request reply", readData);
-    //   } else if (data[0] == "N".charCodeAt(0)) {
-    //     const readData = RiskSymbolManner.read(data);
-    //     console.log("Received Risk User Symbol reply", readData);
-    //   } else if (data[0] == "h".charCodeAt(0)) {
-    //     const readData = ColDataManner.read(data);
-    //     console.log("Received Collateral Data reply", readData);
-    //   }
-    // };
-  }
-
-  send(data: any) {
-    // const len = data.length;
-    // const bytearray = new Uint8Array(len);
-    // for (let i = 0; i < len; ++i) {
-    //   bytearray[i] = data[i];
-    // }
-    // this.client.send(bytearray);
   }
 
   hasInstance(id: number): boolean {
@@ -195,28 +129,6 @@ class WebsocketMananger {
     if (!id) return null;
 
     return id;
-  }
-
-  getSocketInChargeOfByChannel(
-    channel: WebSocketChannelEnum
-  ): WebSocketKindEnum | null {
-    switch (channel) {
-      case WebSocketChannelEnum.MARKET:
-      case WebSocketChannelEnum.TRADES:
-      case WebSocketChannelEnum.ORDERBOOK:
-      case WebSocketChannelEnum.CHART: {
-        return WebSocketKindEnum.MARKET;
-      }
-      // tested
-      // used to test 2nd websocket
-      // case WebSocketChannelEnum.ORDERBOOK:
-      // case WebSocketChannelEnum.CHART: {
-      // return WebSocketKindEnum.ORDERS;
-      // }
-      default: {
-        return null;
-      }
-    }
   }
 }
 

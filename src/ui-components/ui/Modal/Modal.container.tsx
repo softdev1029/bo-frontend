@@ -25,6 +25,7 @@ const ModalContainer = React.memo(
     createModalPortal(
       modals.map((data) => {
         const { component, id, modalProps } = data;
+        if (!component) return <></>;
 
         return React.createElement(component, {
           key: id,

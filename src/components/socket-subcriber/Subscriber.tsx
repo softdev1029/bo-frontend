@@ -1,67 +1,94 @@
 import React, { useEffect } from "react";
 import {
-  WebSocketChannelEnum,
+  PacketHeaderMessageType,
+  WebSocketKindEnum,
   WebSocketKindStateEnum,
 } from "@/constants/websocket.enums";
-import { SubscribeParams } from "@/models/ws-action-types";
-import { getSubscribeData } from "./socket-subscriber.helpers";
 import { connect } from "react-redux";
 import { wsCollectionSelector } from "@/selectors/ws.selectors";
-import { shallowCompareObjects } from "@/exports";
 import { SingletonWSManager } from "@/internals";
-
-type Dependencies = {
-  [x: string]: string | number;
-};
+import { getSymbolEnum } from "@/exports/ticker.utils";
+import { SubscribeType } from "@/constants/system-enums";
+import {
+  getAccountId,
+  getSessionId,
+  isUserLoggedIn,
+} from "@/selectors/auth.selectors";
+import { ISubscribeRequest } from "@/models/subscribe.model";
 
 interface SubscriberProps {
-  channel: WebSocketChannelEnum;
-  subscribeFunc: (x: SubscribeParams) => void;
-  unsubscribeFunc: (x: SubscribeParams) => void;
-  dependencies?: Dependencies;
+  subscribeFunc: (x: ISubscribeRequest) => void;
+  unsubscribeFunc: (x: any) => void;
   isSocketReady?: boolean;
+  isLoggedIn?: boolean;
+  symbol: string;
+  accountId?: number;
+  sessionId?: number;
+  subscribeType: SubscribeType;
+  // removed
+  // speed: number,
+  // interval: number;
 }
 
 const Subscriber = React.memo(
   ({
-    channel,
+    isLoggedIn,
     subscribeFunc,
     unsubscribeFunc,
-    dependencies = {},
+    accountId,
+    sessionId,
+    symbol,
+    subscribeType = SubscribeType.THIRTYLAYERS,
     isSocketReady,
   }: Partial<SubscriberProps>) => {
     useEffect(() => {
-      if (!isSocketReady) return;
-      const subData = getSubscribeData(channel, dependencies);
+      if (!isSocketReady || !isLoggedIn) return;
 
-      if (subData) {
-        // console.log('[subscriber] >>>>> sub', channel, 'dependencies', dependencies)
-        subscribeFunc(subData);
-      }
+      const data = {
+        accountId,
+        sessionId,
+        subscribeType,
+        symbolEnum: getSymbolEnum(symbol),
+        sendingTime: Date.now(),
+        type: PacketHeaderMessageType.SUBSCRIBE,
+      };
 
-      // because Subscriber is rendered via `Subscribers` props,
-      // so everytime `dependecies` changes, this effect calls unmount as well
-      return () => unsubscribeFunc(subData); // called when unmount
-    }, [channel, dependencies, unsubscribeFunc, subscribeFunc, isSocketReady]);
+      console.log("[subscriber] >>>>> sub", data);
+      subscribeFunc(data);
+
+      return () => {
+        // @changelog Dec 11, 2021
+        // no longer have to request unsubscribe to MDS
+        // instead we have to create new instance of MDS socket when switching pair
+        // unsubscribeFunc(data)
+        console.log("un mount");
+      }; // called on unmount
+    }, [
+      isLoggedIn,
+      symbol,
+      accountId,
+      subscribeType,
+      sessionId,
+      unsubscribeFunc,
+      subscribeFunc,
+      isSocketReady,
+    ]);
 
     return null;
-  },
-  (prevProp, nextProps) => {
-    return (
-      shallowCompareObjects(prevProp.dependencies, nextProps.dependencies) &&
-      prevProp.isSocketReady === nextProps.isSocketReady
-    );
   }
 );
 
 const mapStateToProps = (state, props: SubscriberProps) => {
-  const wsId = SingletonWSManager.getSocketInChargeOfByChannel(props.channel);
+  const wsId = WebSocketKindEnum.MARKET;
   const socketState = wsCollectionSelector(state)[wsId];
 
   return {
-    isSocketReady: SingletonWSManager.isMarketWsById(wsId)
-      ? socketState === WebSocketKindStateEnum.OPENED
-      : socketState === WebSocketKindStateEnum.AUTHORIZED,
+    accountId: getAccountId(state),
+    sessionId: getSessionId(state),
+    isLoggedIn: isUserLoggedIn(state),
+    isSocketReady:
+      SingletonWSManager.isMarketWsById(wsId) &&
+      socketState === WebSocketKindStateEnum.AUTHORIZED,
   };
 };
 

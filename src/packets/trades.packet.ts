@@ -1,7 +1,10 @@
 // trades = MDExecReport
 import { PacketHeaderMessageType } from "@/constants/websocket.enums";
 import { DataByte, TypedData } from "@/message-structures/typed-data";
+import { ExecReportResponse } from "@/models/trade.model";
 import { PacketManner } from "./packet-manner";
+
+export const TRADE_MESSAGE_LENGTH = 54; // 54 bytes
 
 const TRADE_MESSAGE_STRUCTURE = [
   new DataByte("type", TypedData.SHORT), // 4
@@ -13,10 +16,10 @@ const TRADE_MESSAGE_STRUCTURE = [
   new DataByte("sendingTime", TypedData.LONG), // 28
   new DataByte("seqNum", TypedData.INT), // 36
   new DataByte("side", TypedData.SHORT), // 40
-  new DataByte("bit24Symbol", TypedData.CHAR, 12), // 42
+  new DataByte("symbolName", TypedData.CHAR, 12), // 42
 ];
 
-export const TradesManner = new PacketManner(
+export const TradesManner = new PacketManner<ExecReportResponse>(
   PacketHeaderMessageType.EXEC_REPORT,
   TRADE_MESSAGE_STRUCTURE
 );

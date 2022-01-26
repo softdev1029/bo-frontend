@@ -8,6 +8,8 @@ export enum TypedData {
   INT,
   SHORT,
   DOUBLE,
+  FLOAT,
+  UINT_64,
   CUSTOM_DATA,
 }
 
@@ -23,6 +25,7 @@ export class DataByte implements IReadCustomData, IPutCustomData {
   name: string;
   type: TypedData;
   private _length: number = 1;
+  private _realValue;
 
   constructor(name: string, type: TypedData, length?: number) {
     this.name = name;
@@ -52,6 +55,14 @@ export class DataByte implements IReadCustomData, IPutCustomData {
         sender.putChar(value || "", this._length);
         break;
       }
+      case TypedData.FLOAT: {
+        sender.putFloat(value || 0);
+        break;
+      }
+      case TypedData.UINT_64: {
+        sender.putUint64T(value || 0);
+        break;
+      }
       case TypedData.CUSTOM_DATA: {
         if (!_isObject(value) && !_isArray(value)) {
           throw new Error(
@@ -67,24 +78,43 @@ export class DataByte implements IReadCustomData, IPutCustomData {
   getValue(reader: PacketReader): any {
     switch (this.type) {
       case TypedData.LONG: {
-        return reader.getLong();
+        this._realValue = reader.getLong();
+        break;
       }
       case TypedData.INT: {
-        return reader.getInt();
+        this._realValue = reader.getInt();
+        break;
       }
       case TypedData.DOUBLE: {
-        return reader.getDouble();
+        this._realValue = reader.getDouble();
+        break;
       }
       case TypedData.SHORT: {
-        return reader.getShort();
+        this._realValue = reader.getShort();
+        break;
       }
       case TypedData.CHAR: {
-        return reader.getChar(this._length, true);
+        this._realValue = reader.getChar(this._length, true);
+        break;
+      }
+      case TypedData.FLOAT: {
+        this._realValue = reader.getFloat();
+        break;
+      }
+      case TypedData.UINT_64: {
+        this._realValue = reader.getUint64T();
+        break;
       }
       case TypedData.CUSTOM_DATA: {
-        return this.getCustomValue(reader);
+        this._realValue = this.getCustomValue(reader);
+        break;
       }
     }
+    return this._realValue;
+  }
+
+  getRealValue(): any {
+    return this._realValue;
   }
 
   length(): number {
@@ -92,7 +122,8 @@ export class DataByte implements IReadCustomData, IPutCustomData {
       case TypedData.LONG: {
         return 8;
       }
-      case TypedData.INT: {
+      case TypedData.INT:
+      case TypedData.FLOAT: {
         return 4;
       }
       case TypedData.DOUBLE: {
@@ -108,6 +139,6 @@ export class DataByte implements IReadCustomData, IPutCustomData {
     }
   }
 
-  getCustomValue(reader: PacketReader) {}
+  getCustomValue(reader: PacketReader): any {}
   putCustomValue(values: Object | Object[], sender: PacketSender) {}
 }

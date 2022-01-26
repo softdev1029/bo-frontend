@@ -11,7 +11,7 @@ import { withErrorBoundary } from "@/HOCs";
 import { getAccessToken, getUserEmail } from "@/selectors/auth.selectors";
 import { requestLogoutAction } from "@/actions/auth.actions";
 import { testurl1 } from "@/config/config";
-import { MessageType, OrderSide, OrderType } from "@/constants/order-enums";
+import { MessageType, OrderSide, OrderType } from "@/constants/system-enums";
 import { PacketSender } from "@/internals/packet/Packet.Sender";
 import { PacketReader } from "@/internals/packet/Packet.Reader";
 import { requestConnectToAdminRisk } from "@/actions/ws.actions";
@@ -34,11 +34,7 @@ import {
   InstrumentRequestType,
 } from "@/packets/instrument.packet";
 import { SingletonWSManager } from "@/internals";
-import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
-import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
-import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
 import { RiskSymbolManner } from "@/packets/user-risk.packet";
-import { ColDataManner } from "@/packets/col-data.packet";
 
 // import { SymbolType } from "@/constants/symbol-enums";
 
@@ -113,7 +109,7 @@ export const Home = () => {
             ClientLoginManner.read(loginData)
           );
 
-          SingletonWSManager.send(loginData);
+          // SingletonWSManager.send(loginData);
           // dispatch(sendWsData(1, loginData));
         }}
       >
@@ -165,7 +161,7 @@ export const Home = () => {
             InstrumentRequestManner.read(subSender)
           );
 
-          SingletonWSManager.send(subSender);
+          // SingletonWSManager.send(subSender);
           // dispatch(sendWsData(2, subSender));
         }}
       >
@@ -202,7 +198,7 @@ export const Home = () => {
             type: MessageType.ORDER_NEW,
             accountId: ACCOUNT_ID,
             clientOrderId: lastOrderId,
-            symbolEnum: SymbolValue.BTC,
+            // symbolEnum: SymbolValue.BTC,
             orderType: OrderType.LIMIT,
             symbolType: SymbolType.SPOT,
             price: 9190,
@@ -222,68 +218,11 @@ export const Home = () => {
             TransactionManner.read(order, true)
           );
 
-          SingletonWSManager.send(order);
+          // SingletonWSManager.send(order);
           // dispatch(sendWsData(1, order));
         }}
       >
         Sending a New Transaction ...
-      </button>
-      <br />
-      <button
-        onClick={() => {
-          const params = {
-            account: ACCOUNT_ID,
-          };
-          const req = ColUpdateReqManner.send(params);
-
-          console.log(
-            "sending collateral update request ...",
-            ColUpdateReqManner.read(req)
-          );
-
-          SingletonWSManager.send(req);
-          // dispatch(sendWsData(1, order));
-        }}
-      >
-        Sending a Collateral Update Request ...
-      </button>
-      <br />
-      <button
-        onClick={() => {
-          const params = {
-            account: ACCOUNT_ID,
-          };
-          const req = OpenOrderReqManner.send(params);
-
-          console.log(
-            "sending open order request ...",
-            OpenOrderReqManner.read(req)
-          );
-
-          SingletonWSManager.send(req);
-          // dispatch(sendWsData(1, order));
-        }}
-      >
-        Sending a Open Order Request ...
-      </button>
-      <br />
-      <button
-        onClick={() => {
-          const params = {
-            account: ACCOUNT_ID,
-          };
-          const req = RiskUpdateReqManner.send(params);
-
-          console.log(
-            "sending risk update request ...",
-            RiskUpdateReqManner.read(req)
-          );
-
-          SingletonWSManager.send(req);
-          // dispatch(sendWsData(1, order));
-        }}
-      >
-        Sending a Risk Update Request ...
       </button>
       <br />
       <button
@@ -298,28 +237,13 @@ export const Home = () => {
             RiskSymbolManner.read(req)
           );
 
-          SingletonWSManager.send(req);
+          // SingletonWSManager.send(req);
           // dispatch(sendWsData(1, order));
         }}
       >
         Sending a Risk User Symbol ...
       </button>
       <br />
-      <button
-        onClick={() => {
-          const params = {
-            account: ACCOUNT_ID,
-          };
-          const req = ColDataManner.send(params);
-
-          console.log("sending collateral data ...", ColDataManner.read(req));
-
-          SingletonWSManager.send(req);
-          // dispatch(sendWsData(1, order));
-        }}
-      >
-        Sending a Collateral Data ...
-      </button>
       {/* {/* <button
         onClick={() => {
           const params = {

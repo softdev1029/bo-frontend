@@ -1,32 +1,30 @@
-import { OrderSide } from "@/constants/order-enums";
-import { formatNumber, greenText, redText } from "@/exports";
-import { getAmountDecimals, getSymbols } from "@/exports/ticker.utils";
-import { Dropdown, RadioButton, RadioGroup, Tabs } from "@/ui-components";
+import { getSymbols } from "@/exports/ticker.utils";
+import { Tabs } from "@/ui-components";
 import { TabTypes } from "@/ui-components/Tabs";
 import React from "react";
+import { connect } from "react-redux";
 import classNames from "classnames";
 import OrderFormInputs from "./OrderForm.inputs";
 import OrderSubmitButton from "./OrderForm.submit-btn";
-import { AdditionPopupData, OrderFormProps } from "./OrderForm.types";
+import { OrderFormErrors, OrderFormProps } from "./OrderForm.types";
 import { isBuy } from "./OrderForm.helpers";
 import _get from "lodash/get";
 import { walletNameFromId } from "@/constants/balance-enums";
-import { OrderBook } from "../order-book";
-import { AppTradeType } from "@/constants/trade-type";
+import { OrderSide } from "@/constants/system-enums";
+import { Button } from "@/ui-components";
+import { closeModal, showModal } from "@/actions/app.actions";
+import { replaceOrder } from "@/actions/order.actions";
+import { OrderItem } from "@/models/order.model";
 import OrderFormModal from "./OrderForm.modal";
-import { connect } from "react-redux";
-import { showModal } from "@/actions/app.actions";
-import { ReactNode } from "react";
 
 interface OrderFormSpotState {
   selectedTab: string;
+  errors?: OrderFormErrors;
 }
-
-interface OrderFormSpotProps extends Partial<OrderFormProps> {
-  showModal: (mid: string, component: ReactNode, props) => void;
-}
-
-class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
+class OrderFormSpotComponent extends React.Component<
+  Partial<OrderFormProps>,
+  OrderFormSpotState
+> {
   private _spotTabConfig = [
     {
       title: "Buy",
@@ -34,7 +32,6 @@ class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
       meta: {
         price: "42,400",
       },
-      // className: greenText(),
     },
     {
       title: "Sell",
@@ -42,13 +39,12 @@ class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
       meta: {
         price: "42,378",
       },
-      // className: redText(),
     },
   ];
 
   state = {
     selectedTab: `${OrderSide.BUY}`,
-    t: "test",
+    errors: undefined,
   };
 
   constructor(props) {
@@ -56,6 +52,7 @@ class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
 
     this.onTabChanged = this.onTabChanged.bind(this);
     this.sendOrder = this.sendOrder.bind(this);
+    this.onReplaceOrder = this.onReplaceOrder.bind(this);
     this.onOrderTypeChange = this.onOrderTypeChange.bind(this);
   }
 
@@ -82,7 +79,21 @@ class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
   private sendOrder(clientOrderId: number, side: OrderSide, cb) {
     const { onOrderBtnClick } = this.props;
 
-    onOrderBtnClick(clientOrderId, { side }, cb);
+    // reset the errors
+    this.setState({
+      errors: undefined,
+    });
+
+    onOrderBtnClick(clientOrderId, { side }, (errors) => {
+      cb();
+      this.setState({
+        errors,
+      });
+    });
+  }
+
+  private onReplaceOrder() {
+    console.log("props - ", this.props);
   }
 
   private strikePrice(to: string) {
@@ -121,8 +132,9 @@ class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
   }
 
   render() {
-    const { amount, balances, pair, wallet } = this.props;
-    const { selectedTab } = this.state;
+    const { balances, pair, wallet } = this.props;
+
+    const { selectedTab, errors } = this.state;
     const [base, quote] = getSymbols(pair);
     const isBuyOrder = isBuy(+selectedTab);
 
@@ -138,18 +150,13 @@ class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
 
     return (
       <div className="order-form__wrapper">
-        {/* <OrderBook
-          symbol={pair}
-          windowOpen={true}
-          tradeType={AppTradeType.SPOT}
-        /> */}
         <div className="mb-10">{this.renderTab()}</div>
         <OrderFormInputs
           balance={balanceAmount}
           side={+selectedTab}
+          errors={errors}
           {...this.props}
           onOrderTypeChange={this.onOrderTypeChange}
-          // price={this.strikePrice()}
         />
         <div className="btn-order__wrapper mb-10">
           <OrderSubmitButton
@@ -159,39 +166,76 @@ class OrderFormSpot extends React.Component<OrderFormSpotProps, any> {
             label={label}
           />
         </div>
-        <div className="d-flex font-size-11 d-justify-content-space-between font-semi-bold">
+        {/* <div className="d-flex font-size-11 d-justify-content-space-between font-semi-bold">
           <div className="d-flex d-flex-direction-column">
-            <div>
+            <div className="mb-4">
               {isBuyOrder ? "Buy" : "Sell"} {base}
             </div>
-            <div className="number-text">
-              {formatNumber({
-                number: amount,
-                decimals: getAmountDecimals(pair),
-              })}{" "}
-              {base}
+            <div className="number-text text--white">
+              {hidden ? (
+                <div className="text--cool-grey-50">●●●●●●●●●●</div>
+              ) : (
+                <>
+                  {formatNumber({
+                    number: amount,
+                    decimals: getAmountDecimals(pair, base),
+                  })}{" "}
+                  {base}
+                </>
+              )}
             </div>
           </div>
           <div className="d-flex d-flex-direction-column">
-            <div className="text-right">Available Balance</div>
-            <div className="number-text text-right">
-              {formatNumber({
-                number: balanceAmount,
-                decimals: getAmountDecimals(pair),
-              })}{" "}
-              {balanceCCy}
+            <div className="text-right mb-4">Available Balance</div>
+            <div className="number-text text-right text--white">
+              {hidden ? (
+                <div className="text--cool-grey-50">●●●●●●●●●●</div>
+              ) : (
+                <>
+                  {formatNumber({
+                    number: balanceAmount,
+                    decimals: getAmountDecimals(pair, balanceCCy),
+                  })}{" "}
+                  {balanceCCy}
+                </>
+              )}
             </div>
           </div>
-        </div>
+        </div> */}
+        {/* <OrderFormAdvanced
+          pair={pair}
+          typeId={typeId}
+          displaySize={displaySize}
+          refreshSize={refreshSize}
+          onDisplaySizeChange={onDisplaySizeChange}
+          onRefreshSizeChange={onRefreshSizeChange}
+        /> */}
       </div>
     );
   }
 }
 
+const mapStateToProps = (state, props) => {};
+
 const mapDispatchToProps = (dispatch) => ({
   showModal: function (id, component, props) {
+    console.log("1111=", component);
     dispatch(showModal(id, component, props));
+  },
+  closePopup(id) {
+    dispatch(closeModal(id));
+  },
+  replaceOrder: function (newOrder: OrderItem) {
+    dispatch(
+      replaceOrder({
+        clientOrderId: Date.now(),
+        order: newOrder,
+      })
+    );
   },
 });
 
-export default connect(null, mapDispatchToProps)(OrderFormSpot);
+export const OrderFormSpot = connect(
+  null,
+  mapDispatchToProps
+)(OrderFormSpotComponent);

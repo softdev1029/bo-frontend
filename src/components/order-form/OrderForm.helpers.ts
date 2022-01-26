@@ -1,6 +1,13 @@
 import _isEmpty from "lodash/isEmpty";
 import _get from "lodash/get";
-import { OrderSide, OrderType } from "@/constants/order-enums";
+import _set from "lodash/set";
+import {
+  AttributeIndexEnum,
+  MessageType,
+  TakeProfitStopLossType,
+  TradeOption,
+} from "@/constants/system-enums";
+
 import {
   getMaxAmount,
   getMaxPrice,
@@ -17,16 +24,14 @@ import {
   multiply,
 } from "@/exports/math";
 import { formatNumber, sliceTo } from "@/exports/format-number";
-import { WalletType } from "@/constants/balance-enums";
 import { toast } from "@/ui-components";
+import { SymbolType } from "@/constants/symbol-enums";
+import { OrderSide, OrderType } from "@/constants/system-enums";
+import { OrderFormErrorEnum } from "./OrderForm.types";
 
-export function isValidPrice(price) {
+export function isValidPrice(price, errors) {
   if (!Number(price)) {
-    toast.open({
-      type: "error",
-      message: `Price required.`,
-      header: "Order Rejected",
-    });
+    _set(errors, [OrderFormErrorEnum.PRICE], "Price required");
     return false;
   }
 
@@ -45,27 +50,15 @@ export function isMarketOrder(typeId) {
   return typeId === OrderType.MARKET || typeId === OrderType.STOP_MKT;
 }
 
-export function isStopLimitOrder(typeId) {
-  return (
-    typeId === OrderType.STOP_LMT ||
-    typeId === OrderType.OCO ||
-    typeId === OrderType.STOP_MKT
-  );
-}
-
-export function isStopMarketOrder(typeId) {
-  return typeId === OrderType.STOP_MKT;
-}
-
 // picked price: either is `stopPrice` if typeId = STOP_MARKET or `tickerPrice` if typeId = MARKET otherwise using `price`
 export function getPickedPrice({ typeId, price, tickerPrice, stopPrice }) {
   if (!tickerPrice) tickerPrice = price;
+  if (shouldHidePriceField(typeId) && !shouldDisplayStopPriceField(typeId)) {
+    return +tickerPrice;
+  }
+  if (shouldDisplayStopPriceField(typeId)) return +stopPrice;
 
-  return (tickerPrice = isStopMarketOrder(typeId)
-    ? +stopPrice
-    : isMarketOrder(typeId)
-    ? +tickerPrice
-    : +price);
+  return +price;
 }
 
 export function calculatedTotal({
@@ -115,7 +108,7 @@ export function validateLimitOrder({
 
     const maxPrice = multiply(basedPrice, 1.1);
 
-    console.log("[buy] maxPrice", maxPrice, basedPrice, lowestSellPrice);
+    // console.log("[buy] maxPrice", maxPrice, basedPrice, lowestSellPrice);
 
     if (isGreaterThan(price, maxPrice)) {
       // toast.open({
@@ -149,22 +142,13 @@ export function validateLimitOrder({
   return true;
 }
 
-export function validateOCOOrder({
-  pair,
-  tickerPrice = 0,
-  side,
-  price,
-  amount,
-  available,
-  stopPrice,
-}) {
+export function validateOCOOrder(
+  { pair, tickerPrice = 0, side, price, amount, available, stopPrice },
+  errors
+) {
   // stopPrice ...
   if (!Number(stopPrice)) {
-    // toast.open({
-    //   type: 'error',
-    //   message: `OCO Stop Price required`
-    // });
-
+    _set(errors, [OrderFormErrorEnum.STOP_PRICE], "StopPrice required");
     return false;
   }
 
@@ -172,99 +156,106 @@ export function validateOCOOrder({
   let maxPrice = getMaxPrice(pair);
 
   if (isGreaterThan(price, maxPrice)) {
-    // toast.open({
-    //   type: 'error',
-    //   message: `Higher than max price`
-    // });
+    _set(errors, [OrderFormErrorEnum.PRICE], `Max price = ${maxPrice})`);
 
     return false;
   }
 
   /**
-  - Buy OCO: 
+  - Buy OCO:
   + Limit price < ticker price < Stop-limit price
   + min trade <= amount <= max trade
   + stop Price <= maxPrice
   + amount*Limitprice <= available balance
       */
   if (side === OrderSide.BUY) {
-    const total = multiply(price, amount);
+    // const total = multiply(price, amount);
 
-    if (!_validateBuyingAmount(pair, amount, total, available)) {
-      return false;
-    }
+    // if (!_validateBuyingAmount(pair, amount, total, available)) {
+    //   return false;
+    // }
 
     if (isGreaterThan(stopPrice, maxPrice)) {
-      // toast.open({
-      //   type: 'error',
-      //   message: `Invalid order (maximum stop price for ${pair} is ${maxPrice})`
-      // });
+      _set(errors, [OrderFormErrorEnum.STOP_PRICE], `Max price = ${maxPrice})`);
 
       return false;
     }
 
-    if (isGreaterThanOrEquals(tickerPrice, stopPrice)) {
-      // toast.open({
-      //   type: 'error',
-      //   message: `Invalid order (Stop price must be bigger than ticker price)`
-      // });
-      return false;
-    }
-
-    if (isGreaterThanOrEquals(price, tickerPrice)) {
-      // toast.open({
-      //   type: 'error',
-      //   message: `Invalid order (Ticker price must be bigger than price)`
-      // });
+    if (isGreaterThanOrEquals(stopPrice, price)) {
+      _set(
+        errors,
+        [OrderFormErrorEnum.STOP_PRICE],
+        `StopPrice must below the LimitPrice`
+      );
 
       return false;
     }
+
+    // if (isGreaterThanOrEquals(tickerPrice, stopPrice)) {
+    //   toast.open({
+    //     type: 'error',
+    //     message: `Invalid order (Stop price must be bigger than ticker price)`
+    //   });
+    //   return false;
+    // }
+
+    // if (isGreaterThanOrEquals(price, tickerPrice)) {
+    //   // toast.open({
+    //   //   type: 'error',
+    //   //   message: `Invalid order (Ticker price must be bigger than price)`
+    //   // });
+
+    //   return false;
+    // }
   } else if (side === OrderSide.SELL) {
-    /*
-  - Sell OCO: 
-  + Stop-limit price < ticker Price <  Limit price
-  + min trade <= amount <= max trade
-  + stop price >= minPrice
-  + amount <= available balance
-  */
-    // amount > available balance
-    if (!_validateSellingAmount(pair, amount, available)) {
-      return false;
-    }
+    // /*
+    // - Sell OCO:
+    // + Stop-limit price < ticker Price <  Limit price
+    // + min trade <= amount <= max trade
+    // + stop price >= minPrice
+    // + amount <= available balance
+    // */
+    // // amount > available balance
+    // if (!_validateSellingAmount(pair, amount, available)) {
+    //   return false;
+    // }
 
-    if (isGreaterThanOrEquals(stopPrice, tickerPrice)) {
-      // toast.open({
-      //   type: 'error',
-      //   message: `Invalid order (Ticker price must be bigger than stop price)`
-      // });
-      return false;
-    }
-    // ticker Price <  Limit price
-    if (isGreaterThanOrEquals(tickerPrice, price)) {
-      // toast.open({
-      //   type: 'error',
-      //   message: `Invalid order (Price must be bigger than ticker price)`
-      // });
+    // if (isGreaterThanOrEquals(stopPrice, tickerPrice)) {
+    //   // toast.open({
+    //   //   type: 'error',
+    //   //   message: `Invalid order (Ticker price must be bigger than stop price)`
+    //   // });
+    //   return false;
+    // }
+    // // ticker Price <  Limit price
+    // if (isGreaterThanOrEquals(tickerPrice, price)) {
+    //   // toast.open({
+    //   //   type: 'error',
+    //   //   message: `Invalid order (Price must be bigger than ticker price)`
+    //   // });
+
+    //   return false;
+    // }
+
+    if (isLessThanOrEquals(stopPrice, price)) {
+      _set(
+        errors,
+        [OrderFormErrorEnum.STOP_PRICE],
+        `StopPrice must above the LimitPrice`
+      );
 
       return false;
     }
 
     // stopPrice >= minPrice
     if (isLessThan(stopPrice, minPrice)) {
-      // toast.open({
-      //   type: 'error',
-      //   message: `Invalid order (minimum stop price for ${pair} is ${minPrice})`
-      // });
-
+      _set(errors, [OrderFormErrorEnum.STOP_PRICE], `Min Price = ${minPrice}`);
       return false;
     }
   }
 
   if (isLessThan(price, minPrice)) {
-    // toast.open({
-    //   type: 'error',
-    //   message: ` Order Price is more than 10% of ticker price, abort.`
-    // });
+    _set(errors, [OrderFormErrorEnum.PRICE], `Min Price = ${minPrice}`);
     return false;
   }
 
@@ -461,34 +452,39 @@ export function validateStopMarketOrder({
   return true;
 }
 
-export function isValidAmount(pair, amount) {
-  if (!amount) {
+export function isValidStopLoss(pair, takeProfitStopLossType, stopLoss) {
+  if (
+    takeProfitStopLossType === TakeProfitStopLossType.PERCENT &&
+    stopLoss > 100
+  ) {
     toast.open({
       type: "error",
-      message: `Amount required.`,
+      message: `Invalid order (maximum stop loss percentage is 100%).`,
       header: "Order Rejected",
     });
 
     return false;
   }
+  return true;
+}
+
+export function isValidAmount(pair, amount, errors) {
+  if (!amount) {
+    _set(errors, [OrderFormErrorEnum.QTY], "Quantity required.");
+    return false;
+  }
 
   const minAmount = getMinAmount(pair);
   const maxAmount = getMaxAmount(pair);
+  const [base] = getSymbols(pair);
 
   if (isLessThan(amount, minAmount)) {
-    // toast.open({
-    //   type: 'error',
-    //   message: `Invalid order (minimum order size for ${pair} is ${minAmount})`
-    // });
-
+    _set(errors, [OrderFormErrorEnum.QTY], `Min amount = ${minAmount} ${base}`);
     return false;
   }
 
   if (isGreaterThan(amount, maxAmount)) {
-    // toast.open({
-    //   type: 'error',
-    //   message: `Invalid order (maximum order size for ${pair} is ${maxAmount})`
-    // });
+    _set(errors, [OrderFormErrorEnum.QTY], `Max amount = ${maxAmount} ${base}`);
 
     return false;
   }
@@ -530,7 +526,7 @@ function _validateSellingAmount(pair, amount, available) {
  *
  * @param {string} pair
  * @param {string} side BUY | SELL
- * @param {string} wallet WalletType
+ * @param {string} wallet SymbolType
  */
 export function getBalanceBySide(
   { pair, side, balances, wallet },
@@ -597,10 +593,10 @@ export function validateIOCOrder({ pair, side, price, amount, available }) {
 export function getSideTitleByWallet({ side, wallet }) {
   // eslint-disable-next-line default-case
   switch (wallet) {
-    case WalletType.EXCHANGE: {
+    case SymbolType.SPOT: {
       return side;
     }
-    case WalletType.DERIVATIVE: {
+    case SymbolType.DERIVATIVE: {
       if (isBuy(side)) {
         return "long";
       } else if (isSell(side)) {
@@ -679,16 +675,16 @@ export function commonOrderValidator({
       leverage) /
     (leverage + 1 - 0.003 * leverage);
 
-  console.log(
-    "[OrderForm] validating order, LP",
-    LP,
-    "place price",
-    price,
-    "highest buy",
-    highestBuyPrice,
-    "lowest sell",
-    lowestSellPrice
-  );
+  // console.log(
+  //   "LP",
+  //   LP,
+  //   "place price",
+  //   price,
+  //   "highest buy",
+  //   highestBuyPrice,
+  //   "lowest sell",
+  //   lowestSellPrice
+  // );
   // if the LP is lower than the price of the order being sent it will be rejected.
   // You are checking to ensure the price of the order being sent is lower than the liquidation price.  Why send an order that will be immediately liquidated??
   // if (
@@ -698,18 +694,18 @@ export function commonOrderValidator({
   //   toast.error(`sending invalid LP for an order has orderType=${side}`, 'order rejected', 100000);
   //   return false;
   // }
+  const errors = {};
 
   if (
-    (!ignoreAmountValidate && !isValidAmount(pair, amount)) ||
-    !isValidPrice(price)
+    (!ignoreAmountValidate && !isValidAmount(pair, amount, errors)) ||
+    !isValidPrice(price, errors)
   ) {
     if (onError) {
-      onError();
+      onError(errors);
     }
 
     return false;
   }
-  return true;
 
   const available = getBalanceBySide({
     pair,
@@ -722,71 +718,110 @@ export function commonOrderValidator({
 
   // eslint-disable-next-line default-case
   switch (type) {
-    case OrderType.LIMIT: {
-      validateFunc = validateLimitOrder;
-      break;
-    }
-    // case OrderType.FoK:
-    // case IMMEDIATE_OR_CANCEL: {
-    //   validateFunc = validateIOCOrder;
+    // case OrderType.LIMIT: {
+    //   validateFunc = validateLimitOrder;
     //   break;
     // }
-    case OrderType.STOP_LMT: {
-      validateFunc = validateStopLimitOrder;
-      break;
-    }
-    case OrderType.MARKET: {
-      if (validateBookBeforePlaceMarket(side, asks, bids)) {
-        validateFunc = validateMarketOrder;
-      } else {
-        // toast.open({
-        //   type: 'error',
-        //   message: `Invalid order (Empty orderbook)`
-        // });
-        // EventRegister.emit(ON_ORDER_ERROR);
-      }
-      break;
-    }
-    case OrderType.STOP_MKT: {
-      validateFunc = validateStopMarketOrder;
+    // // case OrderType.FoK:
+    // // case IMMEDIATE_OR_CANCEL: {
+    // //   validateFunc = validateIOCOrder;
+    // //   break;
+    // // }
+    // case OrderType.STOP_LMT: {
+    //   validateFunc = validateStopLimitOrder;
+    //   break;
+    // }
+    // case OrderType.MARKET: {
+    //   if (validateBookBeforePlaceMarket(side, asks, bids)) {
+    //     validateFunc = validateMarketOrder;
+    //   } else {
+    //     // toast.open({
+    //     //   type: 'error',
+    //     //   message: `Invalid order (Empty orderbook)`
+    //     // });
+    //     // EventRegister.emit(ON_ORDER_ERROR);
+    //   }
+    //   break;
+    // }
+    // case OrderType.STOP_MKT: {
+    //   validateFunc = validateStopMarketOrder;
 
-      break;
-    }
+    //   break;
+    // }
     case OrderType.OCO: {
       validateFunc = validateOCOOrder;
       break;
     }
   }
 
-  const valid =
-    validateFunc &&
-    validateFunc({
-      lowestSellPrice,
-      highestBuyPrice,
-      pair,
-      tickerPrice,
-      side,
-      price,
-      amount,
-      available,
-      stopPrice,
-    });
+  const valid = validateFunc
+    ? validateFunc(
+        {
+          lowestSellPrice,
+          highestBuyPrice,
+          pair,
+          tickerPrice,
+          side,
+          price,
+          amount,
+          available,
+          stopPrice,
+        },
+        errors
+      )
+    : true;
 
   if (valid && onSucces) {
     onSucces({ side, pair });
   } else if (!valid && onError) {
-    onError();
+    onError(errors);
   }
   return valid;
 }
 
 export function isStopOrder(orderType: OrderType): boolean {
+  switch (orderType) {
+    case OrderType.STOP_LMT:
+    case OrderType.STOP_MKT:
+    case OrderType.TSM:
+    case OrderType.TSL: {
+      return true;
+    }
+
+    default: {
+      return false;
+    }
+  }
+}
+
+export function isFilledOrders(messageType: MessageType): boolean {
+  switch (messageType) {
+    case MessageType.EXECUTION:
+    case MessageType.EXECUTION_PARTIAL:
+    case MessageType.QUOTE_FILL:
+    case MessageType.QUOTE_FILL_PARTIAL: {
+      return true;
+    }
+
+    default: {
+      return false;
+    }
+  }
+}
+
+export function shouldDisplayStopPriceField(orderType: OrderType): boolean {
   return (
-    shouldDisplayStopPriceField(orderType) ||
-    shouldDisplayStandaloneStopPrice(orderType)
+    orderType === OrderType.STOP_LMT ||
+    orderType === OrderType.OCO ||
+    orderType === OrderType.STOP_MKT
   );
 }
-export function shouldDisplayStopPriceField(orderType: OrderType): boolean {
+
+export function shouldDisplayLimitCrossField(orderType: OrderType): boolean {
+  return orderType === OrderType.SNIPER_LMT || orderType === OrderType.STOP_LMT;
+}
+
+export function shouldDisplayLimitPriceField(orderType: OrderType): boolean {
   return orderType === OrderType.STOP_LMT;
 }
 
@@ -814,6 +849,7 @@ export function shouldDisplayTPnSLGroups(orderType: OrderType): boolean {
 
 export function shouldDisplayAdvancedGroups(orderType: OrderType): boolean {
   return (
+    orderType === OrderType.STOP_LMT ||
     orderType === OrderType.LIMIT ||
     orderType === OrderType.HIDDEN ||
     orderType === OrderType.OCO ||
@@ -841,15 +877,12 @@ export function shouldDisplayStopTriggerGroup(orderType: OrderType): boolean {
 export function shouldDisplayStandaloneStopPrice(
   orderType: OrderType
 ): boolean {
-  return (
-    orderType === OrderType.OCO ||
-    orderType === OrderType.PEG ||
-    orderType === OrderType.OCO_ICE
-  );
+  return orderType === OrderType.OCO_ICE;
 }
 
 export function shouldDisplayStandaloneOffset(orderType: OrderType): boolean {
-  return orderType === OrderType.BRACKET;
+  // return orderType === OrderType.BRACKET;
+  return false;
 }
 
 export function shouldDisplayTIFOptions(orderType: OrderType): boolean {
@@ -860,9 +893,10 @@ export function shouldDisplayTIFOptions(orderType: OrderType): boolean {
     orderType === OrderType.OCO_ICE ||
     orderType === OrderType.PEG ||
     orderType === OrderType.BRACKET ||
-    orderType === OrderType.SNIPER_LIMIT ||
+    orderType === OrderType.SNIPER_LMT ||
     orderType === OrderType.SNIPER_MKT ||
-    orderType === OrderType.OCO
+    orderType === OrderType.OCO ||
+    orderType === OrderType.HIDDEN
   );
 }
 
@@ -874,4 +908,39 @@ export function shouldDisplayPriceIncreAndOffset(
 
 export function shouldDisplayLayers(orderType: OrderType): boolean {
   return orderType === OrderType.ICE || orderType === OrderType.OCO_ICE;
+}
+
+export function getAttributesByOrderTradeOptions(
+  attributes: string = ""
+): number[] {
+  let attributesArray = attributes.split("");
+  const Y = "Y";
+  const tradeOptions = [];
+  attributesArray.forEach((r: string, index) => {
+    if (r === Y) {
+      switch (index) {
+        case AttributeIndexEnum.HIDDEN_ATTRIBUTE: {
+          tradeOptions.push(TradeOption.HIDDEN);
+          break;
+        }
+        case AttributeIndexEnum.POST: {
+          tradeOptions.push(TradeOption.POO);
+          break;
+        }
+        case AttributeIndexEnum.REDUCE: {
+          tradeOptions.push(TradeOption.RED);
+          break;
+        }
+      }
+    }
+  });
+
+  return tradeOptions;
+}
+
+export function isEnabledTPSL(attributes = ""): boolean {
+  let attributesArray = attributes.split("");
+  const Y = "Y";
+
+  return attributesArray[AttributeIndexEnum.TPSL_ATTRIBUTE] === Y;
 }

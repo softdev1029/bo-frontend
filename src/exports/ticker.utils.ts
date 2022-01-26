@@ -1,81 +1,65 @@
-import { Instrument } from "@/models/instrument.model";
-import { SymbolConfig } from "@/models/symbol-config.model";
-import { TickerConfigModel } from "@/models/ticker.model";
-import { symbolToTickerConfig } from "@/transformers/symbol-to-ticker-config.transformer";
+import { InstrumentModel } from "@/models/instrument.model";
 import _get from "lodash/get";
 import _set from "lodash/set";
 import _includes from "lodash/includes";
 import _split from "lodash/split";
 import _toUpper from "lodash/toUpper";
 import _toLower from "lodash/toLower";
+import { SymbolType, SymbolValue } from "@/constants/symbol-enums";
+import { SYMBOLENUM_TO_INSTRUMENT_MAP } from "./instrument.config";
+import { ITickerConfig } from "@/models/ticker.model";
 
-interface CurrencyInfoCollectionType {
-  [ccy: string]: TickerConfigModel;
-}
-
-let CURRENCY_INFO: CurrencyInfoCollectionType = {};
 let CURRENCY_DECIMALS_INFO_MAP = {};
 
-const INSTRUMENT_INFO = {};
+let CCY_TO_SYMBOLENUM_MAP = {};
 
-export function initInstrument(instrument: Instrument) {
+export function initTickerInfo(
+  instrument: InstrumentModel
+): Partial<ITickerConfig> | null {
   CURRENCY_DECIMALS_INFO_MAP = {};
-  INSTRUMENT_INFO[instrument.symbol] = instrument;
-}
+  if (SYMBOLENUM_TO_INSTRUMENT_MAP.hasOwnProperty(instrument.symbolEnum)) {
+    const tickerConfig = Object.assign(
+      {},
+      SYMBOLENUM_TO_INSTRUMENT_MAP[instrument.symbolEnum],
+      instrument
+    );
 
-export function initCurrency(symbols: SymbolConfig[]) {
-  let info = {};
-  for (let i = 0; i < symbols.length; i++) {
-    const { symbol } = symbols[i];
-    info[symbol] = symbolToTickerConfig(symbols[i]);
+    SYMBOLENUM_TO_INSTRUMENT_MAP[instrument.symbolEnum] = tickerConfig;
+
+    CCY_TO_SYMBOLENUM_MAP[instrument.symbolName] = instrument.symbolEnum;
+
+    return tickerConfig;
   }
 
-  CURRENCY_INFO = { ...info };
+  return null;
 }
 
 //@ref https://cryptoicons.org
 //https://cryptoicons.org/api/:style/:currency/:size/:color
 export function getSvgUrl(ccy: string = "", size: number = 24) {
-  // return `/resources/crypto-icons/${ccy}.svg`;
-  return `https://icons.bitbot.tools/api/${ccy.toLowerCase()}/32x32`;
+  return `/resources/crypto-icons/${ccy}.svg`;
+  // return `https://icons.bitbot.tools/api/${ccy.toLowerCase()}/32x32`
 }
 
-// ------ @deprecated start--------
-// export function getSymbols(ccy: string): [string, string] {
-//   return [firstInPair(ccy), lastInPair(ccy)];
-// }
-// export function firstInPair(ccy: string): string {
-//   return _get(CURRENCY_INFO, [ccy, 'base'], '');
-// }
-// export function lastInPair(ccy: string): string {
-//   return _get(CURRENCY_INFO, [ccy, 'quote'], '');
-// }
-
-// export function getMinAmount(ccy: string): number {
-//   return _get(CURRENCY_INFO, [ccy, 'minQty'], getMinNumberByDecimals(8));
-// }
-
-// export function getMaxAmount(ccy: string): number {
-//   return _get(CURRENCY_INFO, [ccy, 'maxQty'], getMinNumberByDecimals(8));
-// }
-
-// export function getMinPrice(ccy: string): number {
-//   return _get(CURRENCY_INFO, [ccy, 'minPrice'], 0.1);
-// }
-
-// export function getMaxPrice(ccy: string): number {
-//   return _get(CURRENCY_INFO, [ccy, 'maxPrice'], getMinNumberByDecimals(8));
-// }
-// ------ @deprecated end--------
-
 export function getSymbols(ccy: string): string[] {
-  return ["Opt.", "USD"];
   if (_includes(ccy, "/")) {
     // XXX/YYY[Y] format
     return _split(ccy, "/", 2);
   }
+  if (isValidSymbol(ccy)) {
+    const symbolEnum = getSymbolEnum(ccy) || 0;
+    return _split(
+      _get(SYMBOLENUM_TO_INSTRUMENT_MAP, [symbolEnum, "niceCCy"], ""),
+      "/",
+      2
+    );
+  }
 
-  return [ccy.slice(0, 3), ccy.slice(3, 7)]; // XXXYYY[Y] format
+  return [];
+}
+
+export function getPairBySymbolEnum(symbolEnum: SymbolValue): string {
+  return _get(SYMBOLENUM_TO_INSTRUMENT_MAP, [symbolEnum, "pair"], "");
 }
 
 export function firstInPair(pair: string, uppercase: boolean = true): string {
@@ -96,14 +80,9 @@ export function getMinNumberByDecimals(decimals: number): number {
   return Number(`0.${"0".repeat(count)}1`);
 }
 
-// find all symbols include both base and counter by given currency
-// @ex: ccy: BTC -> symbol list: [{ETHBTC}, {BTCUSDT}, {EOSBTC}....]
-// @returns object[]
-export function findRelevantsByCurrency(ccy: string) {
-  return Object.values(CURRENCY_INFO).filter(
-    ({ base, quote }) =>
-      ~quote.search(new RegExp(ccy, "i")) || ~base.search(new RegExp(ccy, "i"))
-  );
+export function toFixed(num, fixed) {
+  var re = new RegExp("^-?\\d+(?:.\\d{0," + (fixed || -1) + "})?");
+  return num.toString().match(re)[0];
 }
 
 export function getAmountDecimals(ccy: string): number {
@@ -127,19 +106,31 @@ export function getPriceDecimals(ccy: string): number {
 }
 
 export function isValidSymbol(ccy: string): boolean {
-  return ccy && INSTRUMENT_INFO.hasOwnProperty(ccy);
+  return ccy && SYMBOLENUM_TO_INSTRUMENT_MAP.hasOwnProperty(getSymbolEnum(ccy));
 }
 
 export function getMinAmount(ccy: string): number {
-  return _get(INSTRUMENT_INFO, [ccy, "minSize"]) || getMinNumberByDecimals(8);
+  return _get(
+    SYMBOLENUM_TO_INSTRUMENT_MAP,
+    [getSymbolEnum(ccy), "minSize"],
+    getMinNumberByDecimals(8)
+  );
 }
 
 export function getMaxAmount(ccy: string): number {
-  return _get(INSTRUMENT_INFO, [ccy, "maxSize"]) || Number.MAX_SAFE_INTEGER;
+  return _get(
+    SYMBOLENUM_TO_INSTRUMENT_MAP,
+    [getSymbolEnum(ccy), "maxSize"],
+    getMaxPrice(ccy)
+  );
 }
 
 export function getMinPrice(ccy: string): number {
-  return _get(INSTRUMENT_INFO, [ccy, "priceIncrement"]) || 0.1;
+  return _get(
+    SYMBOLENUM_TO_INSTRUMENT_MAP,
+    [getSymbolEnum(ccy), "priceIncrement"],
+    0.1
+  );
 }
 
 export function getMaxPrice(ccy: string): number {
@@ -157,14 +148,38 @@ export function getPrecisionFromNumber(a: number): number {
   return p;
 }
 
-export function getNiceCCy(ccy: string): string {
+export function getSymbolNameBySymbolEnum(symbolEnum: SymbolValue): string {
   return (
-    _get(CURRENCY_INFO, [ccy, "base"], "") +
-    "/" +
-    _get(CURRENCY_INFO, [ccy, "quote"], "")
+    _get(SYMBOLENUM_TO_INSTRUMENT_MAP, [symbolEnum, "symbolName"], "") ||
+    _get(SYMBOLENUM_TO_INSTRUMENT_MAP, [symbolEnum, "pair"], "")
   );
 }
 
-export function getSymbolId(ccy: string): number {
-  return _get(INSTRUMENT_INFO, [ccy, "symbolEnum"], 0);
+export function getNiceCCy(ccy: string): string {
+  const fullName = getSymbols(ccy);
+
+  if (!fullName) return "";
+
+  const [base, quote] = fullName;
+
+  return `${base}/${quote}`;
+}
+
+export function getSymbolEnum(
+  ccy: string,
+  walletType = SymbolType.SPOT
+): SymbolValue {
+  return _get(CCY_TO_SYMBOLENUM_MAP, [ccy], 0);
+}
+
+export function getSpotCcy(): Partial<ITickerConfig>[] {
+  return Object.values(SYMBOLENUM_TO_INSTRUMENT_MAP).filter(
+    ({ symbolType }) => symbolType === SymbolType.SPOT
+  );
+}
+
+export function getDerivativeCcy(): Partial<ITickerConfig>[] {
+  return Object.values(SYMBOLENUM_TO_INSTRUMENT_MAP).filter(
+    ({ symbolType }) => symbolType === SymbolType.DERIVATIVE
+  );
 }

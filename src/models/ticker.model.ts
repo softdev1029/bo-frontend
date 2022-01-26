@@ -1,3 +1,6 @@
+import { SymbolType, SymbolValue } from "@/constants/symbol-enums";
+import { InstrumentModel } from "./instrument.model";
+
 export type TickerModel = {
   ccy: string; // symbol alias
   pair: string; // symbol alias
@@ -12,6 +15,8 @@ export type TickerModel = {
   niceCcy: string;
   priceChange: number;
   name?: string;
+  symbolType: SymbolType;
+  symbolEnum: SymbolValue;
 } & TickerMarkPriceModel;
 
 export type TickerMarkPriceModel = {
@@ -23,16 +28,10 @@ export type TickerMarkPriceModel = {
   interestRate?: number;
 };
 
-export interface TickerConfigModel {
+export type ITickerConfig = InstrumentModel & {
+  pair: string;
   base: string;
-  baseDecimals: number;
   quote: string;
-  quoteDecimals: number;
-  symbol: string;
-  minPrice: number;
-  maxPrice: number;
-  tickSize: number; // interval price size
-  minQty: number;
-  maxQty: number;
-  stepSize: number; // interval qty size
-}
+  niceCCy: string;
+  symbolType: SymbolType;
+};
