@@ -273,14 +273,14 @@ class InternalWrapper extends React.PureComponent<
       candles: data,
     };
 
-    if (!childProps.ready) {
-      return <p>Loading...</p>;
-    }
+    // if (!childProps.ready) {
+    //   return <p>Loading...</p>;
+    // }
 
     // WARNING when chart is collapsed we cannot render it, otherwise TV throws errors
-    if (!childProps.isVisible) {
-      return <p>collapsed...</p>;
-    }
+    // if (!childProps.isVisible) {
+    //   return <p>collapsed...</p>;
+    // }
 
     return <Chart {...childProps} />;
   }
