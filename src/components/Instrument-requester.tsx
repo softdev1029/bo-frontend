@@ -38,11 +38,12 @@ class InstrumentRequester extends React.Component<Partial<InstrumentProps>> {
   render() {
     const { isInstrumentLoaded } = this.props;
 
-    return isInstrumentLoaded ? (
-      this.props.children
-    ) : (
-      <p>Loading instrument.....</p>
-    );
+    return this.props.children;
+    // return isInstrumentLoaded ? (
+    //   this.props.children
+    // ) : (
+    //   <p>Loading instrument.....</p>
+    // );
   }
 }
 

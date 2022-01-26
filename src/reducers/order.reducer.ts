@@ -1,8 +1,10 @@
 import {
+  ORDER_CREATE_NEW_ORDER_ENTRY,
   ORDER_NEW_ACCEPTED,
   ORDER_REJECTED,
   ORDER_UPDATED,
   ORDER_UPDATED_LOCAL,
+  ORDER_UPDATE_ORDER_ENTRY,
 } from "@/actions/order.actions";
 import { MessageType, OrderSide, OrderType } from "@/constants/system-enums";
 import { USER_STORAGE_KEY } from "@/constants/storage-keys";
@@ -15,7 +17,7 @@ import {
   getSymbolNameBySymbolEnum,
 } from "@/exports/ticker.utils";
 import Storage from "@/internals/Storage";
-import { OrderItem } from "@/models/order.model";
+import { OrderEntry, OrderItem, Symbols } from "@/models/order.model";
 import _set from "lodash/set";
 import _unset from "lodash/unset";
 import _get from "lodash/get";
@@ -28,6 +30,7 @@ const originalState = {
   orders: EMPTY_OBJ,
   updatedOrder: EMPTY_OBJ,
   placedOrders: EMPTY_ARRAY,
+  orderEntries: EMPTY_ARRAY,
 };
 
 const initialState = Object.assign(
@@ -260,6 +263,35 @@ export const orderReducer = (state = initialState, action) => {
             errorCode: errorCode,
           }),
         },
+      };
+    }
+    case ORDER_CREATE_NEW_ORDER_ENTRY: {
+      const { orderEntries } = state;
+      orderEntries.push({
+        formId: new Date().getTime(),
+        symbol: Symbols.OPTION,
+        expiryDate: new Date(),
+      });
+      return {
+        ...state,
+        orderEntries,
+      };
+    }
+    case ORDER_UPDATE_ORDER_ENTRY: {
+      const { orderEntries } = state;
+      const { formId, symbol, expiryDate } = action.payload as OrderEntry;
+      const entry = orderEntries.find((e) => e.formId === formId);
+      if (entry) {
+        entry.symbol = symbol;
+        entry.expiryDate = expiryDate;
+      }
+
+      return {
+        ...state,
+        orderEntries: [
+          ...orderEntries.filter((e) => e.formId !== formId),
+          entry,
+        ],
       };
     }
     default:
