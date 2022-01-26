@@ -7,6 +7,7 @@ import TradingControlsCol from "@/components/TradingControlsCol";
 import { SymbolType } from "@/constants/symbol-enums";
 
 import { AppTradeType } from "@/constants/trade-type";
+import OrderTradingGrid from "@/components/grids/OrderTradingGrid";
 
 const ExchangePage = ({ match }) => {
   const tradeType = AppTradeType.SPOT;
@@ -16,9 +17,14 @@ const ExchangePage = ({ match }) => {
     <>
       <InstrumentRequester tradeType={SymbolType.SPOT}>
         <div className="trading-main-layout">
-          <TradingControlsCol tradeType={tradeType} symbol={symbol} />
+          {/* <TradingControlsCol tradeType={tradeType} symbol={symbol} /> */}
           <div className="trading-main-free-grid">
-            <MainTradingGrid symbol={symbol} tradeType={tradeType} />
+            <div className="trading-main-order-grid">
+              <OrderTradingGrid symbol={symbol} tradeType={tradeType} />
+            </div>
+            <div className="trading-main-other-grid">
+              <MainTradingGrid symbol={symbol} tradeType={tradeType} />
+            </div>
           </div>
         </div>
         <Subscribers symbol={symbol} />
