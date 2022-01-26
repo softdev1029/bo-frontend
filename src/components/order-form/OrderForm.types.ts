@@ -13,6 +13,7 @@ import { SymbolType } from "@/constants/symbol-enums";
 import { OrderBookModel } from "@/models/book.model";
 import { TabProps } from "@/ui-components/Tabs";
 import { OrderItem } from "@/models/order.model";
+import { ReactNode } from "react";
 
 export enum OrderFormErrorEnum {
   QTY = 1,
@@ -239,4 +240,5 @@ export type OrderFormProps = OrderFormControlsState &
     isolatedWrapperRef: any;
     closePopup?: any;
     formId: number;
+    showModal: (mid: string, component: ReactNode, props) => void;
   };
