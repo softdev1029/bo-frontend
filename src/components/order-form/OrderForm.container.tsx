@@ -239,9 +239,11 @@ class OrderFormContainer extends React.PureComponent<
     };
 
     return (
-      <OrderFormInputControlsContainer {...orderFormProps}>
-        {this.renderForm}
-      </OrderFormInputControlsContainer>
+      <div className="card__title__ctn draggable">
+        <OrderFormInputControlsContainer {...orderFormProps}>
+          {this.renderForm}
+        </OrderFormInputControlsContainer>
+      </div>
     );
   }
 }
