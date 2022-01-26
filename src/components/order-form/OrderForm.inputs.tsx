@@ -204,7 +204,7 @@ export default class OrderFormInputs extends React.Component<
               tabClassName="tab-order-type"
               containerClassName="tabs-order-type tabs-order-type-tab"
             />
-            <Tooltip
+            {/* <Tooltip
               tooltipContent="Limit: Show info on selection"
               place="bottom"
             >
@@ -214,7 +214,7 @@ export default class OrderFormInputs extends React.Component<
               <Tooltip tooltipContent="Show info on selection" place="bottom">
                 <CalculatorIcon className="icon ml-5" />
               </Tooltip>
-            )}
+            )} */}
           </div>
         ) : null}
 
