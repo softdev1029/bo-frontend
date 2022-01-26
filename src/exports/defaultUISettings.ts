@@ -4,11 +4,11 @@ import Storage from "@/internals/Storage";
 import { WorkspaceSetting } from "@/models/workspace-setting";
 
 export const defaultWorkspace: WorkspaceSetting = {
-  chart: false,
+  chart: true,
   contract: false,
   balance: false,
   market: false,
-  orderbook: false,
+  orderbook: true,
   trade: false,
   watchlist: false,
   marketHistory: true,

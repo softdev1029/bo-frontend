@@ -85,7 +85,7 @@ export const OrderBook = ({
   );
 
   return (
-    <div className={bookClass} style={{ height: 200 }}>
+    <div className={bookClass}>
       {dualColumn && lastTick}
       {dualColumn ? <div className="d-flex">{body}</div> : body}
     </div>

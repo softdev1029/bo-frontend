@@ -126,7 +126,7 @@ const mapStateToProps = (state, props: Partial<OrderBookContainerProps>) => {
 
 const mapDispatchToProps = (dispatch) => ({
   loadBook: function ({ symbol, limit }: { symbol: string; limit?: number }) {
-    // dispatch(initBook({ symbol, limit }));
+    dispatch(initBook({ symbol, limit }));
     // dispatch(subscribeMarketData({ symbol, limit }));
     dispatch(sendMDInfoReq({ symbol }));
   },
