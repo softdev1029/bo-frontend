@@ -1,22 +1,20 @@
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
-import { ICELayers, OrderType } from "@/constants/system-enums";
+import React from "react";
+import { AppTradeType } from "@/constants/trade-type";
 import {
+  getMinAmount,
   getAmountDecimals,
-  getMinPrice,
   getPriceDecimals,
   getSymbols,
+  getMinPrice,
 } from "@/exports/ticker.utils";
 import {
   Tabs,
   InputCheckboxInline,
   SelectDropdown,
+  Tooltip,
   RadioGroup,
   RadioButton,
 } from "@/ui-components";
-import React from "react";
-import OrderFormCollapseArea from "./OrderForm.collapse-area";
 import GroupInput from "./OrderForm.group-input";
 import {
   shouldDisplayLayers,
@@ -29,22 +27,46 @@ import {
   shouldDisplayTPnSLGroups,
   shouldDisplayTrailValueField,
   shouldHidePriceField,
+  shouldDisplayAdvancedGroups,
+  shouldDisplayLimitCrossField,
 } from "./OrderForm.helpers";
 import OrderFormInputWithInfo from "./OrderForm.input-with-info";
 import { OrderFormLastTradePriceOptions } from "./OrderForm.lastTradePrice-options";
-import OrderFormQuantityButtons from "./OrderForm.quantity-buttons";
+import OrderFormQuantitySlider from "./OrderForm.quantity-slider";
 import OrderFormStopTrigger from "./OrderForm.stop-trigger";
 import { OrderFormTIFOptions } from "./OrderForm.tif-options";
 import { OrderFormTradeOptions } from "./OrderForm.trade-options";
-import { OrderFormInputDataFlows } from "./OrderForm.types";
-import MultiSelectSort from "@/ui-components/ui/Dropdown/Multi.dropdown";
+import { OrderFormErrorEnum, OrderFormInputDataFlows } from "./OrderForm.types";
+import { ReactComponent as InfoIcon } from "../../resources/img/info.svg";
+import { ReactComponent as CalculatorIcon } from "../../resources/img/calculator.svg";
+import {
+  ICELayers,
+  OrderType,
+  TakeProfitStopLossType,
+} from "@/constants/system-enums";
+import _get from "lodash/get";
 import { CallPutOption } from "@/models/order.model";
 import { getLabelOrderType } from "@/exports/order.utils";
+
+const takeProfitStopLossOptions = [
+  {
+    label: "% from price",
+    value: TakeProfitStopLossType.PERCENT,
+  },
+  {
+    label: "Value",
+    value: TakeProfitStopLossType.VALUE,
+  },
+];
 
 export default class OrderFormInputs extends React.Component<
   Partial<OrderFormInputDataFlows>,
   any
 > {
+  static defaultProps = {
+    hideBalanceSlider: false,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -54,9 +76,11 @@ export default class OrderFormInputs extends React.Component<
           label: `${v}`,
           value: v,
         })),
+      showAdvanced: false,
       expiryDate: new Date(),
       selectedCallPutOption: CallPutOption.CALL,
     };
+    this.handleShowAdvancedChange = this.handleShowAdvancedChange.bind(this);
     this.onLayerChange = this.onLayerChange.bind(this);
     this.onChangeExpiryDate = this.onChangeExpiryDate.bind(this);
     this.onCallPutChange = this.onCallPutChange.bind(this);
@@ -80,6 +104,15 @@ export default class OrderFormInputs extends React.Component<
     });
   }
 
+  handleShowAdvancedChange() {
+    if (this.state.showAdvanced) {
+      this.props.onDisplaySizeChange(0);
+      this.props.onRefreshSizeChange(0);
+    }
+
+    this.setState({ showAdvanced: !this.state.showAdvanced });
+  }
+
   render() {
     const { layers } = this.state;
 
@@ -94,15 +127,15 @@ export default class OrderFormInputs extends React.Component<
       tif,
       balance,
       tradeOptions,
+      applyTPnSL,
+      secondLegPrice,
       stopLoss,
       takeProfit,
       takeProfitTradePriceType,
       stopLossTradePriceType,
+      takeProfitStopLossType,
       trailValue,
-      counterParty,
-      counterPartyTimeout,
-      onCounterPartyChange,
-      onCounterPartyTimeoutChange,
+      total,
       onStopPriceChange,
       onAmountChange,
       onUpdateAmountByBalancePercent,
@@ -112,6 +145,8 @@ export default class OrderFormInputs extends React.Component<
       onTradeOptionChange,
       onTakeProfitLastTradePriceTypeChange,
       onStopLossLastTradePriceTypeChange,
+      onTakeProfitStopLossTypeChange,
+      onApplyTPnSLChange,
       onStopLossChange,
       onTakeProfitChange,
       enabledStopTrigger,
@@ -126,6 +161,17 @@ export default class OrderFormInputs extends React.Component<
       qtyIncrement,
       selectedLayer,
       onQtyIncrementChange,
+      tradeType,
+      displaySize,
+      onDisplaySizeChange,
+      refreshSize,
+      onRefreshSizeChange,
+      onTotalChange,
+      onSecondLegPriceChange,
+      hideBalanceSlider,
+      limitCross,
+      onLimitCrossChange,
+      errors,
     } = this.props;
 
     const [base, quote] = getSymbols(pair);
@@ -143,66 +189,34 @@ export default class OrderFormInputs extends React.Component<
       : decimalPlaceAmount === null
       ? floatingPointRegex
       : numberRegex;
-    const step = getMinPrice(pair);
-
-    const counterPartyOptions = [
-      {
-        id: "all",
-        value: "all",
-        label: "All",
-      },
-      {
-        id: "party1",
-        value: "party1",
-        label: "Party 1",
-      },
-      {
-        id: "party2",
-        value: "party2",
-        label: "Party 2",
-      },
-    ];
-
-    const callPutOptions = [
-      {
-        value: "call",
-        label: "Call",
-      },
-      {
-        value: "put",
-        label: "Put",
-      },
-    ];
+    const priceStep = getMinPrice(pair);
+    const amountStep = getMinAmount(pair);
+    const totalStep = price * amountStep;
 
     return (
       <div>
         {orderTypes.length ? (
-          <div className="mb-10 tab-order-type_ctn">
+          <div className="mb-15 tabs-order-type_ctn">
             <Tabs
               elements={orderTypes}
               selected={`${typeId}`}
               onChange={onOrderTypeChange}
-              tabClassName="r-font-size-12 font-medium"
-              containerClassName="tab-order-type"
+              tabClassName="tab-order-type"
+              containerClassName="tabs-order-type tabs-order-type-tab"
             />
+            <Tooltip
+              tooltipContent="Limit: Show info on selection"
+              place="bottom"
+            >
+              <InfoIcon className="icon pl-20" />
+            </Tooltip>
+            {tradeType !== AppTradeType.SPOT && (
+              <Tooltip tooltipContent="Show info on selection" place="bottom">
+                <CalculatorIcon className="icon ml-5" />
+              </Tooltip>
+            )}
           </div>
         ) : null}
-
-        {/* <div className="d-flex mb-10">
-          <div className="mr-10">
-            <GroupInput
-              value={counterParty}
-              onChange={onCounterPartyChange}
-              addonBefore={"Counter Party"}
-            />
-          </div>
-          <GroupInput
-            value={counterPartyTimeout}
-            onChange={onCounterPartyTimeoutChange}
-            addonBefore={"Timeout"}
-            addonAfter="sec"
-          />
-        </div> */}
 
         <div className="mb-10 call-put-option">
           {/* <SelectDropdown options={callPutOptions} /> */}
@@ -218,26 +232,39 @@ export default class OrderFormInputs extends React.Component<
           </RadioGroup>
         </div>
 
-        {/* <div className="mb-10 expiry-date">
-          <DatePicker
-            selected={this.state.expiryDate}
-            onChange={(date) => this.onChangeExpiryDate(date)}
-          />
-        </div> */}
-
         {!shouldHidePriceField(typeId) && (
           <div className="mb-10">
             <GroupInput
+              type="numeric"
+              useHandlers={true}
               pattern={priceRegex}
               value={price}
               onChange={onPriceChange}
+              precision={decimalPlacePrice}
               addonAfter={quote}
-              addonBefore={"Strike Price"}
-              step={step}
+              addonBefore={
+                typeId !== OrderType.BRACKET ? "Price" : "Limit Buy Price"
+              }
+              step={priceStep}
+              error={_get(errors, [OrderFormErrorEnum.PRICE], undefined)}
             />
           </div>
         )}
-
+        {typeId === OrderType.BRACKET && (
+          <div className="mb-10">
+            <GroupInput
+              type="numeric"
+              useHandlers={true}
+              pattern={priceRegex}
+              value={secondLegPrice}
+              onChange={onSecondLegPriceChange}
+              precision={decimalPlacePrice}
+              addonAfter={quote}
+              addonBefore={"Limit Sell Price"}
+              step={priceStep}
+            />
+          </div>
+        )}
         {shouldDisplayStopPriceField(typeId) && (
           <div className="mb-10">
             <GroupInput
@@ -246,108 +273,321 @@ export default class OrderFormInputs extends React.Component<
               onChange={onStopPriceChange}
               addonAfter={quote}
               addonBefore={"Stop Price"}
-              step={step}
+              precision={decimalPlacePrice}
+              step={priceStep}
+              type="numeric"
+              useHandlers={true}
+              error={_get(errors, [OrderFormErrorEnum.STOP_PRICE], undefined)}
+            />
+          </div>
+        )}
+        {shouldDisplayLimitCrossField(typeId) && (
+          <div className="mb-10">
+            <GroupInput
+              type="numeric"
+              useHandlers={true}
+              pattern={priceRegex}
+              value={limitCross}
+              onChange={onLimitCrossChange}
+              precision={decimalPlacePrice}
+              addonAfter={quote}
+              addonBefore={"Limit Cross"}
+              step={priceStep}
             />
           </div>
         )}
         {shouldDisplayPriceIncreAndOffset(typeId) && (
-          <div className="mb-10 order-form__input-wraper--1-1">
-            <OrderFormInputWithInfo
-              pattern={priceRegex}
-              placeholder="Price Increment"
-              value={priceIncrement || ""}
-              onChange={onPriceIncrementChange}
-            />
-            <OrderFormInputWithInfo
-              pattern={priceRegex}
-              placeholder="Offset"
-              value={offset || ""}
+          // <div className="mb-10 order-form__input-wraper--1-1">
+          //   <OrderFormInputWithInfo
+          //     pattern={priceRegex}
+          //     placeholder="Price Increment"
+          //     value={priceIncrement || ""}
+          //     onChange={onPriceIncrementChange}
+          //   />
+          //   <OrderFormInputWithInfo
+          //     pattern={priceRegex}
+          //     placeholder="Offset"
+          //     value={offset || ""}
+          //     onChange={onOffsetChange}
+          //   />
+          // </div>
+          <>
+            <GroupInput
+              type="numeric"
+              useHandlers={true}
+              value={offset}
               onChange={onOffsetChange}
+              addonAfter={base}
+              addonBefore={"Top of Book Offset"}
             />
-          </div>
+            <GroupInput
+              type="numeric"
+              useHandlers={true}
+              value={priceIncrement}
+              onChange={onPriceIncrementChange}
+              addonAfter={quote}
+              addonBefore={"Price Increment"}
+            />
+          </>
         )}
         {shouldDisplayStandaloneOffset(typeId) && (
           <div className="mb-10">
             <GroupInput
+              type="numeric"
               value={offset}
-              pattern={priceRegex}
+              useHandlers={true}
               onChange={onOffsetChange}
-              addonBefore={"Offset"}
+              addonBefore={"Stop Offset"}
+              addonAfter={quote}
             />
           </div>
         )}
         <div className="mb-10">
           <GroupInput
+            type="numeric"
+            useHandlers={true}
             value={amount}
             pattern={amountRegex}
             onChange={onAmountChange}
             addonAfter={base}
-            addonBefore={"Quantity"}
+            addonBefore={
+              typeId === OrderType.ICE ? "Order Quantity" : "Quantity"
+            }
+            step={amountStep}
+            precision={decimalPlaceAmount}
+            error={_get(errors, [OrderFormErrorEnum.QTY], undefined)}
           />
         </div>
-        {shouldDisplayTrailValueField(typeId) && !!trailValue && (
-          <div className="mb-10">
-            <GroupInput
-              value={trailValue}
-              pattern={amountRegex}
-              onChange={onTrailValueChange}
-              addonAfter={base}
-              addonBefore={"Trail Value"}
-              noInput={true}
-              disabled={true}
-            />
-          </div>
-        )}
+        <div className="mb-10">
+          <GroupInput
+            type="numeric"
+            useHandlers={true}
+            value={total}
+            pattern={amountRegex}
+            onChange={onTotalChange}
+            step={totalStep}
+            addonAfter={quote}
+            addonBefore={"Value"}
+            precision={getPriceDecimals(pair)}
+          />
+        </div>
         {shouldDisplayLayers(typeId) && (
-          <div className="mb-10 order-form__input-wraper--1-1">
+          <div className="mb-10 order-form__layers">
+            <div className="order-form__layers__label">Layers</div>
             <SelectDropdown
               placeholder="Layers"
               options={layers}
               value={selectedLayer}
               onChange={this.onLayerChange}
             />
-            <OrderFormInputWithInfo
+            {/* <OrderFormInputWithInfo
               pattern={amountRegex}
               placeholder="Offset"
               value={qtyIncrement || ""}
               onChange={onQtyIncrementChange}
+            /> */}
+            <GroupInput
+              type="numeric"
+              useHandlers={true}
+              value={qtyIncrement}
+              pattern={amountRegex}
+              onChange={onQtyIncrementChange}
+              addonAfter={base}
+              step={amountStep}
+              addonBefore={"Size Inc."}
             />
           </div>
         )}
-        {/* <div className="mb-10">
-          <OrderFormQuantityButtons
+        {!hideBalanceSlider ? (
+          <div className="mb-10">
+            {/* <OrderFormQuantityButtons
             balance={balance}
             side={side}
             onClick={onUpdateAmountByBalancePercent}
-          />
-        </div> */}
-        {/* 
-  {shouldDisplayTIFOptions(typeId) && (
-    <div className="mb-10 d-flex d-justify-content-space-between">
-      <InputCheckboxInline
-        value={OrderType.HIDDEN}
-        checked={typeId === OrderType.HIDDEN}
-        onChange={onOrderTypeChange}
-        label="Hidden"
-      />
-      <OrderFormTradeOptions
-        orderType={typeId}
-        selectedOptions={tradeOptions}
-        onTradeOptionChange={onTradeOptionChange}
-      />
-      <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
-    </div>
-  )}
-  */}
-        {/* {shouldDisplayStopTriggerGroup(typeId) && (
-          <OrderFormStopTrigger
-            enabledStopTrigger={enabledStopTrigger}
-            onToggleStopTrigger={onToggleStopTrigger}
-            selectedCloseTrigger={selectedCloseTrigger}
-            onCloseTriggerOptionChange={onCloseTriggerOptionChange}
-          />
-        )} */}
-        {shouldDisplayStandaloneStopPrice(typeId) && !!stopPrice && (
+          /> */}
+            <OrderFormQuantitySlider
+              min={0}
+              max={100}
+              value={0}
+              label="Percentage of Balance"
+              valueLabel={"%"}
+              isValueEditable={false}
+              onChange={(val) =>
+                onUpdateAmountByBalancePercent(balance, val / 100.0, side)
+              }
+            />
+          </div>
+        ) : null}
+        {shouldDisplayTrailValueField(typeId) && (
+          <div className="mb-10">
+            <GroupInput
+              value={trailValue}
+              pattern={amountRegex}
+              onChange={onTrailValueChange}
+              addonAfter={quote}
+              addonBefore={"Trail Value"}
+            />
+          </div>
+        )}
+        {shouldDisplayTIFOptions(typeId) && (
+          <div className="mb-15 d-flex d-justify-content-space-between">
+            <OrderFormTradeOptions
+              orderType={typeId}
+              selectedOptions={tradeOptions}
+              onTradeOptionChange={onTradeOptionChange}
+            />
+            <div style={{ width: 56 }}>
+              <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
+            </div>
+          </div>
+        )}
+        {((shouldDisplayAdvancedGroups(typeId) &&
+          !shouldDisplayTPnSLGroups(typeId)) ||
+          shouldDisplayStopTriggerGroup(typeId)) && (
+          <div
+            className="d-flex d-justify-content-space-between"
+            style={{ marginBottom: 16 }}
+          >
+            <div className="d-flex d-align-items-center">
+              {shouldDisplayAdvancedGroups(typeId) &&
+                !shouldDisplayTPnSLGroups(typeId) && (
+                  <InputCheckboxInline
+                    value={this.state.showAdvanced}
+                    checked={this.state.showAdvanced}
+                    onChange={this.handleShowAdvancedChange}
+                    label="Display/Refresh"
+                  />
+                )}
+            </div>
+            {shouldDisplayStopTriggerGroup(typeId) && (
+              <OrderFormStopTrigger
+                enabledStopTrigger={enabledStopTrigger}
+                onToggleStopTrigger={onToggleStopTrigger}
+                selectedCloseTrigger={selectedCloseTrigger}
+                onCloseTriggerOptionChange={onCloseTriggerOptionChange}
+              />
+            )}
+          </div>
+        )}
+        {shouldDisplayTPnSLGroups(typeId) && (
+          <div className="mb-15 d-flex d-justify-content-space-between">
+            <InputCheckboxInline
+              value={applyTPnSL}
+              checked={applyTPnSL}
+              onChange={(_) => onApplyTPnSLChange(!applyTPnSL)}
+              label="Take Profit/Stop Loss"
+            />
+            {shouldDisplayTPnSLGroups(typeId) && applyTPnSL ? (
+              <SelectDropdown
+                options={takeProfitStopLossOptions}
+                value={takeProfitStopLossType}
+                onChange={(selected) =>
+                  onTakeProfitStopLossTypeChange(selected.value)
+                }
+                className={"take-profit-stop-loss-dropdown"}
+              />
+            ) : (
+              <InputCheckboxInline
+                value={this.state.showAdvanced}
+                checked={this.state.showAdvanced}
+                onChange={this.handleShowAdvancedChange}
+                label="Display/Refresh"
+              />
+            )}
+          </div>
+        )}
+        {shouldDisplayTPnSLGroups(typeId) && applyTPnSL && (
+          // <OrderFormCollapseArea
+          //   title="Take Profit / Stop Loss"
+          //   expandedTitle="Remove Take Profit / Stop Loss"
+          // >
+          <>
+            <div className="order-form__input-wraper--2-1">
+              <GroupInput
+                value={takeProfit}
+                pattern={priceRegex}
+                onChange={onTakeProfitChange}
+                addonAfter={
+                  takeProfitStopLossType === TakeProfitStopLossType.PERCENT
+                    ? "%"
+                    : quote
+                }
+                addonBefore={"Take Profit"}
+                type="numeric"
+                useHandlers={true}
+              />
+              {tradeType !== AppTradeType.SPOT && (
+                <OrderFormLastTradePriceOptions
+                  selected={takeProfitTradePriceType}
+                  onLastTradePriceTypeChange={
+                    onTakeProfitLastTradePriceTypeChange
+                  }
+                />
+              )}
+            </div>
+            <div className="order-form__input-wraper--2-1">
+              <GroupInput
+                value={stopLoss}
+                pattern={priceRegex}
+                onChange={onStopLossChange}
+                addonAfter={
+                  takeProfitStopLossType === TakeProfitStopLossType.PERCENT
+                    ? "%"
+                    : quote
+                }
+                addonBefore={"Stop Loss"}
+                type="numeric"
+                useHandlers={true}
+              />
+              {tradeType !== AppTradeType.SPOT && (
+                <OrderFormLastTradePriceOptions
+                  selected={stopLossTradePriceType}
+                  onLastTradePriceTypeChange={
+                    onStopLossLastTradePriceTypeChange
+                  }
+                />
+              )}
+            </div>
+          </>
+          // </OrderFormCollapseArea>
+        )}
+        {shouldDisplayTPnSLGroups(typeId) && applyTPnSL && (
+          <div className="mb-15">
+            <InputCheckboxInline
+              value={this.state.showAdvanced}
+              checked={this.state.showAdvanced}
+              onChange={this.handleShowAdvancedChange}
+              label="Display/Refresh"
+            />
+          </div>
+        )}
+        {this.state.showAdvanced && (
+          <>
+            <div className="order-form__input-wraper--2-1">
+              <GroupInput
+                value={displaySize}
+                pattern={priceRegex}
+                onChange={onDisplaySizeChange}
+                addonAfter={base}
+                addonBefore={"Display Size"}
+                type="numeric"
+                useHandlers={true}
+              />
+            </div>
+            <div className="order-form__input-wraper--2-1">
+              <GroupInput
+                value={refreshSize}
+                pattern={priceRegex}
+                onChange={onRefreshSizeChange}
+                addonAfter={base}
+                addonBefore={"Refresh Size"}
+                type="numeric"
+                useHandlers={true}
+              />
+            </div>
+          </>
+        )}
+        {shouldDisplayStandaloneStopPrice(typeId) && (
           <div className="mb-10">
             <OrderFormInputWithInfo
               inputClass="border-radius"
@@ -355,45 +595,8 @@ export default class OrderFormInputs extends React.Component<
               value={stopPrice || ""}
               pattern={priceRegex}
               onChange={onStopPriceChange}
-              disabled={true}
             />
           </div>
-        )}
-
-        {shouldDisplayTPnSLGroups(typeId) && (
-          <OrderFormCollapseArea
-            title="Add Take Profit / Stop Loss"
-            expandedTitle="Remove Take Profit / Stop Loss"
-          >
-            <div className="order-form__input-wraper--2-1">
-              <GroupInput
-                value={takeProfit}
-                pattern={priceRegex}
-                onChange={onTakeProfitChange}
-                addonAfter={quote}
-                addonBefore={"Take Profit"}
-              />
-              <OrderFormLastTradePriceOptions
-                selected={takeProfitTradePriceType}
-                onLastTradePriceTypeChange={
-                  onTakeProfitLastTradePriceTypeChange
-                }
-              />
-            </div>
-            <div className="order-form__input-wraper--2-1">
-              <GroupInput
-                value={stopLoss}
-                pattern={priceRegex}
-                onChange={onStopLossChange}
-                addonAfter={quote}
-                addonBefore={"Stop Loss"}
-              />
-              <OrderFormLastTradePriceOptions
-                selected={stopLossTradePriceType}
-                onLastTradePriceTypeChange={onStopLossLastTradePriceTypeChange}
-              />
-            </div>
-          </OrderFormCollapseArea>
         )}
       </div>
     );

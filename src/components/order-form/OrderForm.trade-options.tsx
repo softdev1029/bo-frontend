@@ -25,9 +25,12 @@ export class OrderFormTradeOptions extends React.PureComponent<OrderFormTradeOpt
     const { orderType } = this.props;
     return (
       <>
-        {orderType !== OrderType.SNIPER_LIMIT &&
+        {orderType !== OrderType.SNIPER_LMT &&
         orderType !== OrderType.SNIPER_MKT ? (
-          <Checkbox value={TradeOption.POO} label="Post" />
+          <>
+            <Checkbox value={TradeOption.HIDDEN} label="Hidden" />
+            <Checkbox value={TradeOption.POO} label="Post" />
+          </>
         ) : null}
         <Checkbox value={TradeOption.RED} label="Reduce" />
       </>

@@ -1,4 +1,4 @@
-import { WalletType } from "@/constants/balance-enums";
+import { SymbolType } from "@/constants/symbol-enums";
 import React from "react";
 import { OrderFormDerivative } from "./OrderForm.derivative";
 import OrderFormSpot from "./OrderForm.spot";
@@ -8,10 +8,10 @@ export const OrderForm = (props: OrderFormProps) => {
   let { pair } = props;
 
   switch (props.wallet) {
-    case WalletType.EXCHANGE: {
+    case SymbolType.SPOT: {
       return <OrderFormSpot {...props} pair={pair} />;
     }
-    case WalletType.DERIVATIVE: {
+    case SymbolType.DERIVATIVE: {
       return <OrderFormDerivative {...props} pair={pair} />;
     }
   }

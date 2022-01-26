@@ -106,11 +106,6 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
       takeProfitTradePriceType,
       stopLossTradePriceType,
       trailValue,
-      counterParty,
-      counterPartyTimeout,
-      showPopup,
-      onCounterPartyChange,
-      onCounterPartyTimeoutChange,
       onStopPriceChange,
       onAmountChange,
       onUpdateAmountByBalancePercent,
@@ -134,8 +129,6 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
       qtyIncrement,
       selectedLayer,
       onQtyIncrementChange,
-      onPopupClose,
-      closePopup,
       popupId,
     } = this.props;
 
