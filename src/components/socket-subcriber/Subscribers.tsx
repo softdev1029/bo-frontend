@@ -1,122 +1,51 @@
-import { sendSubscribe, sendUnsubscribe } from "@/actions/ws.actions";
-import { OrderBookDepthLimitEnum } from "@/constants/order-book-enums";
-import { WebSocketChannelEnum } from "@/constants/websocket.enums";
-import { SubscribeParams } from "@/models/ws-action-types";
-import { getSetting } from "@/selectors/ui-setting.selectors";
-import React, { useMemo } from "react";
+/**
+ * @changelog Dec 11, 2021
+ * + remove the concept of `channel`, the market data will include data of all trades, tickers, books
+ * + remove the sub/unsub feature, if you want to unsubscribe -> close MDS (note: only closing MDS when switch to another symbol)
+ * + MDS returns only 1 minute bar, so we don't have to renew the subscription when interval changed
+ */
+import { sendWsData } from "@/actions/ws.actions";
+import { SubscribeType } from "@/constants/system-enums";
+import { WebSocketKindEnum } from "@/constants/websocket.enums";
+import { ISubscribeRequest } from "@/models/subscribe.model";
+import { SubscribeManner } from "@/packets/subscribe.packet";
+import React from "react";
 import { connect } from "react-redux";
 import Subscriber from "./Subscriber";
 
 interface SubscribersProps {
   symbol: string;
-  channels: WebSocketChannelEnum[];
-  subscribeFunc: (x: SubscribeParams) => void;
-  unsubscribeFunc: (x: SubscribeParams) => void;
-  chartInterval?: string;
-  depthLevel?: OrderBookDepthLimitEnum;
-  depthUpdateSpeed?: number;
-}
-
-function getSubscribers(data: SubscribersProps): JSX.Element[] {
-  const { channels, subscribeFunc, unsubscribeFunc, symbol } = data;
-  const handlers = {
-    subscribeFunc,
-    unsubscribeFunc,
-  };
-
-  return channels.map((channel: WebSocketChannelEnum) => {
-    switch (channel) {
-      case WebSocketChannelEnum.MARKET: {
-        // there are no any dependencies
-        return <Subscriber key={channel} channel={channel} {...handlers} />;
-      }
-      case WebSocketChannelEnum.ORDERBOOK: {
-        const props = {
-          ...handlers,
-          channel,
-          dependencies: {
-            symbol,
-            level: data.depthLevel,
-            speed: data.depthUpdateSpeed,
-          },
-        };
-        return <Subscriber key={channel} {...props} />;
-      }
-      case WebSocketChannelEnum.TRADES: {
-        const props = {
-          ...handlers,
-          channel,
-          dependencies: {
-            symbol,
-          },
-        };
-        return <Subscriber key={channel} {...props} />;
-      }
-      case WebSocketChannelEnum.CHART: {
-        const props = {
-          ...handlers,
-          channel,
-          dependencies: {
-            symbol,
-            interval: data.chartInterval,
-          },
-        };
-        return <Subscriber key={channel} {...props} />;
-      }
-      default: {
-        return null;
-      }
-    }
-  });
+  sendSubscribe: (x: ISubscribeRequest) => void;
+  closeWs: (x: any) => void;
 }
 
 const Subscribers = React.memo(
-  ({
-    channels,
-    subscribeFunc,
-    unsubscribeFunc,
-    symbol,
-    chartInterval = "30",
-    depthLevel = OrderBookDepthLimitEnum.LVL3,
-    depthUpdateSpeed = 100,
-  }: Partial<SubscribersProps>) => {
-    const subscribers = useMemo(
-      () =>
-        getSubscribers({
-          channels,
-          subscribeFunc,
-          unsubscribeFunc,
-          symbol,
-          chartInterval,
-          depthLevel,
-          depthUpdateSpeed,
-        }),
-      [
-        channels,
-        subscribeFunc,
-        unsubscribeFunc,
-        symbol,
-        chartInterval,
-        depthLevel,
-        depthUpdateSpeed,
-      ]
-    );
+  ({ sendSubscribe, closeWs, symbol }: Partial<SubscribersProps>) => {
+    const props = {
+      subscribeFunc: sendSubscribe,
+      unsubscribeFunc: closeWs,
+      symbol,
+      subscribeType: SubscribeType.TENLAYERS,
+    };
 
-    return <div>{subscribers}</div>;
+    return (
+      <div>
+        <Subscriber {...props} />
+      </div>
+    );
   }
 );
 
-const mapStateToProps = (state) => ({
-  chartInterval: getSetting(state)("chart_interval"),
-});
-
 const mapDispatchToProps = (dispatch) => ({
-  subscribeFunc: function (data: SubscribeParams) {
-    dispatch(sendSubscribe(data));
+  sendSubscribe: function (data: ISubscribeRequest) {
+    console.log("[subscribeFunc] >>>>> send", data);
+
+    const payload = SubscribeManner.send(data);
+    dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
   },
-  unsubscribeFunc: function (data: SubscribeParams) {
-    dispatch(sendUnsubscribe(data));
+  closeWs: function (data) {
+    console.log("close socket....");
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Subscribers);
+export default connect(null, mapDispatchToProps)(Subscribers);

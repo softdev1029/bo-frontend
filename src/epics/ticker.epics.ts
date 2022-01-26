@@ -1,58 +1,14 @@
-import {
-  TICKER_INIT,
-  TICKER_INITIALIZED,
-  GET_TICKER_FUTURE,
-  updateFutureTicker,
-  INSTRUMENT_REQUEST,
-} from "@/actions/ticker.actions";
+import { INSTRUMENT_REQUEST } from "@/actions/ticker.actions";
 import { sendWsData } from "@/actions/ws.actions";
-import { AppTradeType } from "@/constants/trade-type";
 import { WebSocketKindEnum } from "@/constants/websocket.enums";
-import { makeRequest } from "@/exports";
 import {
-  InstrumentRequestManner,
-  InstrumentRequestType,
-} from "@/packets/instrument.packet";
-import { dailyChangeToTicker } from "@/transformers/symbol-to-ticker-config.transformer";
-import { ActionsObservable, ofType, StateObservable } from "redux-observable";
-import { filter, map, switchMap, withLatestFrom } from "rxjs/operators";
-
-export const initTickerEpic = (
-  action$: ActionsObservable<any>,
-  state$: StateObservable<any>
-) =>
-  action$.pipe(
-    ofType(TICKER_INIT),
-    withLatestFrom(state$),
-    filter(([_, state]) => !state.ticker.initialized),
-    switchMap(() => makeRequest("ticker/24hr")),
-    filter(({ error }) => !error),
-    map((data) => {
-      return {
-        type: TICKER_INITIALIZED,
-        payload: data
-          .slice(0, 200)
-          .filter(({ count }) => !!count)
-          .map(dailyChangeToTicker),
-      };
-    })
-  );
-
-export const getFutureTickerEpic = (
-  action$: ActionsObservable<any>,
-  state$: StateObservable<any>
-) =>
-  action$.pipe(
-    ofType(GET_TICKER_FUTURE),
-    switchMap((action: any) =>
-      makeRequest("premiumIndex", {
-        params: { symbol: action.payload },
-        tradeType: AppTradeType.DERIVATIVE,
-      })
-    ),
-    filter(({ error }) => !error),
-    map((data) => updateFutureTicker(data))
-  );
+  InstrumentRequest,
+  InstrumentRequestEnum,
+} from "@/models/instrument.model";
+import { InstrumentRequestManner } from "@/packets/instrument.packet";
+import { getAccountId, getSessionId } from "@/selectors/auth.selectors";
+import { ofType } from "redux-observable";
+import { map, withLatestFrom } from "rxjs/operators";
 
 export const instrumentRequestEpic = (action$, state$) =>
   action$.pipe(
@@ -60,11 +16,12 @@ export const instrumentRequestEpic = (action$, state$) =>
     withLatestFrom(state$),
     //@ts-ignore
     map(([action, state]) => {
-      const instrumentRequestData = {
+      const instrumentRequestData: InstrumentRequest = {
         type: InstrumentRequestManner.messageType,
-        accountId: state.user.accountId,
+        accountId: getAccountId(state),
+        sessionId: getSessionId(state),
         sendingTime: Date.now(),
-        requestType: InstrumentRequestType.ALL,
+        requestType: InstrumentRequestEnum.ALL,
         symbolType: action.payload,
       };
 
@@ -73,7 +30,8 @@ export const instrumentRequestEpic = (action$, state$) =>
         "sending request for walletType",
         action.payload,
         "data",
-        data
+        data,
+        instrumentRequestData
       );
 
       return sendWsData(WebSocketKindEnum.ORDERS, data);

@@ -4,16 +4,16 @@ import {
   WebSocketKindEnum,
   WebSocketKindStateEnum,
 } from "@/constants/websocket.enums";
-import { WalletType } from "@/constants/balance-enums";
 import { requestInstrument } from "@/actions/ticker.actions";
-import { isInstrumentLoaded } from "@/selectors/ticker.selectors";
 import { connect } from "react-redux";
+import { SymbolType } from "@/constants/symbol-enums";
+import { isInstrumentLoaded } from "@/selectors/ticker.selectors";
 
 interface InstrumentProps {
-  tradeType: WalletType;
+  tradeType: SymbolType;
   isSocketReady: boolean;
   isInstrumentLoaded: boolean;
-  requestInstrument: (walletType: WalletType) => void;
+  requestInstrument: (walletType: SymbolType) => void;
   children: ReactNode;
 }
 
@@ -37,11 +37,7 @@ class InstrumentRequester extends React.Component<Partial<InstrumentProps>> {
 
   render() {
     const { isInstrumentLoaded } = this.props;
-    console.log(
-      "isInstrumentLoaded",
-      isInstrumentLoaded,
-      this.props.isSocketReady
-    );
+
     return isInstrumentLoaded ? (
       this.props.children
     ) : (
@@ -54,15 +50,14 @@ const mapStateToProps = (state) => {
   const socketState = wsCollectionSelector(state)[WebSocketKindEnum.ORDERS];
 
   return {
-    // isSocketReady: socketState === WebSocketKindStateEnum.AUTHORIZED,
-    // isInstrumentLoaded: isInstrumentLoaded(state)
-    isSocketReady: true,
-    isInstrumentLoaded: true,
+    isSocketReady: socketState === WebSocketKindStateEnum.AUTHORIZED,
+    isInstrumentLoaded: isInstrumentLoaded(state),
+    // isSocketReady: true,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  requestInstrument: function (walletType: WalletType) {
+  requestInstrument: function (walletType: SymbolType) {
     dispatch(requestInstrument(walletType));
   },
 });

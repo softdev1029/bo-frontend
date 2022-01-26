@@ -1,15 +1,10 @@
 import {
-  TICKER_FUTURE_UPDATE,
-  TICKER_INITIALIZED,
   INSTRUMENT_RECEIVED_UPDATE,
-  TICKER_RECEIVED_UPDATE,
   INSTRUMENT_REQUEST,
 } from "@/actions/ticker.actions";
 import { EMPTY_ARRAY, EMPTY_OBJ } from "@/exports";
-import { Instrument } from "@/models/instrument.model";
 import { TickerState } from "@/models/ticker-state.model";
-import { TickerMarkPriceModel, TickerModel } from "@/models/ticker.model";
-import _isArray from "lodash/isArray";
+import { ITickerConfig } from "@/models/ticker.model";
 import _set from "lodash/set";
 
 const initialState: TickerState = {
@@ -27,9 +22,8 @@ export function tickerReducer(state: TickerState = initialState, action) {
       };
     }
     case INSTRUMENT_RECEIVED_UPDATE: {
-      const instrument = action.payload.instrument as Instrument;
+      const instrument = action.payload.instrument as Partial<ITickerConfig>;
       const instrumentLoaded = action.payload.finished;
-
       const instruments = _set(
         { ...state.instruments },
         [instrument.symbolEnum],
@@ -42,61 +36,28 @@ export function tickerReducer(state: TickerState = initialState, action) {
         instrumentLoaded: instrumentLoaded,
       };
     }
-    case TICKER_RECEIVED_UPDATE: {
-      const payload = action.payload;
-      if (_isArray(payload)) {
-        return state;
-      }
+    // case TICKER_RECEIVED_UPDATE: {
+    //   const payload = action.payload;
+    //   if (_isArray(payload)) {
+    //     return state;
+    //   }
 
-      const items = state.items.map((item: TickerModel) => {
-        if (payload[item.ccy]) {
-          return {
-            ...item,
-            ...payload[item.ccy],
-          };
-        }
+    //   const items = state.items.map((item: TickerModel) => {
+    //     if (payload[item.ccy]) {
+    //       return {
+    //         ...item,
+    //         ...payload[item.ccy]
+    //       }
+    //     }
 
-        return item;
-      });
+    //     return item;
+    //   });
 
-      return {
-        ...state,
-        items,
-      };
-    }
-    case TICKER_FUTURE_UPDATE: {
-      const markTicker = action.payload as TickerMarkPriceModel;
-
-      const items = state.items.map((item: TickerModel) => {
-        if (markTicker.symbol === item.ccy) {
-          return {
-            ...item,
-            markPrice: +markTicker.markPrice,
-            indexPrice: +markTicker.indexPrice,
-            lastFundingRate: +markTicker.lastFundingRate,
-            nextFundingRate: +markTicker.nextFundingRate,
-            interestRate: +markTicker.interestRate,
-          };
-        }
-
-        return item;
-      });
-
-      return {
-        ...state,
-        items,
-      };
-    }
-    case TICKER_INITIALIZED: {
-      const items = action.payload;
-
-      return {
-        ...state,
-        initialized: true,
-        items,
-      };
-    }
-    // TICKER_UPDATE
+    //   return {
+    //     ...state,
+    //     items
+    //   }
+    // }
     default:
       return state;
   }

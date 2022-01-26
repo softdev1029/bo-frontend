@@ -34,8 +34,6 @@ import {
   InstrumentRequestType,
 } from "@/packets/instrument.packet";
 import { SingletonWSManager } from "@/internals";
-import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
-import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
 import { RiskSymbolManner } from "@/packets/user-risk.packet";
 
 // import { SymbolType } from "@/constants/symbol-enums";
@@ -111,7 +109,7 @@ export const Home = () => {
             ClientLoginManner.read(loginData)
           );
 
-          SingletonWSManager.send(loginData);
+          // SingletonWSManager.send(loginData);
           // dispatch(sendWsData(1, loginData));
         }}
       >
@@ -163,7 +161,7 @@ export const Home = () => {
             InstrumentRequestManner.read(subSender)
           );
 
-          SingletonWSManager.send(subSender);
+          // SingletonWSManager.send(subSender);
           // dispatch(sendWsData(2, subSender));
         }}
       >
@@ -200,7 +198,7 @@ export const Home = () => {
             type: MessageType.ORDER_NEW,
             accountId: ACCOUNT_ID,
             clientOrderId: lastOrderId,
-            symbolEnum: SymbolValue.BTC,
+            // symbolEnum: SymbolValue.BTC,
             orderType: OrderType.LIMIT,
             symbolType: SymbolType.SPOT,
             price: 9190,
@@ -220,50 +218,11 @@ export const Home = () => {
             TransactionManner.read(order, true)
           );
 
-          SingletonWSManager.send(order);
+          // SingletonWSManager.send(order);
           // dispatch(sendWsData(1, order));
         }}
       >
         Sending a New Transaction ...
-      </button>
-      <br />
-      <br />
-      <button
-        onClick={() => {
-          const params = {
-            account: ACCOUNT_ID,
-          };
-          const req = OpenOrderReqManner.send(params);
-
-          console.log(
-            "sending open order request ...",
-            OpenOrderReqManner.read(req)
-          );
-
-          SingletonWSManager.send(req);
-          // dispatch(sendWsData(1, order));
-        }}
-      >
-        Sending a Open Order Request ...
-      </button>
-      <br />
-      <button
-        onClick={() => {
-          const params = {
-            account: ACCOUNT_ID,
-          };
-          const req = RiskUpdateReqManner.send(params);
-
-          console.log(
-            "sending risk update request ...",
-            RiskUpdateReqManner.read(req)
-          );
-
-          SingletonWSManager.send(req);
-          // dispatch(sendWsData(1, order));
-        }}
-      >
-        Sending a Risk Update Request ...
       </button>
       <br />
       <button
@@ -278,7 +237,7 @@ export const Home = () => {
             RiskSymbolManner.read(req)
           );
 
-          SingletonWSManager.send(req);
+          // SingletonWSManager.send(req);
           // dispatch(sendWsData(1, order));
         }}
       >
