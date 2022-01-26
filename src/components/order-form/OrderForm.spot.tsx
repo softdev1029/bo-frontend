@@ -1,4 +1,4 @@
-import { OrderSide } from "@/constants/order-enums";
+import { OrderSide } from "@/constants/system-enums";
 import { formatNumber, greenText, redText } from "@/exports";
 import { getAmountDecimals, getSymbols } from "@/exports/ticker.utils";
 import { Dropdown, RadioButton, RadioGroup, Tabs } from "@/ui-components";

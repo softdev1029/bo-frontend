@@ -12,7 +12,7 @@ import {
   StopTrigger,
   TIF,
   TradeOption,
-} from "@/constants/order-enums";
+} from "@/constants/system-enums";
 import {
   calculatedTotal,
   getPickedPrice,

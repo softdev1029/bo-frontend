@@ -1,4 +1,4 @@
-import { OrderSide } from "./order-enums";
+import { OrderSide } from "./system-enums";
 
 export enum OrderBookStyleEnum {
   SINGLE_COL = 1,
@@ -25,20 +25,4 @@ export enum OrderBookStartLayer {
   L1 = 1,
   L2 = 2,
   L3 = 3,
-}
-
-export enum SubscribeUnsubscribe {
-  SUBSCRIBE = 1,
-  UNSUBSCRIBE,
-}
-
-export enum SubscribeType {
-  TOB = 1,
-  THREELAYERS,
-  FIVELAYERS,
-  TENLAYERS,
-  TWENTYLAYERS,
-  THIRTYLAYERS,
-  FOB_DATA,
-  FLB_DATA,
 }

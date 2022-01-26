@@ -20,12 +20,12 @@ export class PacketSender {
   private _isPackedHeader = !1;
   private _capacity = 0;
 
-  constructor(messageType, defaultLength = 100, typeAlias = "") {
+  constructor(messageType, defaultLength = 100, mesasgeType2 = "") {
     this.reset();
 
     this.initData(defaultLength);
     this.putChar(messageType, 1);
-    this.putChar(typeAlias, 1);
+    this.putChar(mesasgeType2, 1);
     // message length
     this.putShort(2);
   }
@@ -33,6 +33,10 @@ export class PacketSender {
   initData(capacity) {
     this._data = [capacity];
     this._capacity = capacity;
+  }
+
+  getLength() {
+    return this._length;
   }
 
   reset() {
@@ -92,6 +96,20 @@ export class PacketSender {
     return this;
   }
 
+  putFloat(v) {
+    var buffer = new ArrayBuffer(4);
+    var longNum = new Float32Array(buffer);
+
+    longNum[0] = v;
+    const array = Array.from(new Int8Array(buffer)).reverse(); // reverse for little endian
+
+    for (let i = array.length - 1; i >= 0; i--) {
+      this.putByte(array[i]);
+    }
+
+    return this;
+  }
+
   putLong(v) {
     if (v < 0) {
       console.log("hahaha v < 0");
@@ -114,6 +132,20 @@ export class PacketSender {
   putDouble(v) {
     var buffer = new ArrayBuffer(8);
     var longNum = new Float64Array(buffer);
+
+    longNum[0] = v;
+    const array = Array.from(new Int8Array(buffer)).reverse(); // reverse for little endian
+
+    for (let i = array.length - 1; i >= 0; i--) {
+      this.putByte(array[i]);
+    }
+
+    return this;
+  }
+
+  putUint64T(v) {
+    var buffer = new ArrayBuffer(8);
+    var longNum = new BigUint64Array(buffer);
 
     longNum[0] = v;
     const array = Array.from(new Int8Array(buffer)).reverse(); // reverse for little endian

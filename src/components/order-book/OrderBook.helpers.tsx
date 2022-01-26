@@ -7,7 +7,7 @@ import {
 } from "./OrderBook.cell";
 import { OrderBookModel } from "@/models/book.model";
 import { getAmountDecimals, getPriceDecimals } from "@/exports/ticker.utils";
-import { OrderSide } from "@/constants/order-enums";
+import { OrderSide } from "@/constants/system-enums";
 
 enum OrderBookHeaderTypes {
   PRICE = "price",

@@ -1,7 +1,7 @@
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { ICELayers, OrderType } from "@/constants/order-enums";
+import { ICELayers, OrderType } from "@/constants/system-enums";
 import {
   getAmountDecimals,
   getMinPrice,

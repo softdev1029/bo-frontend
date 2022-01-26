@@ -3,7 +3,7 @@ import { AnimateOnUpdate, Button, NumberFormat } from "@/ui-components";
 import classNames from "classnames";
 import { usePrevious } from "@/hooks";
 import { WalletType } from "@/constants/balance-enums";
-import { OrderSide, OrderType, TIF } from "@/constants/order-enums";
+import { OrderSide, OrderType, TIF } from "@/constants/system-enums";
 import { connect } from "react-redux";
 import { submitNewOrder } from "@/actions/order.actions";
 import { OrderBookSubject } from "./OrderBook.subject";

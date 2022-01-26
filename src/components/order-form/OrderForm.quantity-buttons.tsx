@@ -1,4 +1,4 @@
-import { OrderSide } from "@/constants/order-enums";
+import { OrderSide } from "@/constants/system-enums";
 import { InputTextInline, Tooltip } from "@/ui-components";
 import React from "react";
 

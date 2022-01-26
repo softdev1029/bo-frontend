@@ -1,4 +1,4 @@
-import { OrderType } from "@/constants/order-enums";
+import { OrderType } from "@/constants/system-enums";
 import { getPriceDecimals } from "@/exports/ticker.utils";
 import React from "react";
 import OrderFormCollapseArea from "./OrderForm.collapse-area";

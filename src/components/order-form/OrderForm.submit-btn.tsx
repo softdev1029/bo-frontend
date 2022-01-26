@@ -2,7 +2,7 @@ import React from "react";
 import _now from "lodash/now";
 import classNames from "classnames";
 
-import { OrderSide } from "@/constants/order-enums";
+import { OrderSide } from "@/constants/system-enums";
 import { Button } from "@/ui-components";
 
 const BTN_TIMEOUT_IN_MS = 30 * 1000;

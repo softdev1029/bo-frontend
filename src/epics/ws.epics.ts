@@ -5,22 +5,31 @@ import {
   tap,
   ignoreElements,
   take,
+  withLatestFrom,
 } from "rxjs/operators";
 import { EMPTY, of } from "rxjs";
 import { ActionsObservable, ofType } from "redux-observable";
-import { wsAuthenticated, WS_ON_MESSAGE } from "@/actions/ws.actions";
+import {
+  sendWsData,
+  wsAuthenticated,
+  WS_ON_MESSAGE,
+} from "@/actions/ws.actions";
 import {
   PacketHeaderMessageType,
   WebSocketKindEnum,
 } from "@/constants/websocket.enums";
-import { tickerUpdate2, updateInstrument } from "@/actions/ticker.actions";
+import { tickerUpdate, updateInstrument } from "@/actions/ticker.actions";
 import { tradeUpdate2 } from "@/actions/trade.actions";
 import {
+  bookUpdate,
   bookUpdate2,
-  sendMDInfoReq,
   subscribeMarketData,
 } from "@/actions/book.action";
-import { ChartSubject } from "@/components/chart";
+import {
+  ChartSnapshotSubject,
+  ChartUpdateSubject,
+  TradeUpdateSubject,
+} from "@/components/chart";
 import { PacketReader, SingletonWSManager } from "@/internals";
 import { updateSocketUrlEntries } from "@/actions/app.actions";
 import { initWSStream } from "@/exports/streams/socket/create-socket-stream";
@@ -33,20 +42,42 @@ import { fromWorker } from "@/exports/streams/rx-worker";
 import TestWorker from "@/internals/workers/file.worker.js";
 import { ClientLoginManner } from "@/packets/client-login.packet";
 import { TransactionManner } from "@/packets/transaction.packet";
-import { MessageType } from "@/constants/order-enums";
-import { newOrderAccepted, orderUpdated } from "@/actions/order.actions";
+import {
+  newOrderAccepted,
+  orderUpdated,
+  ORDER_REJECTED,
+} from "@/actions/order.actions";
 import { RiskSymbolManner } from "@/packets/user-risk.packet";
 import { updateUserInfo } from "@/actions/auth.actions";
 import {
   InstrumentManner,
-  InstrumentRequestManner,
   InstrumentResponseType,
 } from "@/packets/instrument.packet";
-import { initInstrument } from "@/exports/ticker.utils";
-import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
-import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
-import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
-import { ColDataManner } from "@/packets/col-data.packet";
+import {
+  getPairBySymbolEnum,
+  initTickerInfo as initInstrumentUtils,
+} from "@/exports/ticker.utils";
+import { InstrumentModel } from "@/models/instrument.model";
+import {
+  REQUEST_INIT_COLLATERAL,
+  REQUEST_UPDATE_COLLATERAL,
+} from "@/actions/collateral.actions";
+import {
+  CollateralRequestManner,
+  CollateralUpdateRequestManner,
+} from "@/packets/collateral.packet";
+import {
+  getAccountId,
+  getSessionId,
+  getUsername,
+} from "@/selectors/auth.selectors";
+import _pick from "lodash/pick";
+import _chunk from "lodash/chunk";
+import { MessageType, MessageUpdateType } from "@/constants/system-enums";
+import config from "@/config/config";
+import { BookManner } from "@/packets/book.packet";
+import { TradesManner, TRADE_MESSAGE_LENGTH } from "@/packets/trades.packet";
+import { BarManner, BarSnapshotManner } from "@/packets/chart.packet";
 import { MdInfoResManner } from "@/packets/md-info-res.packet";
 
 export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
@@ -59,32 +90,54 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
 
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
-      console.log("[ws.epics] Received msgType via AES", msgType);
+      console.log("[wsOnAdminRiskMessageEpic] msgType", msgType);
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
           const serverInfo = ClientLoginManner.read(data);
-          console.log("[ws.epcis] Received Logon reply via AES", serverInfo);
+          console.log(
+            "[wsOnAdminRiskMessageEpic] Received Logon reply via AES",
+            serverInfo
+          );
 
-          if (serverInfo.orderEntryIp1.replace(/\s/g, "").length) {
+          if (
+            serverInfo.orderEntryIp1 &&
+            serverInfo.orderEntryIp1.replace(/\s/g, "").length
+          ) {
+            // SingletonWSManager.addWs(`${config.protocol}://${serverInfo.orderEntryIp1}`, WebSocketKindEnum.ORDERS);
             SingletonWSManager.addWs(
-              `ws://${serverInfo.orderEntryIp1}`,
+              `${config.protocol}://oes-dev.bit24.com`,
               WebSocketKindEnum.ORDERS
             );
+          }
+
+          if (
+            serverInfo.marketEntryIp1 &&
+            serverInfo.marketEntryIp1.replace(/\s/g, "").length
+          ) {
+            SingletonWSManager.addWs(
+              `${config.protocol}://${serverInfo.marketEntryIp1}`,
+              WebSocketKindEnum.MARKET
+            );
+            // SingletonWSManager.addWs(`ws://113.197.36.50:32028/`, WebSocketKindEnum.MARKET);
           } else {
             SingletonWSManager.addWs(
               `ws://localhost:8081`,
               WebSocketKindEnum.ORDERS
             );
           }
-          // SingletonWSManager.addWs(`ws://123.321.122:123`, WebSocketKindEnum.ORDERS);
-          // SingletonWSManager.addWs(`ws://123.321.112:123`, WebSocketKindEnum.MARKET);
-          // SingletonWSManager.addWs(`ws://123.321.121:123`, WebSocketKindEnum.MARKET);
 
           const saveEntries = SingletonWSManager.getUrlEntries();
-
           SingletonWSManager.acceptEntries();
-          return of(updateSocketUrlEntries(saveEntries), wsAuthenticated(wsId));
+
+          return of(
+            updateSocketUrlEntries(saveEntries),
+            wsAuthenticated(wsId),
+            updateUserInfo({
+              sessionId: serverInfo.sessionId,
+              accountId: serverInfo.accountId,
+            })
+          );
         }
         case PacketHeaderMessageType.MD_INFO_RES: {
           const serverInfo = MdInfoResManner.read(data);
@@ -121,42 +174,17 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
           );
           break;
         }
-        default: {
-          return EMPTY;
-        }
-      }
-      return EMPTY;
-      // wsOnMessageSrc$.next(data);
-    })
-  );
-
-export const wsOnMessageEpic = (action$: ActionsObservable<any>, state$) =>
-  action$.pipe(
-    ofType(WS_ON_MESSAGE),
-    filter((action) => SingletonWSManager.isOrderWsById(action._id)),
-    // bufferTime(200),
-    // filter(batch => batch.length > 0),
-    // take(2),
-    switchMap((action) => {
-      const data = action.payload;
-      const wsId = action._id;
-
-      const reader = new PacketReader(data);
-      const msgType = reader.getMessageType();
-      console.log("[ws epic] >>>> msgType", msgType);
-
-      switch (msgType) {
         // risk symbol returns automatically after logon
         case PacketHeaderMessageType.RISK_USER_SYMBOL: {
           const userSymbols = RiskSymbolManner.read(data);
           console.log("RiskSymbolManner.read(data);", userSymbols);
 
-          return of(updateUserInfo(userSymbols), wsAuthenticated(wsId));
+          return of(updateUserInfo(userSymbols));
         }
         case PacketHeaderMessageType.TRANSACTION: {
           const orderRaw = TransactionManner.read(data);
-          const { rejectReason, orderMessageType, ...order } = orderRaw;
-
+          const { rejectReason, ...order } = orderRaw;
+          const { orderMessageType } = orderRaw;
           console.warn(
             "[TRANSACTION]",
             orderRaw,
@@ -166,7 +194,10 @@ export const wsOnMessageEpic = (action$: ActionsObservable<any>, state$) =>
 
           if (rejectReason) {
             console.error("order rejected >>>>", rejectReason);
-            return EMPTY;
+            return of({
+              type: ORDER_REJECTED,
+              payload: { errorCode: rejectReason, id: order.clientOrderId },
+            });
           }
 
           if (orderMessageType === MessageType.ORDER_ACK) {
@@ -177,36 +208,141 @@ export const wsOnMessageEpic = (action$: ActionsObservable<any>, state$) =>
         }
         case PacketHeaderMessageType.INSTRUMENT: {
           const instrumentReader = InstrumentManner.read(data);
-          console.log("instrumentReader", instrumentReader);
+
           const responseType = instrumentReader.responseType;
-          const instrument = {
-            minSize: instrumentReader.minSize,
-            maxSize: instrumentReader.maxSize,
-            priceIncrement: instrumentReader.priceIncrement,
-            symbolEnum: instrumentReader.symbolEnum,
-            symbol: instrumentReader.symbolName,
-            bidPrice: 0,
-            askPrice: 0,
-          };
+          const instrument: InstrumentModel = _pick(instrumentReader, [
+            "minSize",
+            "maxSize",
+            "symbolType",
+            "priceIncrement",
+            "symbolEnum",
+            "symbolName",
+          ]);
 
           // update instrument info
-          initInstrument(instrument);
+          const tickerConfig = initInstrumentUtils(instrument);
+
           return of(
             updateInstrument(
-              instrument,
+              tickerConfig,
               responseType === InstrumentResponseType.SNAPSHOT_FINISH
             )
           );
+        }
+        case PacketHeaderMessageType.COLLATERAL: {
+          const collateralReader = CollateralRequestManner.read(data);
+
+          console.log("COLLATERAL", collateralReader);
+          return EMPTY;
         }
         default: {
           return EMPTY;
         }
       }
+      return EMPTY;
       // wsOnMessageSrc$.next(data);
     })
-
-    // ignoreElements()
   );
+
+export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
+  action$.pipe(
+    ofType(WS_ON_MESSAGE),
+    filter((action) => SingletonWSManager.isOrderWsById(action._id)),
+    // bufferTime(200),
+    // filter(batch => batch.length > 0),
+    // take(2),
+    switchMap((action) => {
+      const data = action.payload;
+      const wsId = action._id;
+      const reader = new PacketReader(data);
+      const msgType = reader.getMessageType();
+      console.log("[wsOnOrderMessageEpic] msgType", msgType);
+
+      switch (msgType) {
+        case PacketHeaderMessageType.CLIENT_LOGIN: {
+          const serverInfo = ClientLoginManner.read(data);
+          console.log(
+            "ClientLoginManner.read(data);",
+            ClientLoginManner.read(data)
+          );
+
+          return of(
+            wsAuthenticated(wsId),
+            updateUserInfo({
+              sessionId: serverInfo.sessionId,
+              accountId: serverInfo.accountId,
+            })
+          );
+        }
+        // risk symbol returns automatically after logon
+        case PacketHeaderMessageType.RISK_USER_SYMBOL: {
+          const userSymbols = RiskSymbolManner.read(data);
+          console.log("RiskSymbolManner.read(data);", userSymbols);
+
+          return of(updateUserInfo(userSymbols));
+        }
+        case PacketHeaderMessageType.TRANSACTION: {
+          const orderRaw = TransactionManner.read(data);
+          const { rejectReason, ...order } = orderRaw;
+          const { orderMessageType } = orderRaw;
+          console.warn(
+            "[TRANSACTION]",
+            orderRaw,
+            "ordermessageType",
+            orderMessageType
+          );
+
+          if (rejectReason) {
+            console.error("order rejected >>>>", rejectReason);
+            return of({
+              type: ORDER_REJECTED,
+              payload: { errorCode: rejectReason, id: order.clientOrderId },
+            });
+          }
+
+          if (orderMessageType === MessageType.ORDER_ACK) {
+            return of(newOrderAccepted(order));
+          } else {
+            return of(orderUpdated(orderMessageType, order));
+          }
+        }
+        case PacketHeaderMessageType.INSTRUMENT: {
+          const instrumentReader = InstrumentManner.read(data);
+
+          const responseType = instrumentReader.responseType;
+          const instrument: InstrumentModel = _pick(instrumentReader, [
+            "minSize",
+            "maxSize",
+            "symbolType",
+            "priceIncrement",
+            "symbolEnum",
+            "symbolName",
+          ]);
+
+          // update instrument info
+          const tickerConfig = initInstrumentUtils(instrument);
+
+          return of(
+            updateInstrument(
+              tickerConfig,
+              responseType === InstrumentResponseType.SNAPSHOT_FINISH
+            )
+          );
+        }
+        case PacketHeaderMessageType.COLLATERAL: {
+          const collateralReader = CollateralRequestManner.read(data);
+
+          console.log("COLLATERAL", collateralReader);
+          return EMPTY;
+        }
+        default: {
+          return EMPTY;
+        }
+      }
+    })
+  );
+
+let barSnapshotMessagesCache = [];
 
 export const wsOnMarketMessageEpic = (
   action$: ActionsObservable<any>,
@@ -215,11 +351,130 @@ export const wsOnMarketMessageEpic = (
   action$.pipe(
     ofType(WS_ON_MESSAGE),
     filter((action) => SingletonWSManager.isMarketWsById(action._id)),
-    map((action) => action.payload),
-    tap((data) => {
-      wsOnMessageSrc$.next(data);
-    }),
-    ignoreElements()
+    switchMap((action) => {
+      const data = action.payload;
+      const wsId = action._id;
+
+      const reader = new PacketReader(data);
+      const msgType = reader.getMessageType();
+      // console.log('[wsOnMarketMessageEpic epic] >>>> msgType', msgType);
+
+      switch (msgType) {
+        case PacketHeaderMessageType.CLIENT_LOGIN: {
+          console.log(
+            "ClientLoginManner.read(data);",
+            ClientLoginManner.read(data),
+            "socketid",
+            wsId
+          );
+
+          return of(wsAuthenticated(wsId));
+        }
+        // book, trades, chart returns automatically after logon
+        case PacketHeaderMessageType.BOOK_30:
+        case PacketHeaderMessageType.BOOK_20:
+        case PacketHeaderMessageType.BOOK_10: {
+          // wsOnMessageSrc$.next(data);
+          const bookData = BookManner(msgType).read(data);
+          const bids = {};
+          const asks = {};
+          bookData.orderbooks.forEach((book) => {
+            if (book.volume) {
+              if (book.side === "B") {
+                bids[book.price] = book.volume;
+              } else {
+                asks[book.price] = book.volume;
+              }
+            }
+          });
+
+          return of(
+            bookUpdate2({
+              lastUpdateId: bookData.sendingTime,
+              asks,
+              bids,
+            })
+          );
+        }
+        case PacketHeaderMessageType.EXEC_REPORT: {
+          const chunk: number[][] = _chunk<number>(
+            data,
+            TRADE_MESSAGE_LENGTH
+          ).filter((array) => array.length === TRADE_MESSAGE_LENGTH); // make sure every array has the same length
+          const trades = [];
+          chunk.forEach((execBytes) => {
+            const tradeData = TradesManner.read(execBytes);
+            const trade = {
+              id: tradeData.sendingTime,
+              date: tradeData.sendingTime,
+              price: tradeData.price,
+              amount: tradeData.volume,
+              side: tradeData.side,
+            };
+
+            const newBar = {
+              price: tradeData.price,
+              volume: tradeData.volume,
+              // time: Number(tradeData.sendingTime) * 1000, //ms
+              time: Date.now(),
+              pair: getPairBySymbolEnum(tradeData.symbolEnum),
+            };
+
+            TradeUpdateSubject.next(newBar);
+            trades.push(trade);
+          });
+
+          return of(tradeUpdate2(trades));
+        }
+        case PacketHeaderMessageType.BAR_SNAPSHOT: {
+          const snapshotData = BarSnapshotManner.read(data);
+          // console.log('snapshot', snapshotData);
+          barSnapshotMessagesCache = [
+            ...barSnapshotMessagesCache,
+            ...snapshotData.chartBars,
+          ];
+
+          if (snapshotData.updateType === MessageUpdateType.SNAPSHOT_FINISH) {
+            ChartSnapshotSubject.next({
+              symbolEnum: snapshotData.symbolEnum,
+              bars: [...barSnapshotMessagesCache],
+              interval: barSnapshotMessagesCache[0]?.interval || null,
+            });
+
+            barSnapshotMessagesCache = [];
+          }
+          return EMPTY;
+        }
+        case PacketHeaderMessageType.BAR_MESSAGE: {
+          const barData = BarManner.read(data);
+          console.log("BAR_MESSAGE", barData);
+
+          ChartUpdateSubject.next({
+            interval: barData.interval,
+            high: barData.high,
+            low: barData.low,
+            open: barData.open,
+            time: barData.time,
+            volume: barData.volume,
+            close: barData.close,
+            pair: getPairBySymbolEnum(barData.symbolEnum),
+          });
+          return EMPTY;
+        }
+        case PacketHeaderMessageType.BAR_REQUEST: {
+          console.log("BAR_REQUEST");
+
+          return EMPTY;
+        }
+        default: {
+          return EMPTY;
+        }
+      }
+    })
+    // tap((data) => {
+    //   wsOnMessageSrc$.next(data);
+    // }),
+    // ignoreElements()
   );
 
 const worker$ = fromWorker(() => new TestWorker(), wsOnMessageObservable$);
@@ -228,14 +483,17 @@ export const onWebWorkerEpic = (action$, state$) =>
   worker$.pipe(
     // map((batch) => batch[0]),
     switchMap((data: any) => {
-      const { marketData, tradesData, bookData, charts } = data;
+      const { bookPayload } = data;
 
-      const streams = [tickerUpdate2(marketData), tradeUpdate2(tradesData)];
-      if (bookData) {
-        streams.push(bookUpdate2(bookData));
+      const streams = [
+        // tickerUpdate(marketData),
+        // tradeUpdate2(tradesData)
+      ];
+      if (bookPayload) {
+        streams.push(bookUpdate2(bookPayload));
       }
 
-      charts.map((payload) => ChartSubject.next(payload));
+      // charts.map(payload => ChartSubject.next(payload));
 
       return action$.pipe(
         take(1),
@@ -245,70 +503,45 @@ export const onWebWorkerEpic = (action$, state$) =>
     // ignoreElements()
   );
 
-// export const wsOnMessageEpic = (action$: ActionsObservable<any>, state$) => action$.pipe(
-//   ofType(WS_ON_MESSAGE),
-//   map(action => action.payload),
-//   bufferTime(500),
-//   filter(batch => batch.length > 0),
-//   switchMap(data => {
-//     let marketData = [];
-//     const tradesData = [];
-//     let bookData;
-
-//     for (let i = data.length - 1; i >= 0; i--) {
-//       const payload = data[i];
-
-//       if (_isArray(payload) && !marketData.length) {
-//         marketData = payload.slice(0, 100);
-//       } else {
-//         if (payload["e"] === 'aggTrade') {
-//           tradesData.push(payload)
-//         } else if(payload["lastUpdateId"]) {
-//           bookData = payload
-//         } else if(payload["e"] === 'kline') {
-//           ChartSubject.next(payload)
-//         }
-//       }
-//     }
-
-//     const streams = [
-//       tickerUpdate(marketData),
-//       tradeUpdate(tradesData)
-//     ];
-//     if(bookData) {
-//       streams.push(bookUpdate(bookData))
-//     }
-//     return of(...streams)
-//   })
-// );
-
-// SingletonWSManager.addWs(testurl1 as string, WebSocketKindEnum.MARKET);
-
-// @temporary hide
-// export const setupWsConnectionEpic = initWSStream(WebSocketKindEnum.MARKET);
-
 export const adminRisk = initWSStream(WebSocketKindEnum.ADMIN_RISK);
 export const dataFeed = initWSStream(WebSocketKindEnum.MARKET, {
   isBinary: false,
 });
 
-// export const testAdminRiskEpic = (action$, state$) => action$.pipe(
-//   ofType(TEST_ADMIN_RISK_RESPONSE),
-//   delay(1000),
-//   tap(() => {
-//     const response = ['H', null, 0, 0, 1, null, '', 'guest', 0, 'ws://192.81.111.25:32026', '', testurl2, '', Date.now()];
-//     const orderEntryIp1 = response[9],
-//       orderEntryIp2 = response[10],
-//       marketEntryIp1 = response[11],
-//       marketEntryIp2 = response[12];
+export const collateralEpic = (action$: ActionsObservable<any>, state$) =>
+  action$.pipe(
+    ofType(REQUEST_INIT_COLLATERAL),
+    filter((action) => SingletonWSManager.isOrderWsById(action._id)),
+    withLatestFrom(state$),
+    map(([action, state]) => {
+      const collateralDataSender = CollateralRequestManner.send({
+        symbolEnum: action.symbol || 0,
+        accountId: getAccountId(state),
+        sessionId: getSessionId(state),
+        username: getUsername(state),
+      });
 
-//     SingletonWSManager.addWs(marketEntryIp1 as string, WebSocketKindEnum.MARKET);
-//     SingletonWSManager.addWs(marketEntryIp2 as string, WebSocketKindEnum.MARKET);
-//     SingletonWSManager.addWs(orderEntryIp1 as string, WebSocketKindEnum.ORDERS);
-//     SingletonWSManager.addWs(orderEntryIp2 as string, WebSocketKindEnum.ORDERS);
-//   }),
-//   map(() => updateSocketUrlEntries(SingletonWSManager.getUrlEntries())),
-//   tap(() => {
-//     SingletonWSManager.acceptEntries()
-//   })
-// );
+      return sendWsData(WebSocketKindEnum.ORDERS, collateralDataSender);
+    }),
+    ignoreElements()
+  );
+
+export const collateralRequestEpic = (
+  action$: ActionsObservable<any>,
+  state$
+) =>
+  action$.pipe(
+    ofType(REQUEST_UPDATE_COLLATERAL),
+    filter((action) => SingletonWSManager.isOrderWsById(action._id)),
+    withLatestFrom(state$),
+    map(([action, state]) => {
+      const collateralDataSender = CollateralUpdateRequestManner.send({
+        symbolEnum: action.symbol || 0,
+        accountId: getAccountId(state),
+        sessionId: getSessionId(state),
+      });
+
+      return sendWsData(WebSocketKindEnum.ORDERS, collateralDataSender);
+    }),
+    ignoreElements()
+  );

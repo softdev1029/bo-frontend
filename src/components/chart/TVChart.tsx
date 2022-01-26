@@ -1,5 +1,4 @@
 import React, { PureComponent } from "react";
-
 import _throttle from "lodash/throttle";
 import _filter from "lodash/filter";
 import _set from "lodash/set";
@@ -39,8 +38,14 @@ import {
 } from "./Chart.constants";
 // import { EventRegister, ON_NEW_TRADE } from '../../../utils/events/index';
 import ChartSaveLoadAdapter from "./ChartSaveLoadAdapter";
-import { Card } from "@/ui-components";
-import { chartSubscriber } from "./Chart.subject";
+import {
+  chartUpdateFromTradeSubscriber,
+  chartUpdateSubscriber,
+} from "./Chart.subject";
+import { getSetting } from "@/selectors/ui-setting.selectors";
+import { connect } from "react-redux";
+import { add, isGreaterThan, isLessThan } from "@/exports/math";
+import { AppTradeType } from "@/constants/trade-type";
 
 const NOOP = () => {};
 const MAX_INTERVAL = 65 * 60 * 1000; // 65m
@@ -49,10 +54,13 @@ const MULTIPLY_RESOLUTION = 3;
 
 interface TVChartProps {
   pair: string;
+  tradingType: AppTradeType;
   lastPrice: number;
   chartSettings: Object;
   timeDifference: number;
   interval: string;
+  chartType: string;
+  chartAction: string;
   isSubscribed: boolean;
   candles?: any[];
   priceAlerts: any;
@@ -72,9 +80,10 @@ interface TVChartProps {
   updateChartSettings: (data, persist) => void;
   updateInterval: (nextInterval: number) => void;
   closeCard: (e: any) => void;
+  getChartHistoryRequest: ({ interval, tradingType, pair, start, end }) => void;
 }
 
-export default class TVChart extends PureComponent<Partial<TVChartProps>> {
+export class TVChart extends PureComponent<Partial<TVChartProps>> {
   private widget = null;
 
   private chartReady = false;
@@ -107,7 +116,8 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
   private liquidationPrimitives = null;
   private saveLoadAdapterRef;
   private scheduler;
-  private _subscription$ = null;
+  private _tradeUpdateSubscription$ = null;
+  private _updateSubscription$ = null;
 
   static defaultProps = {
     pair: "ETHBTC",
@@ -117,6 +127,7 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
 
   state = {
     marks: {},
+    interval: "1",
   };
 
   constructor(props) {
@@ -133,6 +144,8 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
     this.onChartClicked = this.onChartClicked.bind(this);
     this.onFetchCandlesSuccess = this.onFetchCandlesSuccess.bind(this);
     this.changeInterval = this.changeInterval.bind(this);
+    this.updateLastCandleFromTrading =
+      this.updateLastCandleFromTrading.bind(this);
 
     this.saveLoadAdapterRef = React.createRef();
 
@@ -159,7 +172,7 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
 
     this.candles = null;
 
-    this.addEmptyCandleToEndTimer = setInterval(this.addEmptyCandleToEnd, 1000);
+    // this.addEmptyCandleToEndTimer = setInterval(this.addEmptyCandleToEnd, 1000);
 
     this.getBarsRequest = {
       startTime: null,
@@ -177,17 +190,38 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
 
     this.initializeChartIfNecessary();
     document.addEventListener("ucm-chart", this.handleUcm);
-    this._subscription$ = chartSubscriber().subscribe((data: any) => {
-      if (
-        this.chartReady &&
-        data.pair === this.props.pair &&
-        data.interval === RESOLUTION_MAP[this.props.interval]
-      ) {
-        const candle = _omit(data, ["pair", "interval"]);
-        this.updateLastChartCandle(candle);
+
+    this._updateSubscription$ = chartUpdateSubscriber().subscribe(
+      (data: any) => {
+        if (
+          this.chartReady &&
+          data.pair === this.props.pair &&
+          data.interval === this.props.interval // 1
+        ) {
+          const candle = _omit(data, ["pair", "interval"]);
+          this.updateLastChartCandle(candle);
+        }
       }
-    });
+    );
+    this._tradeUpdateSubscription$ = chartUpdateFromTradeSubscriber().subscribe(
+      this.updateLastCandleFromTrading
+    );
+
     // this.props.setInitialTimeDiff()
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps: TVChartProps) {
+    const { interval, chartType, chartAction } = nextProps;
+    const chart = this.getChart();
+
+    if (chart) {
+      if (this.props.interval !== interval) chart.setResolution(interval);
+      if (this.props.chartType !== chartType) chart.setChartType(chartType);
+      if (this.props.chartAction !== chartAction) {
+        if (chartAction.includes("insertIndicator"))
+          chart.executeActionById("insertIndicator");
+      }
+    }
   }
 
   setScheduler(timerInMs, infinteTimer?: boolean) {
@@ -222,9 +256,13 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
     clearTimeout(this.scheduler);
 
     document.removeEventListener("ucm-chart", this.handleUcm);
-    // EventRegister.off(ON_NEW_TRADE, this.updateLastCandleFromTrading, this)
-    if (this._subscription$) {
-      this._subscription$.unsubscribe();
+
+    if (this._tradeUpdateSubscription$) {
+      this._tradeUpdateSubscription$.unsubscribe();
+    }
+
+    if (this._updateSubscription$) {
+      this._updateSubscription$.unsubscribe();
     }
 
     try {
@@ -302,8 +340,10 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
         const lastCandle = candles[Math.max(...Object.keys(candles))];
 
         if (lastCandle !== undefined) {
-          const lastCandleConverted = convertCandleToTVFormat(lastCandle);
-          this.updateLastChartCandle(lastCandleConverted);
+          // console.log('lastCandle', lastCandle);
+          // const lastCandleConverted = convertCandleToTVFormat(lastCandle);
+          // console.log('lastCandleConverted', lastCandleConverted);
+          // this.updateLastChartCandle(lastCandle);
         }
       }
     }
@@ -331,7 +371,7 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
     // const style = { height };
 
     return (
-      <div className="h-100">
+      <div className="h-100 tvchart">
         <ChartSaveLoadAdapter ref={this.saveLoadAdapterRef} />
         <div
           id={CHART_ROOT_ELEMENT}
@@ -350,11 +390,10 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
     // theme has been changed
     this.widget.applyOverrides(getChartOverrides());
     this.saveChartSettings({ persistImmediately: true });
-
     updateChartTheme(theme);
     // }
 
-    this.widget.subscribe("onAutoSavedNeeded", this.saveChartSettings);
+    this.widget.subscribe("onAutoSaveNeeded", this.saveChartSettings);
     this.widget.subscribe("mouse_up", this.onChartClicked);
 
     this.getChart().crossHairMoved(({ price }) => {
@@ -457,7 +496,7 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
   }
 
   updateLastChartCandle(candle) {
-    // console.warn('>> updateLastChartCandle', candle);
+    console.warn(">> updateLastChartCandle", candle);
 
     const { time } = candle;
     const { candles = [] } = this;
@@ -500,7 +539,10 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
     const lastCandle = candles[candles.length - 1];
     const lastCandleTime = lastCandle.time;
 
-    if (time < lastCandleTime) return;
+    if (time < lastCandleTime) {
+      console.log("time < lastCandleTime", time, lastCandleTime);
+      return;
+    }
 
     const { interval } = this.props;
     const coeff = getMsInInterval(interval);
@@ -516,26 +558,34 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
       candle.close = candle.price;
       candle.high = candle.price;
       candle.low = candle.price;
-      candle.volume = candle.volume;
+      // candle.volume = candle.volume;
     } else {
       candle = { ...lastCandle, ...newCandle };
 
-      // if (!lastCandle.volume) { // empty candle
-      // 	candle.open = Number(newCandle.price);
-      // 	candle.low = Number(newCandle.price);
-      // 	candle.high = Number(newCandle.price);
-      // } else {
-      // 	if (isLessThan(newCandle.price, Number(candle.low))) {
-      // 		candle.low = Number(candle.price);
-      // 	} else if (isGreaterThan(Number(newCandle.price), Number(candle.high))) {
-      // 		candle.high = Number(candle.price);
-      // 	}
-      // }
-      // candle.volume = Number(add(Number(lastCandle.volume), Number(newCandle.volume)));
-      // candle.close = Number(newCandle.price);
-      // candle.time = rounded;
+      if (!lastCandle.volume) {
+        // empty candle
+        candle.open = Number(newCandle.price);
+        candle.low = Number(newCandle.price);
+        candle.high = Number(newCandle.price);
+      } else {
+        if (isLessThan(newCandle.price, Number(candle.low))) {
+          candle.low = Number(candle.price);
+        } else if (
+          isGreaterThan(Number(newCandle.price), Number(candle.high))
+        ) {
+          candle.high = Number(candle.price);
+        }
+      }
+      candle.volume = Number(
+        add(Number(lastCandle.volume), Number(newCandle.volume))
+      );
+      candle.close = Number(newCandle.price);
+      candle.time = rounded;
 
-      // console.warn(`[next] price ${candle.price} and volume ${candle.volume} at ${candle.time} and last candle is`, lastCandle)
+      console.warn(
+        `[next] price ${candle.price} and volume ${candle.volume} at ${candle.time} and last candle is`,
+        lastCandle
+      );
     }
 
     this.updateLastChartCandle(candle);
@@ -595,9 +645,14 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
     if (data !== undefined) {
       updateChartSettings(data, persistImmediately);
     } else if (this.isChartReady()) {
-      this.widget.save((updatedStyle) => {
-        updateChartSettings(updatedStyle, persistImmediately);
-      });
+      // should wait more than auto_save_delay * 1000
+      setTimeout(() => {
+        if (this.widget) {
+          this.widget.save((updatedStyle) => {
+            updateChartSettings(updatedStyle, persistImmediately);
+          });
+        }
+      }, 1500);
     }
   }
 
@@ -651,31 +706,39 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
   }
 
   handleSnapshot() {
+    console.log("handleSnapshot");
     const { startTime, endTime } = this.getBarsRequest;
     const { candles, interval } = this.props;
 
-    this.candles = extractCandlesFromSnapshot(candles, interval, endTime);
+    // this.candles = extractCandlesFromSnapshot(candles, interval, endTime);
+    this.candles = candles;
+
     this.waitingForSnapshot = false;
     if (this.candles.length < SNAPSHOT_CANDLES_NUMBER) {
       this.noMoreHistoricalCandles = true;
     }
 
     const earliestTime = getEarliestCandleTime(this.candles);
-
     if (earliestTime <= startTime) {
+      // tmp comment
       this.fulfillGetBarsRequest();
+      // tmp new
+      // this.onFetchCandlesSuccess(this.props.candles, false);
     } else {
-      this.requestCandlesFetch();
+      // tmp comment
+      // this.requestCandlesFetch();
+      // tmp new
+      this.onFetchCandlesSuccess(this.candles, false);
     }
   }
 
   fulfillGetBarsRequest() {
     const { startTime, endTime } = this.getBarsRequest;
 
-    const requiredCandles = _filter(
-      this.candles,
-      (candle) => candle.time >= startTime && candle.time <= endTime
-    );
+    // const requiredCandles = _filter(
+    //   this.candles,
+    //   (candle) => candle.time >= startTime && candle.time <= endTime
+    // );
 
     const earliestCandleTime = getEarliestCandleTime(this.candles);
     let options;
@@ -684,11 +747,14 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
       options = { noData: true };
     }
 
+    console.log("fulfil....", options);
     //@ts-ignore
-    this.onDataCallback(requiredCandles, options);
+    // this.onDataCallback(requiredCandles, options);
+    this.onDataCallback(this.candles, options);
   }
 
   requestCandlesFetch() {
+    console.log("requestCandlesFetch");
     const { startTime, endTime } = this.getBarsRequest;
     const earliestTime = getEarliestCandleTime(this.candles);
 
@@ -706,9 +772,37 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
     );
   }
 
-  onFetchCandlesSuccess(historicalCandles, hasMoreData) {
-    this.noMoreHistoricalCandles = !hasMoreData;
+  // sending barReqMessage since there is no HTTP is provided
+  requestCandlesMessage() {
+    console.log("requestCandlesMessage");
+    const { startTime, endTime } = this.getBarsRequest;
+    const earliestTime = getEarliestCandleTime(this.candles);
 
+    // avoiding fetching candles that are already known
+    const end = earliestTime < endTime ? earliestTime : endTime;
+    let { interval, pair, tradingType, getChartHistoryRequest } = this.props;
+    getChartHistoryRequest({
+      start: startTime,
+      end,
+      interval,
+      pair,
+      tradingType,
+    });
+    // fetchCandlesAsync(
+    //   startTime,
+    //   end,
+    //   interval,
+    //   pair,
+    //   (data, hasMoreData) => {
+    //     this.onFetchCandlesSuccess(this.candles, false)
+    //   },
+    //   this.onErrorCallback
+    // );
+  }
+
+  onFetchCandlesSuccess(historicalCandles, hasMoreData) {
+    console.log("onFetchCandlesSuccess", hasMoreData);
+    this.noMoreHistoricalCandles = !hasMoreData;
     const { candles } = this;
     const candlesToAdd = [...historicalCandles];
 
@@ -826,18 +920,30 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
     _set(this.getBarsRequest, "startTime", rangeStartDate * 1000);
     _set(this.getBarsRequest, "endTime", adjustedEndTime);
 
+    console.log("isfirstDataRequest", firstDataRequest, this.getBarsRequest);
+    console.log(
+      "rangeStartDate",
+      rangeStartDate,
+      getEarliestCandleTime(this.candles)
+    );
+
     if (firstDataRequest) {
       const { interval } = this.props;
+      console.log("getBarsRequest 1", interval, resolution);
 
       if (interval !== resolution) {
+        console.log("getBarsRequest 2 interval changed");
         this.changeInterval(resolution);
       } else {
+        console.log("getBarsRequest 3 wait");
         this.waitForSnapshot();
       }
     } else if (
       rangeStartDate * 1000 < getEarliestCandleTime(this.candles) &&
       !this.noMoreHistoricalCandles
     ) {
+      console.log("why get bar???");
+      // this.requestCandlesMessage();
       this.requestCandlesFetch();
     } else {
       this.fulfillGetBarsRequest();
@@ -923,3 +1029,11 @@ export default class TVChart extends PureComponent<Partial<TVChartProps>> {
     //optional
   }
 }
+
+const mapStateToProps = (state) => ({
+  interval: getSetting(state)("chart_interval"),
+  chartType: getSetting(state)("chart_type"),
+  chartAction: getSetting(state)("chart_action"),
+});
+
+export default connect(mapStateToProps, null)(TVChart);

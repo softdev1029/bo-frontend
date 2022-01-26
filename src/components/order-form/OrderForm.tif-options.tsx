@@ -1,4 +1,4 @@
-import { TIF } from "@/constants/order-enums";
+import { TIF } from "@/constants/system-enums";
 import { SelectDropdown } from "@/ui-components";
 import React from "react";
 

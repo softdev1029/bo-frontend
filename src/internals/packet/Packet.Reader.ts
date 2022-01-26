@@ -101,6 +101,22 @@ export class PacketReader {
     return new DataView(a).getInt32(0, true);
   }
 
+  getFloat() {
+    invariant(
+      this._pos + 4 <= this._length,
+      "getFloat: IndexOutOfBoundsException"
+    );
+    var buffer = new ArrayBuffer(4);
+    var int8array = new Uint8Array(buffer);
+
+    for (var i = 3; i >= 0; i--) {
+      int8array[3 - i] = this.parseByte();
+    }
+    var dataview = new DataView(buffer);
+
+    return dataview.getFloat32(0, true);
+  }
+
   getLong() {
     invariant(
       this._pos + 8 <= this._length,
@@ -181,6 +197,22 @@ export class PacketReader {
     return dataview.getFloat64(0, true);
   }
 
+  getUint64T() {
+    invariant(
+      this._pos + 8 <= this._length,
+      "getUint64T: IndexOutOfBoundsException"
+    );
+    var buffer = new ArrayBuffer(8);
+    var int8array = new Uint8Array(buffer);
+
+    for (var i = 7; i >= 0; i--) {
+      int8array[7 - i] = this.parseByte();
+    }
+    var dataview = new DataView(buffer);
+
+    return dataview.getBigUint64(0, true);
+  }
+
   getCharArray() {
     var a = this.getUnsignedShort();
     return this.getBytes(a);
@@ -205,7 +237,6 @@ export class PacketReader {
 
     var encode = String.fromCharCode(...uintarray);
     var decode = decodeURIComponent(escape(encode));
-
     return decode;
   }
 

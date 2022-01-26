@@ -5,10 +5,16 @@ export enum SymbolType {
 }
 
 export enum SymbolValue {
+  BTCUSD = 1,
+  USDUSDT,
+  FLYUSDT,
+  BTCUSDT,
+}
+
+export enum AvailableEquity {
   BTC = 1,
+  USDT,
   ETH,
-  XRP,
-  BTCUSD,
-  ETHUSD,
-  XRPUSD,
+  USD,
+  FLY,
 }

@@ -1,17 +1,19 @@
 import { OrderBookStartLayer } from "@/constants/order-book-enums";
 import {
   MessageType,
+  MessageUpdateType,
   OrderSide,
   OrderStatus,
   OrderType,
   StopTrigger,
   TIF,
-} from "@/constants/order-enums";
+} from "@/constants/system-enums";
 import { SymbolType, SymbolValue } from "@/constants/symbol-enums";
 
 export type OrderItem = {
-  orderId: string;
-  clientOrderId: string;
+  orderMessageType?: MessageType;
+  orderId: number;
+  clientOrderId: number;
   symbolEnum: SymbolValue;
   orderType: OrderType;
   symbolType: SymbolType;
@@ -21,16 +23,17 @@ export type OrderItem = {
   tif: TIF;
   stopPrice: number;
   origPrice: number;
-  symbol: string;
+  symbolName: string;
   cancelShares: number;
   execId: number;
   execShares: number;
   remainQty: number;
-  execFee: number;
+  limitCross: number;
   expiredDate: string;
   tradeId: number;
-  displaySize: number;
-  refreshSize: number;
+  sessionId: number;
+  displaySize?: number;
+  refreshSize?: number;
   layers: OrderBookStartLayer;
   sizeIncrement: number;
   priceIncrement: number;
@@ -39,11 +42,15 @@ export type OrderItem = {
   status: OrderStatus;
   takeProfitPrice: number;
   triggerType: StopTrigger;
+  attributes?: string; // 12 character indexed by AttributeIndexEnum
+  secondLegPrice: number;
 };
 
 export type TransactionModel = OrderItem & {
   rejectReason: number;
-  orderMessageType: MessageType;
+  updateType: MessageUpdateType;
+  accountId: number;
+  sendingTime: number;
 };
 
 export type OrderEntry = {

@@ -8,7 +8,7 @@ import {
   StopTrigger,
   TIF,
   TradeOption,
-} from "@/constants/order-enums";
+} from "@/constants/system-enums";
 import { OrderBookModel } from "@/models/book.model";
 import { TabProps } from "@/ui-components/Tabs";
 

@@ -45,7 +45,5 @@ const BOOK_MESSAGE_STRUCTURE = [
   new BookPrice10LevelDataByte("price", TypedData.CUSTOM_DATA, 340), // 38
 ];
 
-export const BookManner = new PacketManner(
-  PacketHeaderMessageType.BOOK_10,
-  BOOK_MESSAGE_STRUCTURE
-);
+export const BookManner = (type) =>
+  new PacketManner(type, BOOK_MESSAGE_STRUCTURE);

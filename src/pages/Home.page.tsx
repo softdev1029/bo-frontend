@@ -11,7 +11,7 @@ import { withErrorBoundary } from "@/HOCs";
 import { getAccessToken, getUserEmail } from "@/selectors/auth.selectors";
 import { requestLogoutAction } from "@/actions/auth.actions";
 import { testurl1 } from "@/config/config";
-import { MessageType, OrderSide, OrderType } from "@/constants/order-enums";
+import { MessageType, OrderSide, OrderType } from "@/constants/system-enums";
 import { PacketSender } from "@/internals/packet/Packet.Sender";
 import { PacketReader } from "@/internals/packet/Packet.Reader";
 import { requestConnectToAdminRisk } from "@/actions/ws.actions";
@@ -34,11 +34,9 @@ import {
   InstrumentRequestType,
 } from "@/packets/instrument.packet";
 import { SingletonWSManager } from "@/internals";
-import { ColUpdateReqManner } from "@/packets/col-update-req.packet";
 import { OpenOrderReqManner } from "@/packets/open-order-req.packet";
 import { RiskUpdateReqManner } from "@/packets/risk-update-req.packet";
 import { RiskSymbolManner } from "@/packets/user-risk.packet";
-import { ColDataManner } from "@/packets/col-data.packet";
 
 // import { SymbolType } from "@/constants/symbol-enums";
 
@@ -229,24 +227,6 @@ export const Home = () => {
         Sending a New Transaction ...
       </button>
       <br />
-      <button
-        onClick={() => {
-          const params = {
-            account: ACCOUNT_ID,
-          };
-          const req = ColUpdateReqManner.send(params);
-
-          console.log(
-            "sending collateral update request ...",
-            ColUpdateReqManner.read(req)
-          );
-
-          SingletonWSManager.send(req);
-          // dispatch(sendWsData(1, order));
-        }}
-      >
-        Sending a Collateral Update Request ...
-      </button>
       <br />
       <button
         onClick={() => {
@@ -305,21 +285,6 @@ export const Home = () => {
         Sending a Risk User Symbol ...
       </button>
       <br />
-      <button
-        onClick={() => {
-          const params = {
-            account: ACCOUNT_ID,
-          };
-          const req = ColDataManner.send(params);
-
-          console.log("sending collateral data ...", ColDataManner.read(req));
-
-          SingletonWSManager.send(req);
-          // dispatch(sendWsData(1, order));
-        }}
-      >
-        Sending a Collateral Data ...
-      </button>
       {/* {/* <button
         onClick={() => {
           const params = {

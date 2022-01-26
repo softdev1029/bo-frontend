@@ -35,13 +35,14 @@ export enum PacketHeaderMessageType {
   RISK_USER_SYMBOL = "N",
   INSTRUMENT = "Q",
   INSTRUMENT_REQUEST = "Y",
+  COLLATERAL = "h",
+  COLLATERAL_UPDATE_REQ = "f",
   BOOK_10 = "O", // ten level data
   BOOK_20 = "S", // 20 level data
-  BOOK_30 = "U", // 30 level data
-  COL_UPDATE_REQ = "f",
-  OPEN_ORDER_REQ = "e",
-  RISK_UPDATE_REQ = "w",
-  COL_DATA = "h",
+  BOOK_30 = "U", // 30 level data,
+  BAR_SNAPSHOT = "c",
+  BAR_MESSAGE = "b",
+  BAR_REQUEST = "i",
   MD_INFO_REQ = "a",
   MD_INFO_RES = "a",
 }

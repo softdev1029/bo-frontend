@@ -3,23 +3,19 @@ import {
   adminRisk,
   wsOnAdminRiskMessageEpic,
   onWebWorkerEpic,
-  wsOnMessageEpic,
+  wsOnOrderMessageEpic,
   wsOnMarketMessageEpic,
 } from "./ws.epics";
 import {
-  loginSuccessEpic,
-  loginEpic,
   login2FAEpic,
   logoutEpic,
   logoutSuccessEpic,
+  loginEpic,
+  loginSuccessEpic,
 } from "./auth.epics";
 import { storageSaveEpic, storageDeleteEpic } from "./storage.epics";
 import { uiSettingEpic } from "./ui-setting.epics";
-import {
-  initTickerEpic,
-  getFutureTickerEpic,
-  instrumentRequestEpic,
-} from "./ticker.epics";
+import { instrumentRequestEpic } from "./ticker.epics";
 import { initBookEpic } from "./book.epics";
 import { initTradeEpic } from "./trade.epics";
 
@@ -31,7 +27,7 @@ export const rootEpic = {
   wsOnMarketMessageEpic,
   // setupWsConnectionEpic,
   // testAdminRiskEpic,
-  wsOnMessageEpic,
+  wsOnOrderMessageEpic,
   loginSuccessEpic,
   loginEpic,
   login2FAEpic,
@@ -40,8 +36,6 @@ export const rootEpic = {
   storageSaveEpic,
   storageDeleteEpic,
   uiSettingEpic,
-  initTickerEpic,
-  getFutureTickerEpic,
   instrumentRequestEpic,
   initBookEpic,
   initTradeEpic,

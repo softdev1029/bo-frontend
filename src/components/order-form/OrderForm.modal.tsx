@@ -3,7 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { connect } from "react-redux";
 import { closeModal } from "@/actions/app.actions";
 
-import { ICELayers, OrderType } from "@/constants/order-enums";
+import { ICELayers, OrderType } from "@/constants/system-enums";
 import {
   getAmountDecimals,
   getMinPrice,

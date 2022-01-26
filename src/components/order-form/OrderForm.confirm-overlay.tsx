@@ -1,6 +1,11 @@
 import { updateUISetting } from "@/actions/ui-setting.actions";
 import { WalletType } from "@/constants/balance-enums";
-import { MarginType, OrderSide, OrderType, TIF } from "@/constants/order-enums";
+import {
+  MarginType,
+  OrderSide,
+  OrderType,
+  TIF,
+} from "@/constants/system-enums";
 import { formatNumber, greenText, redText } from "@/exports";
 import {
   calculateLP,

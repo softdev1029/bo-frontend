@@ -1,6 +1,6 @@
 import _isEmpty from "lodash/isEmpty";
 import _get from "lodash/get";
-import { OrderSide, OrderType } from "@/constants/order-enums";
+import { OrderSide, OrderType } from "@/constants/system-enums";
 import {
   getMaxAmount,
   getMaxPrice,
