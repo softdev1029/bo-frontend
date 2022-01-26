@@ -13,7 +13,7 @@ import {
 } from "@/models/workspace-setting";
 import { getSetting } from "@/selectors/ui-setting.selectors";
 import { connect } from "react-redux";
-import { shallowCompareObjects } from "@/exports";
+import { shallowCompareArrays, shallowCompareObjects } from "@/exports";
 import {
   getCardToolByKey,
   getCardContentPaddingByKey,
@@ -24,6 +24,10 @@ import {
 import { toggleWorkspaceSetting } from "@/actions/ui-setting.actions";
 import { Card } from "@/ui-components";
 import { isUserLoggedIn } from "@/selectors/auth.selectors";
+import { OrderForm } from "../order-form";
+import { getWalletIdFromName } from "@/constants/balance-enums";
+import { OrderEntry } from "@/models/order.model";
+import { getOrderEntries } from "@/selectors/order.selectors";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -35,6 +39,7 @@ interface MainTradingGridProps {
   margin?: number[];
   breakpoints: object;
   layouts: object;
+  orderEntries: OrderEntry[];
 }
 
 interface MainTradingGridState {
@@ -142,6 +147,7 @@ class MainTradingGrid extends React.Component<
     prevState: MainTradingGridState
   ) {
     if (
+      !shallowCompareArrays(prevProps.orderEntries, this.props.orderEntries) ||
       !shallowCompareObjects(
         prevProps.enabledWorkspaces,
         this.props.enabledWorkspaces
@@ -178,6 +184,7 @@ class MainTradingGrid extends React.Component<
     }[] = []
   ) {
     const { windowPopupMap, dragKey } = this.state;
+    const { tradeType, orderEntries } = this.props;
     if (!layoutSetting.length) return [];
 
     const layout = [];
@@ -199,6 +206,24 @@ class MainTradingGrid extends React.Component<
           )
         );
       }
+    }
+
+    for (let _i = 0; _i < orderEntries.length; _i++) {
+      const entry = orderEntries[_i];
+      layout.push(
+        <div
+          key={_i}
+          data-grid={{ x: 0, y: _i * 35, w: 5, h: 35, minH: 14, minW: 3 }}
+        >
+          <OrderForm
+            wallet={getWalletIdFromName(tradeType)}
+            formId={entry.formId}
+            pair={entry.symbol}
+            expiryDate={entry.expiryDate}
+            isDraggable={true}
+          />
+        </div>
+      );
     }
 
     return layout;
@@ -280,7 +305,10 @@ class MainTradingGrid extends React.Component<
         useCSSTransforms={mounted}
         margin={margin}
       >
-        {this.state.gridLayout}
+        {this.updateLayout(
+          this.props.enabledWorkspaces,
+          this.props.layouts[this.state.currentBreakpoint] || []
+        )}
       </ResponsiveReactGridLayout>
     );
   }
@@ -288,6 +316,7 @@ class MainTradingGrid extends React.Component<
 
 const mapStateToProps = (state) => ({
   enabledWorkspaces: omitWorkspace(getSetting(state)("enabled_workspaces")),
+  orderEntries: getOrderEntries(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
