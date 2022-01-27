@@ -20,8 +20,17 @@ export const COLS = {
 
 const lgLayout = [
   {
+    i: WorkspaceSettingEnum.CHART,
+    x: 5,
+    y: 0,
+    w: 12,
+    h: 48,
+    minW: 5,
+    minH: 20,
+  },
+  {
     i: WorkspaceSettingEnum.ORDERBOOK,
-    x: 0,
+    x: 17,
     y: 0,
     w: 7,
     h: 27,
@@ -37,15 +46,6 @@ const lgLayout = [
     h: 12,
     minH: 8,
     minW: 6,
-  },
-  {
-    i: WorkspaceSettingEnum.CHART,
-    x: 12,
-    y: 0,
-    w: 17,
-    h: 48,
-    minW: 5,
-    minH: 20,
   },
 ];
 

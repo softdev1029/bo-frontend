@@ -20,7 +20,7 @@ const ExchangePage = ({ match }) => {
           {/* <TradingControlsCol tradeType={tradeType} symbol={symbol} /> */}
           <div className="trading-main-free-grid">
             <div className="trading-main-order-grid">
-              <OrderTradingGrid symbol={symbol} tradeType={tradeType} />
+              {/* <OrderTradingGrid symbol={symbol} tradeType={tradeType} /> */}
             </div>
             <div className="trading-main-other-grid">
               <MainTradingGrid symbol={symbol} tradeType={tradeType} />
