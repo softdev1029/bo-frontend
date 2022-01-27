@@ -353,7 +353,7 @@ export default class OrderFormInputs extends React.Component<
             addonBefore={
               typeId === OrderType.ICE ? "Order Quantity" : "Quantity"
             }
-            step={amountStep}
+            step="1"
             precision={decimalPlaceAmount}
             error={_get(errors, [OrderFormErrorEnum.QTY], undefined)}
           />
