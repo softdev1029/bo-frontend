@@ -23,17 +23,17 @@ const lgLayout = [
     i: WorkspaceSettingEnum.CHART,
     x: 5,
     y: 0,
-    w: 12,
-    h: 48,
+    w: 14,
+    h: 30,
     minW: 5,
     minH: 20,
   },
   {
     i: WorkspaceSettingEnum.ORDERBOOK,
-    x: 17,
-    y: 0,
-    w: 7,
-    h: 27,
+    x: 5,
+    y: 25,
+    w: 19,
+    h: 17,
     minH: 14,
     minW: 3,
   },
@@ -41,7 +41,7 @@ const lgLayout = [
   {
     i: WorkspaceSettingEnum.MARKET_HISTORY,
     x: 16,
-    y: 48,
+    y: 46,
     w: 24,
     h: 12,
     minH: 8,
@@ -50,6 +50,15 @@ const lgLayout = [
 ];
 
 const mdLayout = [
+  {
+    i: WorkspaceSettingEnum.CHART,
+    x: 7,
+    y: 0,
+    w: 17,
+    h: 40,
+    minW: 5,
+    minH: 20,
+  },
   {
     i: WorkspaceSettingEnum.ORDERBOOK,
     x: 0,
@@ -68,15 +77,6 @@ const mdLayout = [
     h: 12,
     minH: 8,
     minW: 6,
-  },
-  {
-    i: WorkspaceSettingEnum.CHART,
-    x: 7,
-    y: 0,
-    w: 17,
-    h: 40,
-    minW: 5,
-    minH: 20,
   },
 ];
 
