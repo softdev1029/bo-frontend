@@ -154,6 +154,7 @@ class NumericInput extends React.Component<
 
     this.onChange = this.onChange.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseWheel = this.onMouseWheel.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.getRatio = this.getRatio.bind(this);
@@ -173,6 +174,7 @@ class NumericInput extends React.Component<
 
   componentDidMount() {
     this.componentDidUpdate(null);
+    this.input.addEventListener("wheel", this.onMouseWheel, { passive: false });
   }
 
   componentDidUpdate(prevProps) {
@@ -289,6 +291,7 @@ class NumericInput extends React.Component<
   }
 
   componentWillUnmount() {
+    this.input.removeEventListener("wheel", this.onMouseWheel);
     this.stop();
   }
 
@@ -317,6 +320,18 @@ class NumericInput extends React.Component<
 
     if (!isNaN(emitVal)) {
       onChange(emitVal); // valid number or invalid string
+    }
+  }
+
+  onMouseWheel(e) {
+    if (e.deltaY < 0) {
+      e.preventDefault();
+      this.up(e);
+      this.stop();
+    } else if (e.deltaY > 0) {
+      e.preventDefault();
+      this.down(e);
+      this.stop();
     }
   }
 
@@ -663,7 +678,7 @@ class NumericInput extends React.Component<
   step(type, e, ratio = 1, recursive) {
     this.stop();
     if (e) {
-      e.persist();
+      // e.persist();
       e.preventDefault();
     }
     const { props } = this;
@@ -956,7 +971,11 @@ class NumericInput extends React.Component<
             title={title}
             id={id}
             onChange={this.onChange}
-            ref={this.saveInput}
+            // ref={this.saveInput}
+            ref={(ref) => {
+              this.input = ref;
+              // this.saveInput;
+            }}
             value={this.getFullNum(inputDisplayValue)}
             pattern={floatNumberRegex}
             inputMode={inputMode}
