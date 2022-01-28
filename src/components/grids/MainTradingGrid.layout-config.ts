@@ -28,6 +28,7 @@ const lgLayout = [
     minW: 5,
     minH: 20,
   },
+  { i: WorkspaceSettingEnum.TRADE, x: 19, y: 0, w: 5, h: 30, minH: 6, minW: 3 },
   {
     i: WorkspaceSettingEnum.ORDERBOOK,
     x: 5,
@@ -37,7 +38,6 @@ const lgLayout = [
     minH: 14,
     minW: 3,
   },
-  { i: WorkspaceSettingEnum.TRADE, x: 0, y: 20, w: 7, h: 21, minH: 6, minW: 3 },
   {
     i: WorkspaceSettingEnum.MARKET_HISTORY,
     x: 16,
@@ -59,6 +59,7 @@ const mdLayout = [
     minW: 5,
     minH: 20,
   },
+  { i: WorkspaceSettingEnum.TRADE, x: 0, y: 0, w: 5, h: 24, minH: 6, minW: 3 },
   {
     i: WorkspaceSettingEnum.ORDERBOOK,
     x: 0,
@@ -68,7 +69,6 @@ const mdLayout = [
     minH: 14,
     minW: 3,
   },
-  { i: WorkspaceSettingEnum.TRADE, x: 0, y: 20, w: 7, h: 16, minH: 6, minW: 3 },
   {
     i: WorkspaceSettingEnum.MARKET_HISTORY,
     x: 16,
