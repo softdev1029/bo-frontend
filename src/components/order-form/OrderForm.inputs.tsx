@@ -250,6 +250,37 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
+
+        <div className="mb-10">
+          <GroupInput
+            type="numeric"
+            useHandlers={true}
+            value={amount}
+            pattern={amountRegex}
+            onChange={onAmountChange}
+            addonAfter={base}
+            addonBefore={
+              typeId === OrderType.ICE ? "Order Quantity" : "Quantity"
+            }
+            step={amountStep}
+            precision={decimalPlaceAmount}
+            error={_get(errors, [OrderFormErrorEnum.QTY], undefined)}
+          />
+        </div>
+        <div className="mb-10">
+          <GroupInput
+            type="numeric"
+            useHandlers={true}
+            value={total}
+            pattern={amountRegex}
+            onChange={onTotalChange}
+            step={totalStep}
+            addonAfter={quote}
+            addonBefore={"Value"}
+            precision={getPriceDecimals(pair)}
+          />
+        </div>
+
         {false && typeId === OrderType.BRACKET && (
           <div className="mb-10">
             <GroupInput
@@ -296,40 +327,13 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        {false && shouldDisplayPriceIncreAndOffset(typeId) && (
-          // <div className="mb-10 order-form__input-wraper--1-1">
-          //   <OrderFormInputWithInfo
-          //     pattern={priceRegex}
-          //     placeholder="Price Increment"
-          //     value={priceIncrement || ""}
-          //     onChange={onPriceIncrementChange}
-          //   />
-          //   <OrderFormInputWithInfo
-          //     pattern={priceRegex}
-          //     placeholder="Offset"
-          //     value={offset || ""}
-          //     onChange={onOffsetChange}
-          //   />
-          // </div>
-          <>
-            <GroupInput
-              type="numeric"
-              useHandlers={true}
-              value={offset}
-              onChange={onOffsetChange}
-              addonAfter={base}
-              addonBefore={"Top of Book Offset"}
-            />
-            <GroupInput
-              type="numeric"
-              useHandlers={true}
-              value={priceIncrement}
-              onChange={onPriceIncrementChange}
-              addonAfter={quote}
-              addonBefore={"Price Increment"}
-            />
-          </>
+        {!!offset && shouldDisplayPriceIncreAndOffset(typeId) && (
+          <div className="mb-10">Offset: {offset}</div>
         )}
+        {!!priceIncrement && shouldDisplayPriceIncreAndOffset(typeId) && (
+          <div className="mb-10">Increment: {priceIncrement}</div>
+        )}
+
         {false && shouldDisplayStandaloneOffset(typeId) && (
           <div className="mb-10">
             <GroupInput
@@ -342,35 +346,6 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        <div className="mb-10">
-          <GroupInput
-            type="numeric"
-            useHandlers={true}
-            value={amount}
-            pattern={amountRegex}
-            onChange={onAmountChange}
-            addonAfter={base}
-            addonBefore={
-              typeId === OrderType.ICE ? "Order Quantity" : "Quantity"
-            }
-            step={amountStep}
-            precision={decimalPlaceAmount}
-            error={_get(errors, [OrderFormErrorEnum.QTY], undefined)}
-          />
-        </div>
-        <div className="mb-10">
-          <GroupInput
-            type="numeric"
-            useHandlers={true}
-            value={total}
-            pattern={amountRegex}
-            onChange={onTotalChange}
-            step={totalStep}
-            addonAfter={quote}
-            addonBefore={"Value"}
-            precision={getPriceDecimals(pair)}
-          />
-        </div>
         {false && shouldDisplayLayers(typeId) && (
           <div className="mb-10 order-form__layers">
             <div className="order-form__layers__label">Layers</div>
