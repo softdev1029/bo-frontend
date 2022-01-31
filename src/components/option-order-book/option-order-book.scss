@@ -1,0 +1,68 @@
+.oob__container {
+  height: 100%;
+  .oob__date__table {
+    height: 100%;
+
+    &__body {
+      height: calc(100% - 48px);
+      overflow-y: scroll;
+    }
+
+    & table {
+      width: 100%;
+      text-align: center;
+
+      & th,
+      & td {
+        width: 6%;
+        min-width: 50px;
+      }
+    }
+
+    & > table {
+      line-height: 2.3333333333rem;
+      cursor: pointer;
+      border-radius: var(--border-radius);
+      background-color: #3c3d3c;
+      border: 1px solid #575757;
+      box-shadow: 1px 1px 2px rgb(0 0 0 / 40%), -1px -1px 2px rgb(0 0 0 / 40%);
+      margin-bottom: 4px;
+
+      & .oob__date__table__header {
+        &__item {
+          padding: 4px 8px;
+          span {
+            display: block;
+            line-height: 1.8rem;
+            border-bottom: 1px white dashed;
+          }
+        }
+      }
+    }
+
+    &__list {
+      & > tr {
+        line-height: 2rem;
+      }
+      & > tr:nth-child(even) {
+        background-color: #575757;
+      }
+    }
+
+    & .collapsible {
+      position: relative;
+      margin-bottom: 4px;
+
+      .collapsible__header__container {
+        position: absolute;
+        width: 100%;
+      }
+
+      .collapsible__contentOuter {
+        max-height: 100px;
+        overflow-y: scroll;
+        margin-top: 2.3rem;
+      }
+    }
+  }
+}

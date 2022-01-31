@@ -32,6 +32,7 @@ const TableColGroup = ({ headers }) => (
     })}
   </colgroup>
 );
+
 export const OrderBookSide = ({
   symbol,
   dualColumn,
