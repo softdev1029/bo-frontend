@@ -328,10 +328,10 @@ export default class OrderFormInputs extends React.Component<
           </div>
         )}
         {!!offset && shouldDisplayPriceIncreAndOffset(typeId) && (
-          <div className="mb-10">Offset: {offset}</div>
+          <div className="mb-10 ml-10">Offset: {offset}</div>
         )}
         {!!priceIncrement && shouldDisplayPriceIncreAndOffset(typeId) && (
-          <div className="mb-10">Increment: {priceIncrement}</div>
+          <div className="mb-10 ml-10">Increment: {priceIncrement}</div>
         )}
 
         {false && shouldDisplayStandaloneOffset(typeId) && (
