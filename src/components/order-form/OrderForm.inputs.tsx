@@ -441,35 +441,35 @@ export default class OrderFormInputs extends React.Component<
             </div>
           </div>
         )}
-        {((false &&
-          shouldDisplayAdvancedGroups(typeId) &&
-          !shouldDisplayTPnSLGroups(typeId)) ||
-          shouldDisplayStopTriggerGroup(typeId)) && (
-          <div
-            className="d-flex d-justify-content-space-between"
-            style={{ marginBottom: 16 }}
-          >
-            <div className="d-flex d-align-items-center">
-              {shouldDisplayAdvancedGroups(typeId) &&
-                !shouldDisplayTPnSLGroups(typeId) && (
-                  <InputCheckboxInline
-                    value={this.state.showAdvanced}
-                    checked={this.state.showAdvanced}
-                    onChange={this.handleShowAdvancedChange}
-                    label="Display/Refresh"
-                  />
-                )}
+        {false &&
+          ((shouldDisplayAdvancedGroups(typeId) &&
+            !shouldDisplayTPnSLGroups(typeId)) ||
+            shouldDisplayStopTriggerGroup(typeId)) && (
+            <div
+              className="d-flex d-justify-content-space-between"
+              style={{ marginBottom: 16 }}
+            >
+              <div className="d-flex d-align-items-center">
+                {shouldDisplayAdvancedGroups(typeId) &&
+                  !shouldDisplayTPnSLGroups(typeId) && (
+                    <InputCheckboxInline
+                      value={this.state.showAdvanced}
+                      checked={this.state.showAdvanced}
+                      onChange={this.handleShowAdvancedChange}
+                      label="Display/Refresh"
+                    />
+                  )}
+              </div>
+              {shouldDisplayStopTriggerGroup(typeId) && (
+                <OrderFormStopTrigger
+                  enabledStopTrigger={enabledStopTrigger}
+                  onToggleStopTrigger={onToggleStopTrigger}
+                  selectedCloseTrigger={selectedCloseTrigger}
+                  onCloseTriggerOptionChange={onCloseTriggerOptionChange}
+                />
+              )}
             </div>
-            {shouldDisplayStopTriggerGroup(typeId) && (
-              <OrderFormStopTrigger
-                enabledStopTrigger={enabledStopTrigger}
-                onToggleStopTrigger={onToggleStopTrigger}
-                selectedCloseTrigger={selectedCloseTrigger}
-                onCloseTriggerOptionChange={onCloseTriggerOptionChange}
-              />
-            )}
-          </div>
-        )}
+          )}
         {false && shouldDisplayTPnSLGroups(typeId) && (
           <div className="mb-15 d-flex d-justify-content-space-between">
             <InputCheckboxInline
