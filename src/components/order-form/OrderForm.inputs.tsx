@@ -250,7 +250,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        {typeId === OrderType.BRACKET && (
+        {false && typeId === OrderType.BRACKET && (
           <div className="mb-10">
             <GroupInput
               type="numeric"
@@ -265,7 +265,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        {shouldDisplayStopPriceField(typeId) && (
+        {false && shouldDisplayStopPriceField(typeId) && (
           <div className="mb-10">
             <GroupInput
               value={stopPrice}
@@ -281,7 +281,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        {shouldDisplayLimitCrossField(typeId) && (
+        {false && shouldDisplayLimitCrossField(typeId) && (
           <div className="mb-10">
             <GroupInput
               type="numeric"
@@ -296,7 +296,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        {shouldDisplayPriceIncreAndOffset(typeId) && (
+        {false && shouldDisplayPriceIncreAndOffset(typeId) && (
           // <div className="mb-10 order-form__input-wraper--1-1">
           //   <OrderFormInputWithInfo
           //     pattern={priceRegex}
@@ -330,7 +330,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </>
         )}
-        {shouldDisplayStandaloneOffset(typeId) && (
+        {false && shouldDisplayStandaloneOffset(typeId) && (
           <div className="mb-10">
             <GroupInput
               type="numeric"
@@ -371,7 +371,7 @@ export default class OrderFormInputs extends React.Component<
             precision={getPriceDecimals(pair)}
           />
         </div>
-        {shouldDisplayLayers(typeId) && (
+        {false && shouldDisplayLayers(typeId) && (
           <div className="mb-10 order-form__layers">
             <div className="order-form__layers__label">Layers</div>
             <SelectDropdown
@@ -398,7 +398,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        {!hideBalanceSlider ? (
+        {false && !hideBalanceSlider ? (
           <div className="mb-10">
             {/* <OrderFormQuantityButtons
             balance={balance}
@@ -418,7 +418,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         ) : null}
-        {shouldDisplayTrailValueField(typeId) && (
+        {false && shouldDisplayTrailValueField(typeId) && (
           <div className="mb-10">
             <GroupInput
               value={trailValue}
@@ -429,7 +429,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        {shouldDisplayTIFOptions(typeId) && (
+        {false && shouldDisplayTIFOptions(typeId) && (
           <div className="mb-15 d-flex d-justify-content-space-between">
             <OrderFormTradeOptions
               orderType={typeId}
@@ -441,7 +441,8 @@ export default class OrderFormInputs extends React.Component<
             </div>
           </div>
         )}
-        {((shouldDisplayAdvancedGroups(typeId) &&
+        {((false &&
+          shouldDisplayAdvancedGroups(typeId) &&
           !shouldDisplayTPnSLGroups(typeId)) ||
           shouldDisplayStopTriggerGroup(typeId)) && (
           <div
@@ -469,7 +470,7 @@ export default class OrderFormInputs extends React.Component<
             )}
           </div>
         )}
-        {shouldDisplayTPnSLGroups(typeId) && (
+        {false && shouldDisplayTPnSLGroups(typeId) && (
           <div className="mb-15 d-flex d-justify-content-space-between">
             <InputCheckboxInline
               value={applyTPnSL}
@@ -496,7 +497,7 @@ export default class OrderFormInputs extends React.Component<
             )}
           </div>
         )}
-        {shouldDisplayTPnSLGroups(typeId) && applyTPnSL && (
+        {false && shouldDisplayTPnSLGroups(typeId) && applyTPnSL && (
           // <OrderFormCollapseArea
           //   title="Take Profit / Stop Loss"
           //   expandedTitle="Remove Take Profit / Stop Loss"
@@ -551,7 +552,7 @@ export default class OrderFormInputs extends React.Component<
           </>
           // </OrderFormCollapseArea>
         )}
-        {shouldDisplayTPnSLGroups(typeId) && applyTPnSL && (
+        {false && shouldDisplayTPnSLGroups(typeId) && applyTPnSL && (
           <div className="mb-15">
             <InputCheckboxInline
               value={this.state.showAdvanced}
@@ -561,7 +562,7 @@ export default class OrderFormInputs extends React.Component<
             />
           </div>
         )}
-        {this.state.showAdvanced && (
+        {false && this.state.showAdvanced && (
           <>
             <div className="order-form__input-wraper--2-1">
               <GroupInput
@@ -587,7 +588,7 @@ export default class OrderFormInputs extends React.Component<
             </div>
           </>
         )}
-        {shouldDisplayStandaloneStopPrice(typeId) && (
+        {false && shouldDisplayStandaloneStopPrice(typeId) && (
           <div className="mb-10">
             <OrderFormInputWithInfo
               inputClass="border-radius"
