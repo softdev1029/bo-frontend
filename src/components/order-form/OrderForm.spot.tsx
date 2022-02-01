@@ -160,10 +160,16 @@ class OrderFormSpotComponent extends React.Component<
         />
         <div className="btn-order__wrapper mb-10">
           <OrderSubmitButton
-            className={btnClass}
-            side={+selectedTab}
+            className={classNames("btn", "buy")}
+            side={OrderSide.BUY}
             onBtnClickFallback={this.sendOrder}
-            label={label}
+            label={"Buy"}
+          />
+          <OrderSubmitButton
+            className={classNames("btn", "sell")}
+            side={OrderSide.SELL}
+            onBtnClickFallback={this.sendOrder}
+            label={"Sell"}
           />
         </div>
         {/* <div className="d-flex font-size-11 d-justify-content-space-between font-semi-bold">
