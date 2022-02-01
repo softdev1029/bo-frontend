@@ -27,86 +27,59 @@ class CollasibleDateHeader extends React.PureComponent<
           <div className={`${this.state.className}__category__item`}>Put</div>
           <div className={`${this.state.className}__category__item`}>Call</div>
         </div>
-        <table>
-          <thead className={`${this.state.className}__header`}>
-            <tr>
-              {/* Calls Start */}
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Mark</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Open</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>IV (Bid)</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Ask</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Size</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Bid</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>IV (Ask)</span>
-                </div>
-              </th>
-              {/* Calls End */}
-              {/* Puts Start */}
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>IV (Bid)</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Bid</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Size</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Ask</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>IV (Ask)</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Open</span>
-                </div>
-              </th>
-              <th>
-                <div className={`${this.state.className}__header__item`}>
-                  <span>Mark</span>
-                </div>
-              </th>
-              {/* Puts End */}
-            </tr>
-          </thead>
-        </table>
+        <div className={`${this.state.className}__header`}>
+          <div className={`${this.state.className}__header__left`}>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Mark</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Open</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>IV (Bid)</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Ask</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Size</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Bid</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>IV (Ask)</span>
+            </div>
+          </div>
+          <div className={`${this.state.className}__header__center`}>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Strike</span>
+            </div>
+          </div>
+          <div className={`${this.state.className}__header__right`}>
+            <div className={`${this.state.className}__header__item`}>
+              <span>IV (Bid)</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Bid</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Size</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Ask</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>IV (Ask)</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Open</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Mark</span>
+            </div>
+          </div>
+        </div>
       </>
     );
   }
