@@ -22,216 +22,260 @@ class CollasibleDateList extends React.PureComponent<
   }
   render() {
     return (
-      <div className={`${this.state.className}__body`}>
+      <div className={`${this.state.className}__wrapper`}>
         <Collapsible title="01 Feb 2022" open={false}>
-          <table>
-            <tbody className={`${this.state.className}__list`}>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>15</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-              </tr>
-            </tbody>
-          </table>
-        </Collapsible>
-        <Collapsible title="31 Jan 2022" open={false}>
-          <table>
-            <tbody className={`${this.state.className}__list`}>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>15</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-              </tr>
-            </tbody>
-          </table>
-        </Collapsible>
-        <Collapsible title="30 Jan 2022" open={false}>
-          <table>
-            <tbody className={`${this.state.className}__list`}>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>15</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>2</td>
-                <td>3</td>
-                <td>4</td>
-                <td>5</td>
-                <td>6</td>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
-                <td>10</td>
-                <td>11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className={`${this.state.className}__body`}>
+            <div className={`${this.state.className}__body__left`}>
+              <div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
+              </div>
+            </div>
+            <div className={`${this.state.className}__body__center`}>
+              <div className={`${this.state.className}__body__item`}>
+                <span>30000</span>
+              </div>
+            </div>
+            <div className={`${this.state.className}__body__right`}>
+              <div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={`${this.state.className}__body`}>
+            <div className={`${this.state.className}__body__left`}>
+              <div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
+              </div>
+            </div>
+            <div className={`${this.state.className}__body__center`}>
+              <div className={`${this.state.className}__body__item`}>
+                <span>30000</span>
+              </div>
+            </div>
+            <div className={`${this.state.className}__body__right`}>
+              <div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={`${this.state.className}__body`}>
+            <div className={`${this.state.className}__body__left`}>
+              <div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
+              </div>
+            </div>
+            <div className={`${this.state.className}__body__center`}>
+              <div className={`${this.state.className}__body__item`}>
+                <span>30000</span>
+              </div>
+            </div>
+            <div className={`${this.state.className}__body__right`}>
+              <div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={`${this.state.className}__body`}>
+            <div className={`${this.state.className}__body__left`}>
+              <div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
+              </div>
+            </div>
+            <div className={`${this.state.className}__body__center`}>
+              <div className={`${this.state.className}__body__item`}>
+                <span>30000</span>
+              </div>
+            </div>
+            <div className={`${this.state.className}__body__right`}>
+              <div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </Collapsible>
       </div>
     );
@@ -245,7 +289,7 @@ const mapStateToProps = (state, props: Partial<CollasibleDateListProps>) => {
 const mapDispatchToProps = (dispatch) => ({
   loadBook: function ({ symbol, limit }: { symbol: string; limit?: number }) {
     // dispatch(initBook({ symbol, limit }));
-    // dispatch(subscribeMarketData({ symbol, limit }));
+    // dispatch(subscribe30000etData({ symbol, limit }));
     // dispatch(sendMDInfoReq({ symbol }));
   },
 });

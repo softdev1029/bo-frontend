@@ -5,7 +5,7 @@
   .oob__date__table {
     height: 100%;
 
-    &__body {
+    &__wrapper {
       height: calc(100% - 75px);
       overflow-y: scroll;
 
@@ -15,35 +15,129 @@
       }
     }
 
-    & table {
-      width: 100%;
-      text-align: center;
-      border-collapse: collapse;
+    &__body {
+      display: flex;
 
-      & th,
-      & td {
-        width: 6%;
-        min-width: 50px;
+      &:nth-child(odd) {
+        & .oob__date__table__body__left,
+        & .oob__date__table__body__right {
+          background-color: rgba(16, 40, 49, 0.8);
+          border-top: 1px solid #1a3b49;
+          border-left: 1px solid #1a3b49;
+
+          & > div {
+          }
+        }
+      }
+
+      &:nth-child(even) {
+        & .oob__date__table__body__left,
+        & .oob__date__table__body__right {
+          background-color: rgba(12, 27, 33, 0.8);
+          border-top: 1px solid #1a3b49;
+          border-left: 1px solid #1a3b49;
+        }
+      }
+
+      &__center {
+        background-color: #0c1b21;
+      }
+
+      &__left,
+      &__right {
+        flex: 1 1 0px;
+
+        & > div {
+          display: flex;
+          cursor: pointer;
+          position: relative;
+
+          & .oob__date__table__body__item {
+            border-right: 1px solid #1a3b49;
+            border-bottom: 1px solid #1a3b49;
+          }
+        }
+      }
+
+      &__item {
+        flex: 1 1;
+        height: 32px;
+        display: flex;
+        justify-content: center;
+        color: #ffffff;
+        display: flex;
+        padding: 0 4px;
+        padding-right: 6px;
+        font-size: 13px;
+        align-items: flex-end;
+        line-height: 13px;
+        flex-direction: column;
+        justify-content: center;
+
+        span:not(:first-of-type) {
+          color: #77949f;
+        }
+
+        span.down {
+          color: #eb5757;
+        }
+
+        span.up {
+          color: #32c47a;
+        }
+      }
+
+      &__center {
+        & .oob__date__table__body__item {
+          align-items: center;
+        }
+        width: 60px;
+        flex: 0 0 60px;
       }
     }
 
-    & > table {
+    &__header {
+      display: flex;
+      font-size: small;
+      min-height: 32px;
+      margin-bottom: 8px;
+
       line-height: 2.3333333333rem;
       border-radius: var(--border-radius);
       background-color: #3c3d3c;
       border: 1px solid #575757;
       box-shadow: 1px 1px 2px rgb(0 0 0 / 40%), -1px -1px 2px rgb(0 0 0 / 40%);
-      margin-bottom: 4px;
 
-      & .oob__date__table__header {
-        &__item {
-          padding: 4px 8px;
-          span {
-            display: block;
-            line-height: 1.8rem;
-            border-bottom: 1px white dashed;
-            color: white;
-          }
+      & > div {
+        display: flex;
+        align-items: center;
+      }
+
+      &__left,
+      &__right {
+        flex: 1 1;
+
+        & > div {
+          flex: 1 1;
+          text-align: center;
+          border-right: 1px solid transparent;
+          padding-right: 8px;
+          padding-left: 8px;
+        }
+      }
+
+      &__center {
+        text-align: center;
+      }
+
+      &__item {
+        min-width: 60px;
+
+        span {
+          display: block;
+          line-height: 1.8rem;
+          border-bottom: 1px white dashed;
+          color: white;
         }
       }
     }
