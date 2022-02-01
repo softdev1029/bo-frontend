@@ -7,6 +7,7 @@ import {
 import Chart from "../chart";
 import { MarketHistory } from "../market-history";
 import { BookSettingDropdown, OrderBook } from "../order-book";
+import { OptionOrderBook } from "../option-order-book";
 import { Trade } from "../trade";
 import { capitalize } from "@/exports";
 import { AppTradeType } from "@/constants/trade-type";
@@ -52,7 +53,7 @@ export function getCardInnerByKey(
     }
     case WorkspaceSettingEnum.ORDERBOOK: {
       return (
-        <OrderBook
+        <OptionOrderBook
           symbol={symbol}
           windowOpen={enableWindowPopup}
           tradeType={tradeType}

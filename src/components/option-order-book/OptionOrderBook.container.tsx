@@ -1,24 +1,15 @@
 import ResizeSensor from "@/ui-components/ResizeSensor";
 import React from "react";
 import { connect } from "react-redux";
-import { OrderBook } from "./OrderBook";
 import { OrderBookModel } from "@/models/book.model";
-import { getDisplayOrderBookData } from "./OrderBook.helpers";
-import {
-  initBook,
-  sendMDInfoReq,
-  subscribeMarketData,
-} from "@/actions/book.action";
-import {
-  getAsksSelector,
-  getBidsSelector,
-  getBookMaxSumsize,
-} from "@/selectors/book.selectors";
-import { getSetting } from "@/selectors/ui-setting.selectors";
-import { getLastPriceBySymbol } from "@/selectors/ticker.selectors";
 import { AppTradeType } from "@/constants/trade-type";
+import { initBook } from "@/actions/book.action";
+import { Collapsible } from "@/ui-components";
+import OptionOrderBook from "./OptionOrderBook";
 
-interface OrderBookContainerProps {
+import "./option-order-book.scss";
+
+interface OptionOrderBookContainerProps {
   symbol: string;
   lastPrice: number;
   bids: OrderBookModel[];
@@ -32,14 +23,14 @@ interface OrderBookContainerProps {
   tradeType: AppTradeType;
 }
 
-interface OrderBookContainerState {
+interface OptionOrderBookContainerState {
   width: number;
   height: number;
 }
 
-class OrderBookContainer extends React.PureComponent<
-  Partial<OrderBookContainerProps>,
-  OrderBookContainerState
+class OptionOrderBookContainer extends React.PureComponent<
+  Partial<OptionOrderBookContainerProps>,
+  OptionOrderBookContainerState
 > {
   state = {
     width: 0,
@@ -55,7 +46,7 @@ class OrderBookContainer extends React.PureComponent<
     });
   };
 
-  componentDidUpdate(prevProps: Partial<OrderBookContainerProps>) {
+  componentDidUpdate(prevProps: Partial<OptionOrderBookContainerProps>) {
     if (this.props.symbol !== prevProps.symbol) {
       const { symbol, loadBook } = this.props;
       loadBook({ symbol });
@@ -82,21 +73,14 @@ class OrderBookContainer extends React.PureComponent<
     } = this.props;
 
     const { width, height } = this.state;
-    const { bids, asks } = getDisplayOrderBookData({
-      bids: b,
-      asks: a,
-      width,
-      dualColumn,
-      height,
-    });
 
     const bookProps = {
       symbol,
       lastPrice,
       dualColumn,
       showDepth,
-      bids,
-      asks,
+      // bids,
+      // asks,
       maxSumSize,
       width,
       windowOpen,
@@ -104,26 +88,21 @@ class OrderBookContainer extends React.PureComponent<
       tradeType,
     };
 
-    console.log("bookProps: ", bookProps);
-
     return (
       <ResizeSensor onResize={this.onResize}>
-        <OrderBook {...bookProps} />
+        <div className="oob__container">
+          <OptionOrderBook className="oob__date__table" />
+        </div>
       </ResizeSensor>
     );
   }
 }
 
-const mapStateToProps = (state, props: Partial<OrderBookContainerProps>) => {
-  return {
-    lastPrice: getLastPriceBySymbol(state)(props.symbol),
-    bids: getBidsSelector(state),
-    asks: getAsksSelector(state),
-    maxSumSize: getBookMaxSumsize(state),
-    dualColumn: getSetting(state)("orderbook_dual_column"),
-    showDepth: getSetting(state)("orderbook_show_depth"),
-    enabled1Click: getSetting(state)("orderbook_1_click"),
-  };
+const mapStateToProps = (
+  state,
+  props: Partial<OptionOrderBookContainerProps>
+) => {
+  return {};
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -134,4 +113,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrderBookContainer);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OptionOrderBookContainer);
