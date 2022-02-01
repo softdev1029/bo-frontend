@@ -1,16 +1,24 @@
 .oob__container {
   height: 100%;
+  margin-top: 4px;
+
   .oob__date__table {
     height: 100%;
 
     &__body {
-      height: calc(100% - 48px);
+      height: calc(100% - 75px);
       overflow-y: scroll;
+
+      & .collapsible__contentInner {
+        padding-top: 4px;
+        padding-bottom: 4px;
+      }
     }
 
     & table {
       width: 100%;
       text-align: center;
+      border-collapse: collapse;
 
       & th,
       & td {
@@ -21,7 +29,6 @@
 
     & > table {
       line-height: 2.3333333333rem;
-      cursor: pointer;
       border-radius: var(--border-radius);
       background-color: #3c3d3c;
       border: 1px solid #575757;
@@ -35,7 +42,27 @@
             display: block;
             line-height: 1.8rem;
             border-bottom: 1px white dashed;
+            color: white;
           }
+        }
+      }
+    }
+
+    &__category {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 4px;
+
+      &__item {
+        width: 50%;
+        text-align: center;
+
+        font-size: 1.375rem;
+        line-height: 2rem;
+
+        &:last-child {
+          border-left: 2px solid #575757;
         }
       }
     }
@@ -43,7 +70,12 @@
     &__list {
       & > tr {
         line-height: 2rem;
+
+        & > td {
+          border: 1px solid;
+        }
       }
+
       & > tr:nth-child(even) {
         background-color: #575757;
       }

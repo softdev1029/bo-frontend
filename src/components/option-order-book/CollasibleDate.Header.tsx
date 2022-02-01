@@ -22,96 +22,92 @@ class CollasibleDateHeader extends React.PureComponent<
   }
   render() {
     return (
-      <table>
-        <thead className={`${this.state.className}__header`}>
-          <tr>
-            {/* Calls Start */}
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Size</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>IV (Bid)</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Bid</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Mark</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Ask</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>IV (Ask)</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Open</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Δ|Delta</span>
-              </div>
-            </th>
-            {/* Calls End */}
-            {/* Puts Start */}
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Size</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>IV (Bid)</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Bid</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Mark</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Ask</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>IV (Ask)</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Open</span>
-              </div>
-            </th>
-            <th>
-              <div className={`${this.state.className}__header__item`}>
-                <span>Δ|Delta</span>
-              </div>
-            </th>
-            {/* Puts End */}
-          </tr>
-        </thead>
-      </table>
+      <>
+        <div className={`${this.state.className}__category`}>
+          <div className={`${this.state.className}__category__item`}>Put</div>
+          <div className={`${this.state.className}__category__item`}>Call</div>
+        </div>
+        <table>
+          <thead className={`${this.state.className}__header`}>
+            <tr>
+              {/* Calls Start */}
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Mark</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Open</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>IV (Bid)</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Ask</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Size</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Bid</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>IV (Ask)</span>
+                </div>
+              </th>
+              {/* Calls End */}
+              {/* Puts Start */}
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>IV (Bid)</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Bid</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Size</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Ask</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>IV (Ask)</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Open</span>
+                </div>
+              </th>
+              <th>
+                <div className={`${this.state.className}__header__item`}>
+                  <span>Mark</span>
+                </div>
+              </th>
+              {/* Puts End */}
+            </tr>
+          </thead>
+        </table>
+      </>
     );
   }
 }
