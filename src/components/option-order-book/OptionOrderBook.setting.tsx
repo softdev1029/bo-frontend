@@ -6,6 +6,7 @@ import {
   Menu,
   MenuItem,
   SelectDropdown,
+  Button,
 } from "@/ui-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -74,9 +75,12 @@ const OptionBookSetting = ({ title, selectedSetting, selectOption }) => {
         <MenuItem
           content={
             <div className="d-flex d-justify-content-space-between w-100">
-              <button onClick={() => selectOption({ selected, date })}>
-                Test
-              </button>
+              <Button
+                classes="btn primary"
+                onClick={() => selectOption({ selected, date })}
+              >
+                Ok
+              </Button>
             </div>
           }
         />
