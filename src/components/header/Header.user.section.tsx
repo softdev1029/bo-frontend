@@ -61,7 +61,10 @@ const menuItems = [
 ];
 
 function asterisk(str: string): string {
-  return str.slice(0, 1) + "*".repeat(str.length - 1);
+  if (str) {
+    return str.slice(0, 1) + "*".repeat(str.length - 1);
+  }
+  return "***";
 }
 
 export const HeaderUserSection = () => {
