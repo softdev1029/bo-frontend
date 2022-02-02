@@ -29,6 +29,8 @@ import { getWalletIdFromName } from "@/constants/balance-enums";
 import { OrderEntry } from "@/models/order.model";
 import { getOrderEntries } from "@/selectors/order.selectors";
 
+import { IconButton } from "@/ui-components";
+
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 interface MainTradingGridProps {
@@ -260,6 +262,27 @@ class MainTradingGrid extends React.Component<
       <div className="react-grid-item__section">
         {key === WorkspaceSettingEnum.MARKET_HISTORY ? (
           item
+        ) : key === WorkspaceSettingEnum.ORDERBOOK ? (
+          <Card
+            cardIdentify={key}
+            title={title}
+            closable={true}
+            onClose={closeElement}
+            titleClickable={true}
+            rightTool={
+              <IconButton
+                id="cog"
+                onClick={() =>
+                  document
+                    .querySelector("#oob__container")
+                    .requestFullscreen({ navigationUI: "show" })
+                }
+              />
+            }
+            contentPadding={getCardContentPaddingByKey(key)}
+          >
+            {item}
+          </Card>
         ) : (
           <Card
             cardIdentify={key}

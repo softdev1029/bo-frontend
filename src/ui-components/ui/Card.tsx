@@ -14,6 +14,7 @@ interface CardProps {
   onClose?: (identiy?: any) => void;
   className?: string;
   contentPadding?: boolean;
+  titleClickable?: boolean;
 }
 
 const iconClass = [];
@@ -24,6 +25,7 @@ export const Card = ({
   className,
   rightTool,
   children,
+  titleClickable = false,
   resizable = true,
   draggable = true,
   closable,
@@ -54,7 +56,11 @@ export const Card = ({
     <div className={cardClass}>
       <div className={titleClass}>
         <div className="card__title h-100 d-flex d-align-items-center">
-          {title}
+          {!titleClickable ? (
+            title
+          ) : (
+            <span onClick={() => console.log(title)}>{title}</span>
+          )}
         </div>
         <div className="icons-right">
           {rightTool}

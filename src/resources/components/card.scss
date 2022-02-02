@@ -26,6 +26,10 @@
   .card__title {
     flex: 1;
     padding-left: rem(8);
+
+    & > span {
+      cursor: pointer;
+    }
   }
 
   .icons-right {
