@@ -5,6 +5,8 @@ import {
   TOGGLE_FAVOR_SYMBOL,
   UI_SET_ORDER,
   UPDATE_UI_SETTING,
+  SELECT_ORDER_OPTION,
+  SELECT_DATE_OPTION,
 } from "@/actions/ui-setting.actions";
 import { getDefaultUserSetting } from "@/exports";
 import _isNull from "lodash/isNull";
@@ -96,6 +98,24 @@ export const settingReducer = (state = initialState, action) => {
       };
 
       return nextState;
+    }
+    // Option
+    // Option type { selected, date }
+    case SELECT_ORDER_OPTION: {
+      const { key, option } = action.payload;
+
+      return {
+        ...state,
+        [key]: option,
+      };
+    }
+    case SELECT_DATE_OPTION: {
+      const { key, date } = action.payload;
+
+      return {
+        ...state,
+        [key]: date,
+      };
     }
     default:
       return state;

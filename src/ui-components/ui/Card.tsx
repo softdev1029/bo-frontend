@@ -1,7 +1,8 @@
 import React, { ReactNode, useCallback } from "react";
 import classNames from "classnames";
 import IconButton from "./IconButton";
-
+import { FixedDropdown, Menu, MenuItem, Dropdown } from "@/ui-components";
+import { OptionBookSettingDropdown } from "@/components/option-order-book/OptionOrderBook.setting";
 interface CardProps {
   cardIdentify?: any;
   children: ReactNode;
@@ -59,7 +60,7 @@ export const Card = ({
           {!titleClickable ? (
             title
           ) : (
-            <span onClick={() => console.log(title)}>{title}</span>
+            <OptionBookSettingDropdown title={title} />
           )}
         </div>
         <div className="icons-right">

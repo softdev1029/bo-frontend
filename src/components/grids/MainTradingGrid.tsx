@@ -269,16 +269,18 @@ class MainTradingGrid extends React.Component<
             closable={true}
             onClose={closeElement}
             titleClickable={true}
-            rightTool={
-              <IconButton
-                id="cog"
-                onClick={() =>
-                  document
-                    .querySelector("#oob__container")
-                    .requestFullscreen({ navigationUI: "show" })
-                }
-              />
-            }
+            className="order-book"
+            // rightTool={
+            //   <IconButton
+            //     id="cog"
+            //     onClick={() =>
+            //       document
+            //         .querySelector("#oob__container")
+            //         .requestFullscreen({ navigationUI: "show" })
+            //     }
+            //   />
+            // }
+            rightTool={getCardToolByKey(key)}
             contentPadding={getCardContentPaddingByKey(key)}
           >
             {item}

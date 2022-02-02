@@ -57,7 +57,7 @@ States:
   vertical-align: middle;
 }
 
-.cpn-dropdown .cpn-dropdown__content {
+.cpn-dropdown > .cpn-dropdown__content {
   margin-top: 0px;
   left: initial;
   right: 0;
@@ -139,6 +139,14 @@ States:
   .cpn-dropdown__arrow,
 .cpn-dropdown.show .cpn-dropdown__button .cpn-dropdown__arrow {
   transform: rotate(180deg);
+}
+
+.order-book .cpn-dropdown__button {
+  span {
+    display: flex;
+    align-items: center;
+    height: 28px;
+  }
 }
 
 /* 
