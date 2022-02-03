@@ -90,7 +90,7 @@ class OptionOrderBookContainer extends React.PureComponent<
 
     return (
       <ResizeSensor onResize={this.onResize}>
-        <div className="oob__container">
+        <div className="oob__container" id="oob__container">
           <OptionOrderBook className="oob__date__table" />
         </div>
       </ResizeSensor>

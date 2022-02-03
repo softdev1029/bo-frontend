@@ -5,6 +5,9 @@ import {
   TOGGLE_FAVOR_SYMBOL,
   UI_SET_ORDER,
   UPDATE_UI_SETTING,
+  SELECT_ORDER_OPTION,
+  SELECT_DATE_OPTION,
+  SET_FULLSCREEN_MODE,
 } from "@/actions/ui-setting.actions";
 import { getDefaultUserSetting } from "@/exports";
 import _isNull from "lodash/isNull";
@@ -97,6 +100,26 @@ export const settingReducer = (state = initialState, action) => {
 
       return nextState;
     }
+    // Option
+    // Option type { selected, date }
+    case SELECT_ORDER_OPTION: {
+      const { key, option } = action.payload;
+
+      return {
+        ...state,
+        [key]: option,
+      };
+    }
+
+    case SET_FULLSCREEN_MODE: {
+      const { key, status } = action.payload;
+
+      return {
+        ...state,
+        [key]: status,
+      };
+    }
+
     default:
       return state;
   }

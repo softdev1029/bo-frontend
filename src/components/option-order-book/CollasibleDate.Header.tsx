@@ -39,13 +39,16 @@ class CollasibleDateHeader extends React.PureComponent<
               <span>IV (Bid)</span>
             </div>
             <div className={`${this.state.className}__header__item`}>
-              <span>Ask</span>
-            </div>
-            <div className={`${this.state.className}__header__item`}>
               <span>Size</span>
             </div>
             <div className={`${this.state.className}__header__item`}>
               <span>Bid</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Ask</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Size</span>
             </div>
             <div className={`${this.state.className}__header__item`}>
               <span>IV (Ask)</span>
@@ -61,13 +64,16 @@ class CollasibleDateHeader extends React.PureComponent<
               <span>IV (Bid)</span>
             </div>
             <div className={`${this.state.className}__header__item`}>
-              <span>Bid</span>
-            </div>
-            <div className={`${this.state.className}__header__item`}>
               <span>Size</span>
             </div>
             <div className={`${this.state.className}__header__item`}>
+              <span>Bid</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
               <span>Ask</span>
+            </div>
+            <div className={`${this.state.className}__header__item`}>
+              <span>Size</span>
             </div>
             <div className={`${this.state.className}__header__item`}>
               <span>IV (Ask)</span>

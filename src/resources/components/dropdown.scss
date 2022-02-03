@@ -141,6 +141,14 @@ States:
   transform: rotate(180deg);
 }
 
+.order-book .cpn-dropdown__button {
+  span {
+    display: flex;
+    align-items: center;
+    height: 28px;
+  }
+}
+
 /* 
 Select Dropdown Component
 */

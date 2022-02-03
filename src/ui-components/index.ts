@@ -25,6 +25,7 @@ export {
   NumericInput,
   InputRadioInline,
   InputCheckboxInline,
+  InputDatePicker,
 } from "./ui/inputs";
 export { ScrollBar } from "./ui/ScrollBar";
 export { List, ListPerfectScrollbar } from "./ui/List";

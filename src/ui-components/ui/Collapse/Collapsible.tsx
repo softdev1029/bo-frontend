@@ -135,7 +135,7 @@ class Collapsible extends Component<
     }
 
     if (
-      prevState.height === "auto" &&
+      (prevState.height === "auto" || prevState.height > 0) &&
       this.state.shouldSwitchAutoOnNextCycle === true
     ) {
       // Set small timeout to ensure a true re-render
@@ -204,9 +204,11 @@ class Collapsible extends Component<
       this.props.handleTriggerClick(this.props.accordionPosition);
     } else {
       if (this.state.isClosed === true) {
+        console.log("----------", this.state.isClosed);
         this.openCollapsible();
         this.props.onOpening();
       } else {
+        console.log("**********", this.state.isClosed);
         this.closeCollapsible();
         this.props.onClosing();
       }
@@ -310,7 +312,8 @@ class Collapsible extends Component<
     );
     const outerClasses = classNames(
       `${this.props.classParentString}__contentOuter`,
-      this.props.contentOuterClassName
+      this.props.contentOuterClassName,
+      `${this.props.triggerDisabled ? "" : "is-disabled-collapsible"}`
     );
     const innerClasses = classNames(
       `${this.props.classParentString}__contentInner`,
