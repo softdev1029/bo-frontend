@@ -7,6 +7,7 @@ import {
   UPDATE_UI_SETTING,
   SELECT_ORDER_OPTION,
   SELECT_DATE_OPTION,
+  SET_FULLSCREEN_MODE,
 } from "@/actions/ui-setting.actions";
 import { getDefaultUserSetting } from "@/exports";
 import _isNull from "lodash/isNull";
@@ -109,14 +110,16 @@ export const settingReducer = (state = initialState, action) => {
         [key]: option,
       };
     }
-    case SELECT_DATE_OPTION: {
-      const { key, date } = action.payload;
+
+    case SET_FULLSCREEN_MODE: {
+      const { key, status } = action.payload;
 
       return {
         ...state,
-        [key]: date,
+        [key]: status,
       };
     }
+
     default:
       return state;
   }

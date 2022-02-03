@@ -185,6 +185,10 @@
         max-height: 100px;
         overflow-y: scroll;
         margin-top: 2.3rem;
+
+        &.is-disabled-collapsible {
+          max-height: none;
+        }
       }
     }
   }

@@ -6,6 +6,7 @@ export const TOGGLE_WORKSPACE_SETTING = "@ui/TOGGLE_WORKSPACE_SETTING";
 export const TOGGLE_FAVOR_SYMBOL = "@ui/TOGGLE_FAVOR_SYMBOL";
 export const SELECT_ORDER_OPTION = "@ui/SELECT_ORDER_OPTION";
 export const SELECT_DATE_OPTION = "@ui/SELECT_DATE_OPTION";
+export const SET_FULLSCREEN_MODE = "@ui/SET_FULLSCREEN_MODE";
 
 export function updateUISetting({ key, value, persist = false }) {
   return {
@@ -66,12 +67,14 @@ export function selectOption({ key, option, persist }) {
   };
 }
 
-export function selectDate({ key, date, persist }) {
+// Full Screen Mode
+
+export function setFullScreenMode({ key, status, persist }) {
   return {
-    type: SELECT_DATE_OPTION,
+    type: SET_FULLSCREEN_MODE,
     payload: {
       key,
-      date,
+      status,
       persist,
     },
   };

@@ -6,7 +6,6 @@ import {
   UI_SET_ORDER,
   UPDATE_UI_SETTING,
   SELECT_ORDER_OPTION,
-  SELECT_DATE_OPTION,
 } from "@/actions/ui-setting.actions";
 import { UI_SETTING_STORAGE_KEY } from "@/constants/storage-keys";
 import { RootState } from "@/models/root-state.model";
@@ -24,8 +23,7 @@ export const uiSettingEpic = (
       UI_SET_ORDER,
       TOGGLE_BOOLEAN_SETTING,
       TOGGLE_FAVOR_SYMBOL,
-      SELECT_ORDER_OPTION,
-      SELECT_DATE_OPTION
+      SELECT_ORDER_OPTION
     ),
     //@todo defined type
     filter((action) => action.payload.persist),

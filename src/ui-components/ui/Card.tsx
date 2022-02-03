@@ -2,7 +2,8 @@ import React, { ReactNode, useCallback } from "react";
 import classNames from "classnames";
 import IconButton from "./IconButton";
 import { FixedDropdown, Menu, MenuItem, Dropdown } from "@/ui-components";
-import { OptionBookSettingDropdown } from "@/components/option-order-book/OptionOrderBook.setting";
+import OptionBookSetting from "@/components/option-order-book/OptionOrderBook.setting";
+
 interface CardProps {
   cardIdentify?: any;
   children: ReactNode;
@@ -57,11 +58,7 @@ export const Card = ({
     <div className={cardClass}>
       <div className={titleClass}>
         <div className="card__title h-100 d-flex d-align-items-center">
-          {!titleClickable ? (
-            title
-          ) : (
-            <OptionBookSettingDropdown title={title} />
-          )}
+          {!titleClickable ? title : <OptionBookSetting />}
         </div>
         <div className="icons-right">
           {rightTool}

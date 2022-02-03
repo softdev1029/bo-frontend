@@ -21,7 +21,10 @@ import {
   getCardNameByKey,
   omitWorkspace,
 } from "./MainTradingGrid.helpers";
-import { toggleWorkspaceSetting } from "@/actions/ui-setting.actions";
+import {
+  setFullScreenMode,
+  toggleWorkspaceSetting,
+} from "@/actions/ui-setting.actions";
 import { Card } from "@/ui-components";
 import { isUserLoggedIn } from "@/selectors/auth.selectors";
 import { OrderForm } from "../order-form";
@@ -42,6 +45,7 @@ interface MainTradingGridProps {
   breakpoints: object;
   layouts: object;
   orderEntries: OrderEntry[];
+  setFullScreenMode: (status: boolean, persist?: boolean) => void;
 }
 
 interface MainTradingGridState {
@@ -270,17 +274,17 @@ class MainTradingGrid extends React.Component<
             onClose={closeElement}
             titleClickable={true}
             className="order-book"
-            // rightTool={
-            //   <IconButton
-            //     id="cog"
-            //     onClick={() =>
-            //       document
-            //         .querySelector("#oob__container")
-            //         .requestFullscreen({ navigationUI: "show" })
-            //     }
-            //   />
-            // }
-            rightTool={getCardToolByKey(key)}
+            rightTool={
+              <IconButton
+                id="cog"
+                onClick={() =>
+                  document
+                    .querySelector("#oob__container")
+                    .requestFullscreen({ navigationUI: "show" })
+                }
+              />
+            }
+            // rightTool={getCardToolByKey(key)}
             contentPadding={getCardContentPaddingByKey(key)}
           >
             {item}
@@ -302,8 +306,22 @@ class MainTradingGrid extends React.Component<
   }
 
   componentDidMount() {
+    const { setFullScreenMode } = this.props;
+    document.addEventListener("fullscreenchange", function () {
+      var full_screen_ele = document.fullscreenElement;
+
+      if (full_screen_ele !== null) setFullScreenMode(true);
+      else setFullScreenMode(false);
+    });
+
     this.setState({
       mounted: true,
+    });
+  }
+
+  componentWillUnmount(): void {
+    document.removeEventListener("fullscreenchange", function () {
+      console.log("Successfully removed");
     });
   }
 
@@ -347,6 +365,15 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   closeElement: function (key: WorkspaceSettingEnum, persist = false) {
     dispatch(toggleWorkspaceSetting({ key, persist }));
+  },
+  setFullScreenMode: function (status?: boolean, persist = false) {
+    dispatch(
+      setFullScreenMode({
+        key: "set_fullscreen_mode",
+        status,
+        persist,
+      })
+    );
   },
 });
 

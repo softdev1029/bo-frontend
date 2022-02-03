@@ -1,14 +1,13 @@
-import { selectDate, selectOption } from "@/actions/ui-setting.actions";
+import { selectOption } from "@/actions/ui-setting.actions";
 import { getSetting } from "@/selectors/ui-setting.selectors";
 import {
   FixedDropdown,
-  InputDatePicker,
   Menu,
   MenuItem,
   SelectDropdown,
   Button,
 } from "@/ui-components";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Symbols } from "@/models/order.model";
 
@@ -16,7 +15,7 @@ interface OptionType {
   value: string;
   label: string;
 }
-const OptionBookSetting = ({ title, selectedSetting, selectOption }) => {
+const OptionBookSetting = ({ selectedOption, selectOption }) => {
   const options = [
     {
       value: Symbols.OPTION,
@@ -32,17 +31,32 @@ const OptionBookSetting = ({ title, selectedSetting, selectOption }) => {
     },
   ];
 
+  const date_options = [
+    {
+      value: "01 Feb 2022",
+      label: "01 Feb 2022",
+    },
+    {
+      value: "01 Feb 2022",
+      label: "01 Feb 2022",
+    },
+    {
+      value: "01 Feb 2022",
+      label: "01 Feb 2022",
+    },
+  ];
+
   const [selected, setSelected] = useState<OptionType | undefined>(undefined);
-  const [date, setDate] = useState<string | number>("");
+  const [date, setDate] = useState<OptionType | undefined>(undefined);
 
   let titleText = "Order Book";
-  if (selectedSetting) {
-    titleText = `${selectedSetting.selected?.value} - ${selectedSetting.date}`;
+  if (selectedOption) {
+    titleText = `${
+      selectedOption.selected === undefined
+        ? "Order Book "
+        : selectedOption.selected?.value
+    } - ${selectedOption.date === undefined ? "" : selectedOption.date.value}`;
   }
-
-  const handleDateChange = (date: string | number) => {
-    setDate(date);
-  };
 
   return (
     <FixedDropdown
@@ -54,6 +68,7 @@ const OptionBookSetting = ({ title, selectedSetting, selectOption }) => {
         <MenuItem
           content={
             <div>
+              <label htmlFor="">Option</label>
               <SelectDropdown
                 options={options}
                 value={selected}
@@ -64,10 +79,12 @@ const OptionBookSetting = ({ title, selectedSetting, selectOption }) => {
         />
         <MenuItem
           content={
-            <div className="d-flex d-justify-content-space-between w-100">
-              <InputDatePicker
-                className="w-100"
-                onChange={(date) => handleDateChange(date)}
+            <div>
+              <label htmlFor="">Expiration Date</label>
+              <SelectDropdown
+                options={date_options}
+                value={date}
+                onChange={(option) => setDate(option as OptionType)}
               />
             </div>
           }
@@ -90,14 +107,11 @@ const OptionBookSetting = ({ title, selectedSetting, selectOption }) => {
 };
 
 const mapStateToProps = (state) => ({
-  scrollable: getSetting(state)("orderbook_scrollable"),
-  selectedSetting: getSetting(state)("option_ordersetting"),
+  selectedOption: getSetting(state)("option_ordersetting"),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   selectOption: function (option, persist?: boolean) {
-    console.log(option.date);
-
     dispatch(
       selectOption({
         key: "option_ordersetting",
@@ -108,7 +122,4 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-export const OptionBookSettingDropdown = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OptionBookSetting);
+export default connect(mapStateToProps, mapDispatchToProps)(OptionBookSetting);
