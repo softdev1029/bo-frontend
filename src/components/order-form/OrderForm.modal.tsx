@@ -53,6 +53,7 @@ interface OrderFormModalProps extends Partial<OrderFormInputDataFlows> {
 class OrderFormModal extends React.Component<OrderFormModalProps, any> {
   constructor(props) {
     super(props);
+    console.log("PROPS: ", props);
     this.state = {
       layers: Object.values(ICELayers)
         .filter((v) => !isNaN(+v))
@@ -112,6 +113,7 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
       trailValue,
       onStopPriceChange,
       onAmountChange,
+      onAccept,
       onUpdateAmountByBalancePercent,
       onPriceChange,
       onOrderTypeChange,
@@ -228,13 +230,13 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
             <OrderFormInputWithInfo
               pattern={priceRegex}
               placeholder="Price Increment"
-              value={priceIncrement || ""}
+              value={priceIncrement}
               onChange={onPriceIncrementChange}
             />
             <OrderFormInputWithInfo
               pattern={priceRegex}
               placeholder="Offset"
-              value={offset || ""}
+              value={offset}
               onChange={onOffsetChange}
             />
           </div>
@@ -251,6 +253,7 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
         )}
         <div className="mb-10">
           <GroupInput
+            type="numeric"
             value={amount}
             pattern={amountRegex}
             onChange={onAmountChange}
@@ -370,7 +373,7 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
   }
 
   render() {
-    const { popupId } = this.props;
+    const { popupId, onAccept } = this.props;
 
     return (
       <ConfirmModal
@@ -380,6 +383,7 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
         useLegacyBtns={true}
         cancelText="Cancel"
         okText="Save"
+        onAccept={onAccept}
         // popupData={this.getCurrentValue()}
       >
         {this.renderBody}

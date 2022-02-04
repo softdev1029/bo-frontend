@@ -155,7 +155,8 @@ class OrderFormSpotComponent extends React.Component<
           balance={balanceAmount}
           side={+selectedTab}
           errors={errors}
-          {...this.props}
+          // {...this.props}
+          orderTypes={this.props.orderTypes}
           onOrderTypeChange={this.onOrderTypeChange}
         />
         <div className="btn-order__wrapper mb-10">

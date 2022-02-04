@@ -47,6 +47,7 @@ import {
 import _get from "lodash/get";
 import { CallPutOption } from "@/models/order.model";
 import { getLabelOrderType } from "@/exports/order.utils";
+import { connect } from "react-redux";
 
 const takeProfitStopLossOptions = [
   {
@@ -59,7 +60,7 @@ const takeProfitStopLossOptions = [
   },
 ];
 
-export default class OrderFormInputs extends React.Component<
+class OrderFormInputs extends React.Component<
   Partial<OrderFormInputDataFlows>,
   any
 > {
@@ -84,6 +85,10 @@ export default class OrderFormInputs extends React.Component<
     this.onLayerChange = this.onLayerChange.bind(this);
     this.onChangeExpiryDate = this.onChangeExpiryDate.bind(this);
     this.onCallPutChange = this.onCallPutChange.bind(this);
+  }
+
+  componentDidMount(): void {
+    console.log("this.props.orderFormInfo: ", this.props.orderFormInfo);
   }
 
   onLayerChange({ value }) {
@@ -119,23 +124,23 @@ export default class OrderFormInputs extends React.Component<
     const {
       orderTypes,
       side,
-      pair,
-      typeId,
-      price,
-      amount,
-      stopPrice,
-      tif,
+      // pair,
+      // typeId,
+      // price,
+      // amount,
+      // stopPrice,
+      // tif,
       balance,
-      tradeOptions,
-      applyTPnSL,
-      secondLegPrice,
-      stopLoss,
-      takeProfit,
-      takeProfitTradePriceType,
-      stopLossTradePriceType,
-      takeProfitStopLossType,
-      trailValue,
-      total,
+      // tradeOptions,
+      // applyTPnSL,
+      // secondLegPrice,
+      // stopLoss,
+      // takeProfit,
+      // takeProfitTradePriceType,
+      // stopLossTradePriceType,
+      // takeProfitStopLossType,
+      // trailValue,
+      // total,
       onStopPriceChange,
       onAmountChange,
       onUpdateAmountByBalancePercent,
@@ -149,30 +154,61 @@ export default class OrderFormInputs extends React.Component<
       onApplyTPnSLChange,
       onStopLossChange,
       onTakeProfitChange,
-      enabledStopTrigger,
+      // enabledStopTrigger,
       onToggleStopTrigger,
       selectedCloseTrigger,
       onCloseTriggerOptionChange,
       onTrailValueChange,
-      offset,
+      // offset,
       onOffsetChange,
-      priceIncrement,
+      // priceIncrement,
       onPriceIncrementChange,
-      qtyIncrement,
-      selectedLayer,
+      // qtyIncrement,
+      // selectedLayer,
       onQtyIncrementChange,
       tradeType,
-      displaySize,
+      // displaySize,
       onDisplaySizeChange,
-      refreshSize,
+      // refreshSize,
       onRefreshSizeChange,
       onTotalChange,
       onSecondLegPriceChange,
       hideBalanceSlider,
-      limitCross,
+      // limitCross,
       onLimitCrossChange,
       errors,
     } = this.props;
+
+    const {
+      pair,
+      isTradeLoaded,
+      price,
+      stopPrice,
+      amount,
+      typeId,
+      total,
+      fund,
+      applyTPnSL,
+      takeProfitTradePriceType,
+      stopLossTradePriceType,
+      takeProfitStopLossType,
+      stopLoss,
+      takeProfit,
+      tif,
+      tradeOptions,
+      leverage,
+      displaySize,
+      refreshSize,
+      enabledStopTrigger,
+      selectedStopTrigger,
+      trailValue,
+      offset,
+      priceIncrement,
+      selectedLayer,
+      qtyIncrement,
+      secondLegPrice,
+      limitCross,
+    } = this.props.orderFormInfo;
 
     const [base, quote] = getSymbols(pair);
     const decimalPlacePrice = getPriceDecimals(pair);
@@ -578,3 +614,13 @@ export default class OrderFormInputs extends React.Component<
     );
   }
 }
+
+const mapStateToProps = (state, props) => {
+  return {
+    orderFormInfo: state.orderForm,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(OrderFormInputs);

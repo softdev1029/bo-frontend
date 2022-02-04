@@ -162,7 +162,12 @@ export interface OrderFormControlsProps {
   hidden: boolean;
   activeTradeTabTitle: string;
   order?: OrderItem;
-  onPriceChange: (typeId, price) => void;
+  // onPriceChange: (price: number) => void;
+  // onStopPriceChange: (price: number) => void;
+  // onAmountChange: (amount: number) => void;
+  // onTotalChange: (total: number) => void;
+  onOrderTypeChange: (value: number) => void;
+  onAccept: (orderFormInfo: Record<string, any>) => void;
 }
 
 export type AdditionPopupData = {
@@ -187,6 +192,8 @@ export type OrderFormInputDataFlows = OrderFormControlsState & {
   onPriceChange: (price: number) => void;
   onStopPriceChange: (price: number) => void;
   onAmountChange: (amount: number) => void;
+  orderFormInfo: Record<string, any>;
+  onAccept?: (orderFormInfo: Record<string, any>) => void;
   onOrderBtnClick: (
     clientId: number,
     data?: AdditionPopupData,

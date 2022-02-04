@@ -10,10 +10,22 @@ import {
   StopTrigger,
   TradeOption,
 } from "@/constants/system-enums";
-import { getAttributesByOrderTradeOptions } from "@/components/order-form/OrderForm.helpers";
+import {
+  getAttributesByOrderTradeOptions,
+  getPickedPrice,
+} from "@/components/order-form/OrderForm.helpers";
 import { divide, multiply } from "@/exports/math";
 
-import { ON_PRICE_CHANGE } from "@/actions/order-form.actions";
+import {
+  ON_ACCEPT,
+  ON_AMOUNT_CHANGE,
+  ON_ORDER_TYPE_CHANGE,
+  ON_PRICE_CHANGE,
+  ON_STOP_PRICE_CHANGE,
+  ON_TOTAL_CHANGE,
+} from "@/actions/order-form.actions";
+import { getAmountDecimals } from "@/exports/ticker.utils";
+import { sliceTo } from "@/exports/format-number";
 
 const initialState: OrderFormModel = {
   pair: "",
@@ -46,17 +58,92 @@ const initialState: OrderFormModel = {
   limitCross: 0,
 };
 
+const initTickerPrice: number = 0;
+
 export const orderFormReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ON_PRICE_CHANGE: {
-      const { price, persist } = action.payload;
-      const total = +multiply(state.amount, price);
+    // case ON_PRICE_CHANGE: {
+    //   const { price, persist } = action.payload;
+    //   const total = +multiply(state.amount, price);
 
-      return {
-        ...state,
-        price,
-        total,
-      };
+    //   return {
+    //     ...state,
+    //     price,
+    //     total,
+    //   };
+    // }
+    // case ON_STOP_PRICE_CHANGE: {
+    //   const { price, persist } = action.payload;
+    //   const total = +multiply(state.amount, price);
+
+    //   return {
+    //     ...state,
+    //     stopPrice: price,
+    //     total,
+    //   };
+    // }
+    // case ON_AMOUNT_CHANGE: {
+    //   const { amount, persist } = action.payload;
+
+    //   const tickerPrice = getPickedPrice({
+    //     typeId: state.typeId,
+    //     tickerPrice: initTickerPrice,
+    //     price: state.price,
+    //     stopPrice: state.stopPrice,
+    //   });
+
+    //   const total = +multiply(+amount, tickerPrice);
+
+    //   const changed = { total };
+    //   if (state.typeId === OrderType.ICE) {
+    //     changed["qtyIncrement"] = divide(+state.amount, state.selectedLayer);
+    //   }
+
+    //   return {
+    //     ...state,
+    //     amount,
+    //     total,
+    //   };
+    // }
+    // case ON_TOTAL_CHANGE: {
+    //   const { total, persist } = action.payload;
+
+    //   const decimalPlaceAmount = getAmountDecimals(state.pair);
+    //   const tickerPrice = getPickedPrice({
+    //     typeId: state.typeId,
+    //     tickerPrice: initTickerPrice,
+    //     price: state.price,
+    //     stopPrice: state.stopPrice,
+    //   });
+
+    //   if (Number(tickerPrice)) {
+    //     let amount = +sliceTo(
+    //       +divide(Number(total), tickerPrice),
+    //       decimalPlaceAmount
+    //     );
+    //     return {
+    //       ...state,
+    //       amount,
+    //     };
+    //   }
+
+    //   return {
+    //     ...state,
+    //     total,
+    //   };
+    // }
+    // case ON_ORDER_TYPE_CHANGE: {
+    //   const { value } = action.payload;
+
+    //   return {
+    //     ...state,
+    //     typeId: value,
+    //   };
+    // }
+    case ON_ACCEPT: {
+      const { orderFormInfo } = action.payload;
+
+      return { ...state, ...orderFormInfo };
     }
     default:
       return state;

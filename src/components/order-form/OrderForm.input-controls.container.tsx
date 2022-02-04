@@ -35,7 +35,14 @@ import { Subscription } from "rxjs";
 import _get from "lodash/get";
 
 import { connect } from "react-redux";
-import { onPriceChange } from "@/actions/order-form.actions";
+import {
+  onAccept,
+  onAmountChange,
+  onOrderTypeChange,
+  onPriceChange,
+  onStopPriceChange,
+  onTotalChange,
+} from "@/actions/order-form.actions";
 
 class OrderFormInputControlsContainer extends React.PureComponent<
   Partial<OrderFormControlsProps>,
@@ -92,7 +99,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     this.tickerPrice = this.props.initialPrice;
 
     this._onOrderBookTransferData = this._onOrderBookTransferData.bind(this);
-    // this.onPriceChange = this.onPriceChange.bind(this);
+    this.onPriceChange = this.onPriceChange.bind(this);
     this.onStopPriceChange = this.onStopPriceChange.bind(this);
     this.onAmountChange = this.onAmountChange.bind(this);
     this.onOrderBtnClick = this.onOrderBtnClick.bind(this);
@@ -124,6 +131,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     this.onQtyIncrementChange = this.onQtyIncrementChange.bind(this);
     this.onSecondLegPriceChange = this.onSecondLegPriceChange.bind(this);
     this.onLimitCrossChange = this.onLimitCrossChange.bind(this);
+    this.handleConfirmOrderForm = this.handleConfirmOrderForm.bind(this);
   }
 
   onLayerChange(layer: ICELayers) {
@@ -255,19 +263,19 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     this.setState({ tif });
   }
 
-  // onPriceChange(price: number) {
-  //   const { typeId } = this.state;
+  onPriceChange(price: number) {
+    const { typeId } = this.state;
 
-  //   this.setState({ price }, () => {
-  //     if (isMarketOrder(typeId) || this.state.amount === undefined) return;
-  //     // const total = Number(this.state.amount) * Number(this.state.price)
-  //     const total = +multiply(this.state.amount, this.state.price);
+    this.setState({ price }, () => {
+      if (isMarketOrder(typeId) || this.state.amount === undefined) return;
+      // const total = Number(this.state.amount) * Number(this.state.price)
+      const total = +multiply(this.state.amount, this.state.price);
 
-  //     this.setState({
-  //       total,
-  //     });
-  //   });
-  // }
+      this.setState({
+        total,
+      });
+    });
+  }
 
   onStopPriceChange(price: number) {
     const { typeId } = this.state;
@@ -603,6 +611,11 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     );
   }
 
+  handleConfirmOrderForm() {
+    console.log("onAccept: ", this.state);
+    this.props.onAccept({ ...this.state });
+  }
+
   render() {
     const {
       mmr,
@@ -627,7 +640,8 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       orderTypes,
       isAuthenticated,
       immediateSubmit,
-      onPriceChange: this.props.onPriceChange,
+      onPriceChange: this.onPriceChange,
+      onAccept: this.handleConfirmOrderForm,
       onStopPriceChange: this.onStopPriceChange,
       onAmountChange: this.onAmountChange,
       onOrderBtnClick: this.onOrderBtnClick,
@@ -666,10 +680,10 @@ const mapStateToProps = () => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  onPriceChange: function (price, persist = false) {
+  onAccept: function (orderFormInfo, persist = false) {
     dispatch(
-      onPriceChange({
-        price,
+      onAccept({
+        orderFormInfo,
         persist,
       })
     );
