@@ -53,7 +53,6 @@ interface OrderFormModalProps extends Partial<OrderFormInputDataFlows> {
 class OrderFormModal extends React.Component<OrderFormModalProps, any> {
   constructor(props) {
     super(props);
-    console.log("PROPS: ", props);
     this.state = {
       layers: Object.values(ICELayers)
         .filter((v) => !isNaN(+v))
@@ -86,10 +85,6 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
     this.setState((state) => {
       return { ...state, selectedCallPutOption: value };
     });
-  }
-
-  componentDidMount(): void {
-    console.log("this.typeId", this.props.typeId);
   }
 
   renderBody({ renderButtons }): ReactNode {

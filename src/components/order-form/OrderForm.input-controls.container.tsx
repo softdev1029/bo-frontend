@@ -612,7 +612,6 @@ class OrderFormInputControlsContainer extends React.PureComponent<
   }
 
   handleConfirmOrderForm() {
-    console.log("onAccept: ", this.state);
     this.props.onAccept({ ...this.state });
   }
 
