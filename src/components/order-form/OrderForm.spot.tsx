@@ -225,7 +225,7 @@ const mapStateToProps = (state, props) => {};
 
 const mapDispatchToProps = (dispatch) => ({
   showModal: function (id, component, props) {
-    console.log("1111=", component);
+    // console.log("1111=", component);
     dispatch(showModal(id, component, props));
   },
   closePopup(id) {

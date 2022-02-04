@@ -18,6 +18,7 @@ import { uiSettingEpic } from "./ui-setting.epics";
 import { instrumentRequestEpic } from "./ticker.epics";
 import { initBookEpic } from "./book.epics";
 import { initTradeEpic } from "./trade.epics";
+import { orderFormEpic } from "./order-form.epics";
 
 export const rootEpic = {
   adminRisk,
@@ -39,4 +40,5 @@ export const rootEpic = {
   instrumentRequestEpic,
   initBookEpic,
   initTradeEpic,
+  orderFormEpic,
 };

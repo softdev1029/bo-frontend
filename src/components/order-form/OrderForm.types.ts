@@ -162,6 +162,7 @@ export interface OrderFormControlsProps {
   hidden: boolean;
   activeTradeTabTitle: string;
   order?: OrderItem;
+  onPriceChange: (typeId, price) => void;
 }
 
 export type AdditionPopupData = {

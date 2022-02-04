@@ -1,6 +1,7 @@
 import { LocationChangeAction, RouterState } from "connected-react-router";
 import { Reducer } from "redux";
 import { AuthReducerState } from "./auth-reducer-state";
+import { OrderFormModel } from "./order-form.model";
 import { TickerState } from "./ticker-state.model";
 import { WSReducerState } from "./ws-reducer-state";
 
@@ -15,4 +16,5 @@ export interface RootState {
   trade: Reducer<any>; // @todo: define reducer
   order: Reducer<any>; // @todo: define reducer
   ticker: Reducer<TickerState>;
+  orderForm: Reducer<OrderFormModel>;
 }

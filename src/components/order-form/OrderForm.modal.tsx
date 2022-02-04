@@ -87,6 +87,10 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
     });
   }
 
+  componentDidMount(): void {
+    console.log("this.typeId", this.props.typeId);
+  }
+
   renderBody({ renderButtons }): ReactNode {
     const { layers } = this.state;
 
@@ -289,23 +293,23 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
           />
         </div>
         {/* 
-  {shouldDisplayTIFOptions(typeId) && (
-    <div className="mb-10 d-flex d-justify-content-space-between">
-      <InputCheckboxInline
-        value={OrderType.HIDDEN}
-        checked={typeId === OrderType.HIDDEN}
-        onChange={onOrderTypeChange}
-        label="Hidden"
-      />
-      <OrderFormTradeOptions
-        orderType={typeId}
-        selectedOptions={tradeOptions}
-        onTradeOptionChange={onTradeOptionChange}
-      />
-      <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
-    </div>
-  )}
-  */}
+          {shouldDisplayTIFOptions(typeId) && (
+            <div className="mb-10 d-flex d-justify-content-space-between">
+              <InputCheckboxInline
+                value={OrderType.HIDDEN}
+                checked={typeId === OrderType.HIDDEN}
+                onChange={onOrderTypeChange}
+                label="Hidden"
+              />
+              <OrderFormTradeOptions
+                orderType={typeId}
+                selectedOptions={tradeOptions}
+                onTradeOptionChange={onTradeOptionChange}
+              />
+              <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
+            </div>
+          )}
+        */}
         {shouldDisplayStopTriggerGroup(typeId) && (
           <OrderFormStopTrigger
             enabledStopTrigger={enabledStopTrigger}

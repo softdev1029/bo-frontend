@@ -33,6 +33,10 @@ import { sliceTo } from "@/exports/format-number";
 import { getOrderBookObservable } from "../order-book/OrderBook.subject";
 import { Subscription } from "rxjs";
 import _get from "lodash/get";
+
+import { connect } from "react-redux";
+import { onPriceChange } from "@/actions/order-form.actions";
+
 class OrderFormInputControlsContainer extends React.PureComponent<
   Partial<OrderFormControlsProps>,
   OrderFormControlsState
@@ -88,7 +92,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     this.tickerPrice = this.props.initialPrice;
 
     this._onOrderBookTransferData = this._onOrderBookTransferData.bind(this);
-    this.onPriceChange = this.onPriceChange.bind(this);
+    // this.onPriceChange = this.onPriceChange.bind(this);
     this.onStopPriceChange = this.onStopPriceChange.bind(this);
     this.onAmountChange = this.onAmountChange.bind(this);
     this.onOrderBtnClick = this.onOrderBtnClick.bind(this);
@@ -251,19 +255,19 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     this.setState({ tif });
   }
 
-  onPriceChange(price: number) {
-    const { typeId } = this.state;
+  // onPriceChange(price: number) {
+  //   const { typeId } = this.state;
 
-    this.setState({ price }, () => {
-      if (isMarketOrder(typeId) || this.state.amount === undefined) return;
-      // const total = Number(this.state.amount) * Number(this.state.price)
-      const total = +multiply(this.state.amount, this.state.price);
+  //   this.setState({ price }, () => {
+  //     if (isMarketOrder(typeId) || this.state.amount === undefined) return;
+  //     // const total = Number(this.state.amount) * Number(this.state.price)
+  //     const total = +multiply(this.state.amount, this.state.price);
 
-      this.setState({
-        total,
-      });
-    });
-  }
+  //     this.setState({
+  //       total,
+  //     });
+  //   });
+  // }
 
   onStopPriceChange(price: number) {
     const { typeId } = this.state;
@@ -623,7 +627,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       orderTypes,
       isAuthenticated,
       immediateSubmit,
-      onPriceChange: this.onPriceChange,
+      onPriceChange: this.props.onPriceChange,
       onStopPriceChange: this.onStopPriceChange,
       onAmountChange: this.onAmountChange,
       onOrderBtnClick: this.onOrderBtnClick,
@@ -657,4 +661,22 @@ class OrderFormInputControlsContainer extends React.PureComponent<
   }
 }
 
-export default OrderFormInputControlsContainer;
+const mapStateToProps = () => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  onPriceChange: function (price, persist = false) {
+    dispatch(
+      onPriceChange({
+        price,
+        persist,
+      })
+    );
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OrderFormInputControlsContainer);

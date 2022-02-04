@@ -11,6 +11,7 @@ import { tickerReducer as ticker } from "./ticker.reducer";
 import { tradeReducer as trade } from "./trade.reducer";
 import { bookReducer as book } from "./book.reducer";
 import { orderReducer as order } from "./order.reducer";
+import { orderFormReducer as orderForm } from "./order-form.reducer";
 
 export const rootReducer: RootState = {
   // connected-router
@@ -24,4 +25,5 @@ export const rootReducer: RootState = {
   setting,
   balance,
   book,
+  orderForm,
 };
