@@ -62,12 +62,6 @@ const mapStateToProps = (state, props: Partial<CollasibleDateListProps>) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  loadBook: function ({ symbol, limit }: { symbol: string; limit?: number }) {
-    // dispatch(initBook({ symbol, limit }));
-    // dispatch(subscribe30000etData({ symbol, limit }));
-    // dispatch(sendMDInfoReq({ symbol }));
-  },
-});
+const mapDispatchToProps = (dispatch) => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(CollasibleDateList);
