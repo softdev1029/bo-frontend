@@ -28,311 +28,93 @@ class CollasibleDate extends React.PureComponent<
   }
 
   handleOrderTableClick() {
-    this.props.showModal("order-tabel-modal-popup", OrderFormModal, {
-      popupId: "order-tabel-modal-popup",
-      typeId: OrderType.LIMIT,
-    });
+    // this.props.showModal("order-tabel-modal-popup", OrderFormModal, {
+    //   popupId: "order-tabel-modal-popup",
+    //   typeId: OrderType.LIMIT,
+    // });
   }
 
   render() {
     return (
       <>
         {/* <Collapsible title="01 Feb 2022" open={false}> */}
-        <div className={`${this.state.className}__body`}>
-          <div
-            className={`${this.state.className}__body__left`}
-            onClick={this.handleOrderTableClick}
-          >
-            <div>
-              <div className={`${this.state.className}__body__item mark`}>
-                <span>0.0731</span>
-                <span>98.18%</span>
+        {new Array(10).fill(0).map((item) => (
+          <div className={`${this.state.className}__body`}>
+            <div
+              className={`${this.state.className}__body__left`}
+              onClick={this.handleOrderTableClick}
+            >
+              <div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
               </div>
-              <div className={`${this.state.className}__body__item open`}>
-                <span>11.3</span>
+            </div>
+            <div className={`${this.state.className}__body__center`}>
+              <div className={`${this.state.className}__body__item`}>
+                <span>30000</span>
               </div>
-              <div className={`${this.state.className}__body__item iv_bid`}>
-                <span>68.1%</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item bid`}>
-                <span className="up">0.0010</span>
-                <span>$38.90</span>
-              </div>
-              <div className={`${this.state.className}__body__item ask`}>
-                <span className="down">0.0605</span>
-                <span>$2351.70</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_ask`}>
-                <span>-</span>
+            </div>
+            <div
+              className={`${this.state.className}__body__right`}
+              onClick={this.handleOrderTableClick}
+            >
+              <div>
+                <div className={`${this.state.className}__body__item iv_bid`}>
+                  <span>68.1%</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item bid`}>
+                  <span className="up">0.0010</span>
+                  <span>$38.90</span>
+                </div>
+                <div className={`${this.state.className}__body__item ask`}>
+                  <span className="down">0.0605</span>
+                  <span>$2351.70</span>
+                </div>
+                <div className={`${this.state.className}__body__item size`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item iv_ask`}>
+                  <span>-</span>
+                </div>
+                <div className={`${this.state.className}__body__item open`}>
+                  <span>11.3</span>
+                </div>
+                <div className={`${this.state.className}__body__item mark`}>
+                  <span>0.0731</span>
+                  <span>98.18%</span>
+                </div>
               </div>
             </div>
           </div>
-          <div className={`${this.state.className}__body__center`}>
-            <div className={`${this.state.className}__body__item`}>
-              <span>30000</span>
-            </div>
-          </div>
-          <div
-            className={`${this.state.className}__body__right`}
-            onClick={this.handleOrderTableClick}
-          >
-            <div>
-              <div className={`${this.state.className}__body__item iv_bid`}>
-                <span>68.1%</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item bid`}>
-                <span className="up">0.0010</span>
-                <span>$38.90</span>
-              </div>
-              <div className={`${this.state.className}__body__item ask`}>
-                <span className="down">0.0605</span>
-                <span>$2351.70</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_ask`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item open`}>
-                <span>11.3</span>
-              </div>
-              <div className={`${this.state.className}__body__item mark`}>
-                <span>0.0731</span>
-                <span>98.18%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className={`${this.state.className}__body`}>
-          <div className={`${this.state.className}__body__left`}>
-            <div>
-              <div className={`${this.state.className}__body__item mark`}>
-                <span>0.0731</span>
-                <span>98.18%</span>
-              </div>
-              <div className={`${this.state.className}__body__item open`}>
-                <span>11.3</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_bid`}>
-                <span>68.1%</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item bid`}>
-                <span className="up">0.0010</span>
-                <span>$38.90</span>
-              </div>
-              <div className={`${this.state.className}__body__item ask`}>
-                <span className="down">0.0605</span>
-                <span>$2351.70</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_ask`}>
-                <span>-</span>
-              </div>
-            </div>
-          </div>
-          <div className={`${this.state.className}__body__center`}>
-            <div className={`${this.state.className}__body__item`}>
-              <span>30000</span>
-            </div>
-          </div>
-          <div className={`${this.state.className}__body__right`}>
-            <div>
-              <div className={`${this.state.className}__body__item iv_bid`}>
-                <span>68.1%</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item bid`}>
-                <span className="up">0.0010</span>
-                <span>$38.90</span>
-              </div>
-              <div className={`${this.state.className}__body__item ask`}>
-                <span className="down">0.0605</span>
-                <span>$2351.70</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_ask`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item open`}>
-                <span>11.3</span>
-              </div>
-              <div className={`${this.state.className}__body__item mark`}>
-                <span>0.0731</span>
-                <span>98.18%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className={`${this.state.className}__body`}>
-          <div className={`${this.state.className}__body__left`}>
-            <div>
-              <div className={`${this.state.className}__body__item mark`}>
-                <span>0.0731</span>
-                <span>98.18%</span>
-              </div>
-              <div className={`${this.state.className}__body__item open`}>
-                <span>11.3</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_bid`}>
-                <span>68.1%</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item bid`}>
-                <span className="up">0.0010</span>
-                <span>$38.90</span>
-              </div>
-              <div className={`${this.state.className}__body__item ask`}>
-                <span className="down">0.0605</span>
-                <span>$2351.70</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_ask`}>
-                <span>-</span>
-              </div>
-            </div>
-          </div>
-          <div className={`${this.state.className}__body__center`}>
-            <div className={`${this.state.className}__body__item`}>
-              <span>30000</span>
-            </div>
-          </div>
-          <div className={`${this.state.className}__body__right`}>
-            <div>
-              <div className={`${this.state.className}__body__item iv_bid`}>
-                <span>68.1%</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item bid`}>
-                <span className="up">0.0010</span>
-                <span>$38.90</span>
-              </div>
-              <div className={`${this.state.className}__body__item ask`}>
-                <span className="down">0.0605</span>
-                <span>$2351.70</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_ask`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item open`}>
-                <span>11.3</span>
-              </div>
-              <div className={`${this.state.className}__body__item mark`}>
-                <span>0.0731</span>
-                <span>98.18%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className={`${this.state.className}__body`}>
-          <div className={`${this.state.className}__body__left`}>
-            <div>
-              <div className={`${this.state.className}__body__item mark`}>
-                <span>0.0731</span>
-                <span>98.18%</span>
-              </div>
-              <div className={`${this.state.className}__body__item open`}>
-                <span>11.3</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_bid`}>
-                <span>68.1%</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item bid`}>
-                <span className="up">0.0010</span>
-                <span>$38.90</span>
-              </div>
-              <div className={`${this.state.className}__body__item ask`}>
-                <span className="down">0.0605</span>
-                <span>$2351.70</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_ask`}>
-                <span>-</span>
-              </div>
-            </div>
-          </div>
-          <div className={`${this.state.className}__body__center`}>
-            <div className={`${this.state.className}__body__item`}>
-              <span>30000</span>
-            </div>
-          </div>
-          <div className={`${this.state.className}__body__right`}>
-            <div>
-              <div className={`${this.state.className}__body__item iv_bid`}>
-                <span>68.1%</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item bid`}>
-                <span className="up">0.0010</span>
-                <span>$38.90</span>
-              </div>
-              <div className={`${this.state.className}__body__item ask`}>
-                <span className="down">0.0605</span>
-                <span>$2351.70</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item iv_ask`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item size`}>
-                <span>-</span>
-              </div>
-              <div className={`${this.state.className}__body__item open`}>
-                <span>11.3</span>
-              </div>
-              <div className={`${this.state.className}__body__item mark`}>
-                <span>0.0731</span>
-                <span>98.18%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* </Collapsible> */}
+        ))}
       </>
     );
   }
