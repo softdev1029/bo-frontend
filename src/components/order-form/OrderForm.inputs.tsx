@@ -87,10 +87,6 @@ class OrderFormInputs extends React.Component<
     this.onCallPutChange = this.onCallPutChange.bind(this);
   }
 
-  componentDidMount(): void {
-    console.log("this.props.orderFormInfo: ", this.props.orderFormInfo);
-  }
-
   onLayerChange({ value }) {
     const { onLayerChange } = this.props;
 

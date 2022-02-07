@@ -1,9 +1,13 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { connect } from "react-redux";
 import { Collapsible } from "@/ui-components";
+import { showModal } from "@/actions/app.actions";
+import { OrderType } from "@/constants/system-enums";
+import OrderFormModal from "../order-form/OrderForm.modal";
 
 interface CollasibleDateProps {
   className?: string;
+  showModal: (mid: string, component: ReactNode, props) => void;
 }
 
 interface CollasibleDateState {
@@ -19,13 +23,26 @@ class CollasibleDate extends React.PureComponent<
     this.state = {
       className: this.props.className,
     };
+
+    this.handleOrderTableClick = this.handleOrderTableClick.bind(this);
   }
+
+  handleOrderTableClick() {
+    this.props.showModal("order-tabel-modal-popup", OrderFormModal, {
+      popupId: "order-tabel-modal-popup",
+      typeId: OrderType.LIMIT,
+    });
+  }
+
   render() {
     return (
       <>
         {/* <Collapsible title="01 Feb 2022" open={false}> */}
         <div className={`${this.state.className}__body`}>
-          <div className={`${this.state.className}__body__left`}>
+          <div
+            className={`${this.state.className}__body__left`}
+            onClick={this.handleOrderTableClick}
+          >
             <div>
               <div className={`${this.state.className}__body__item mark`}>
                 <span>0.0731</span>
@@ -61,7 +78,10 @@ class CollasibleDate extends React.PureComponent<
               <span>30000</span>
             </div>
           </div>
-          <div className={`${this.state.className}__body__right`}>
+          <div
+            className={`${this.state.className}__body__right`}
+            onClick={this.handleOrderTableClick}
+          >
             <div>
               <div className={`${this.state.className}__body__item iv_bid`}>
                 <span>68.1%</span>
@@ -323,7 +343,12 @@ const mapStateToProps = (state, props: Partial<CollasibleDateProps>) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    showModal: function (id, component, props) {
+      // console.log("1111=", component);
+      dispatch(showModal(id, component, props));
+    },
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CollasibleDate);
