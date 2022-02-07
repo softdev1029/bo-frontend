@@ -38,8 +38,8 @@ class CollasibleDate extends React.PureComponent<
     return (
       <>
         {/* <Collapsible title="01 Feb 2022" open={false}> */}
-        {new Array(10).fill(0).map((item) => (
-          <div className={`${this.state.className}__body`}>
+        {new Array(10).fill(0).map((item, index) => (
+          <div className={`${this.state.className}__body`} key={index}>
             <div
               className={`${this.state.className}__body__left`}
               onClick={this.handleOrderTableClick}
