@@ -204,11 +204,9 @@ class Collapsible extends Component<
       this.props.handleTriggerClick(this.props.accordionPosition);
     } else {
       if (this.state.isClosed === true) {
-        console.log("----------", this.state.isClosed);
         this.openCollapsible();
         this.props.onOpening();
       } else {
-        console.log("**********", this.state.isClosed);
         this.closeCollapsible();
         this.props.onClosing();
       }

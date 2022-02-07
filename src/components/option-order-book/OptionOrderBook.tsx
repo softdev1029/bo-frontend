@@ -37,12 +37,6 @@ const mapStateToProps = (state, props: Partial<OptionOrderBookProps>) => {
   return {};
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  loadBook: function ({ symbol, limit }: { symbol: string; limit?: number }) {
-    // dispatch(initBook({ symbol, limit }));
-    // dispatch(subscribeMarketData({ symbol, limit }));
-    // dispatch(sendMDInfoReq({ symbol }));
-  },
-});
+const mapDispatchToProps = (dispatch) => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(OptionOrderBook);

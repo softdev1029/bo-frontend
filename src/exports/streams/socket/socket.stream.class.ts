@@ -196,7 +196,6 @@ export class StreamingWS {
       map((closeEvent: CloseEvent) => {
         this.websocketSubject = null;
         this.isCreated = false;
-        console.log("closing id", this._id);
         SingletonWSManager.removeInstance(this._id);
 
         return of(wsDisconnected({ id: this._id, errorCode: closeEvent.code }));

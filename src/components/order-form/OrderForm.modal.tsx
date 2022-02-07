@@ -108,6 +108,7 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
       trailValue,
       onStopPriceChange,
       onAmountChange,
+      onAccept,
       onUpdateAmountByBalancePercent,
       onPriceChange,
       onOrderTypeChange,
@@ -224,13 +225,13 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
             <OrderFormInputWithInfo
               pattern={priceRegex}
               placeholder="Price Increment"
-              value={priceIncrement || ""}
+              value={priceIncrement}
               onChange={onPriceIncrementChange}
             />
             <OrderFormInputWithInfo
               pattern={priceRegex}
               placeholder="Offset"
-              value={offset || ""}
+              value={offset}
               onChange={onOffsetChange}
             />
           </div>
@@ -247,6 +248,7 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
         )}
         <div className="mb-10">
           <GroupInput
+            type="numeric"
             value={amount}
             pattern={amountRegex}
             onChange={onAmountChange}
@@ -289,23 +291,23 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
           />
         </div>
         {/* 
-  {shouldDisplayTIFOptions(typeId) && (
-    <div className="mb-10 d-flex d-justify-content-space-between">
-      <InputCheckboxInline
-        value={OrderType.HIDDEN}
-        checked={typeId === OrderType.HIDDEN}
-        onChange={onOrderTypeChange}
-        label="Hidden"
-      />
-      <OrderFormTradeOptions
-        orderType={typeId}
-        selectedOptions={tradeOptions}
-        onTradeOptionChange={onTradeOptionChange}
-      />
-      <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
-    </div>
-  )}
-  */}
+          {shouldDisplayTIFOptions(typeId) && (
+            <div className="mb-10 d-flex d-justify-content-space-between">
+              <InputCheckboxInline
+                value={OrderType.HIDDEN}
+                checked={typeId === OrderType.HIDDEN}
+                onChange={onOrderTypeChange}
+                label="Hidden"
+              />
+              <OrderFormTradeOptions
+                orderType={typeId}
+                selectedOptions={tradeOptions}
+                onTradeOptionChange={onTradeOptionChange}
+              />
+              <OrderFormTIFOptions selected={tif} onTIFChange={onTIFChange} />
+            </div>
+          )}
+        */}
         {shouldDisplayStopTriggerGroup(typeId) && (
           <OrderFormStopTrigger
             enabledStopTrigger={enabledStopTrigger}
@@ -366,7 +368,7 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
   }
 
   render() {
-    const { popupId } = this.props;
+    const { popupId, onAccept } = this.props;
 
     return (
       <ConfirmModal
@@ -376,6 +378,7 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
         useLegacyBtns={true}
         cancelText="Cancel"
         okText="Save"
+        onAccept={onAccept}
         // popupData={this.getCurrentValue()}
       >
         {this.renderBody}

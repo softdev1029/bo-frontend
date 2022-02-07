@@ -155,7 +155,8 @@ class OrderFormSpotComponent extends React.Component<
           balance={balanceAmount}
           side={+selectedTab}
           errors={errors}
-          {...this.props}
+          // {...this.props}
+          orderTypes={this.props.orderTypes}
           onOrderTypeChange={this.onOrderTypeChange}
         />
         <div className="btn-order__wrapper mb-10">
@@ -225,7 +226,7 @@ const mapStateToProps = (state, props) => {};
 
 const mapDispatchToProps = (dispatch) => ({
   showModal: function (id, component, props) {
-    console.log("1111=", component);
+    // console.log("1111=", component);
     dispatch(showModal(id, component, props));
   },
   closePopup(id) {

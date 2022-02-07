@@ -33,6 +33,17 @@ import { sliceTo } from "@/exports/format-number";
 import { getOrderBookObservable } from "../order-book/OrderBook.subject";
 import { Subscription } from "rxjs";
 import _get from "lodash/get";
+
+import { connect } from "react-redux";
+import {
+  onAccept,
+  onAmountChange,
+  onOrderTypeChange,
+  onPriceChange,
+  onStopPriceChange,
+  onTotalChange,
+} from "@/actions/order-form.actions";
+
 class OrderFormInputControlsContainer extends React.PureComponent<
   Partial<OrderFormControlsProps>,
   OrderFormControlsState
@@ -120,6 +131,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     this.onQtyIncrementChange = this.onQtyIncrementChange.bind(this);
     this.onSecondLegPriceChange = this.onSecondLegPriceChange.bind(this);
     this.onLimitCrossChange = this.onLimitCrossChange.bind(this);
+    this.handleConfirmOrderForm = this.handleConfirmOrderForm.bind(this);
   }
 
   onLayerChange(layer: ICELayers) {
@@ -599,6 +611,10 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     );
   }
 
+  handleConfirmOrderForm() {
+    this.props.onAccept({ ...this.state });
+  }
+
   render() {
     const {
       mmr,
@@ -624,6 +640,7 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       isAuthenticated,
       immediateSubmit,
       onPriceChange: this.onPriceChange,
+      onAccept: this.handleConfirmOrderForm,
       onStopPriceChange: this.onStopPriceChange,
       onAmountChange: this.onAmountChange,
       onOrderBtnClick: this.onOrderBtnClick,
@@ -657,4 +674,22 @@ class OrderFormInputControlsContainer extends React.PureComponent<
   }
 }
 
-export default OrderFormInputControlsContainer;
+const mapStateToProps = () => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  onAccept: function (orderFormInfo, persist = false) {
+    dispatch(
+      onAccept({
+        orderFormInfo,
+        persist,
+      })
+    );
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OrderFormInputControlsContainer);
