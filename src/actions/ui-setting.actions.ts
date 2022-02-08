@@ -57,8 +57,6 @@ export function toggleWorkspaceSetting({ key, persist }) {
 // Option OrderBook
 
 export function selectOption({ key, option, persist }) {
-  console.log("option:", option);
-
   return {
     type: SELECT_ORDER_OPTION,
     payload: {
