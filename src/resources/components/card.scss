@@ -47,6 +47,6 @@
   height: calc(100% - 36px); // 36px = 28px (header's height) + 8px(margin)
   position: relative;
   &.card__content__padding {
-    margin: 0 rem(8) 8px rem(8);
+    margin: 0 rem(8) 4px rem(8);
   }
 }

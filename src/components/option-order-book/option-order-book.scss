@@ -6,8 +6,13 @@
     height: 100%;
 
     &__wrapper {
-      height: calc(100% - 75px);
+      height: calc(100% - 70px);
       overflow-y: scroll;
+      overflow-x: hidden;
+
+      .collapsible {
+        max-height: inherit;
+      }
 
       & .collapsible__contentInner {
         padding-top: 4px;
@@ -177,14 +182,21 @@
       margin-bottom: 4px;
 
       .collapsible__header__container {
-        position: absolute;
+        // position: absolute;
+        position: relative;
+        z-index: 99;
         width: 100%;
+
+        & ~ div {
+          position: relative !important;
+          transform: translate(0px, 0px) !important;
+        }
       }
 
       .collapsible__contentOuter {
-        max-height: 100px;
+        // max-height: 250px;
+        // height: 250px !important;
         overflow-y: scroll;
-        margin-top: 2.3rem;
 
         &.is-disabled-collapsible {
           max-height: none;

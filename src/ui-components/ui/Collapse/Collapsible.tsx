@@ -1,6 +1,8 @@
 import React, { Component, ReactNode } from "react";
 import classNames from "classnames";
 import { Icon } from "../Icon";
+import { Rnd } from "react-rnd";
+import { RndBox } from "../RndBox";
 
 interface CollapsibleProps {
   className?: string;
@@ -43,6 +45,7 @@ interface CollapsibleProps {
   overlay?: ReactNode;
   closeOverlay?: () => void;
   isDraggable: boolean;
+  resizable?: boolean;
 }
 
 interface CollapsibleState {
@@ -92,6 +95,7 @@ class Collapsible extends Component<
     onClosing: () => {},
     tabIndex: null,
     isDraggable: false,
+    resizable: false,
   };
 
   innerRef = null;
@@ -382,37 +386,73 @@ class Collapsible extends Component<
 
         {this.renderNonClickableTriggerElement()}
 
-        <div
-          className={outerClasses}
-          style={{ ...dropdownStyle }}
-          // style={{...dropdownStyle, paddingTop: 10}}
-          onTransitionEnd={this.handleTransitionEnd}
-        >
-          <div
-            className={innerClasses}
-            ref={this.setInnerRef}
-            style={{
-              position: "relative",
-            }}
-          >
-            {children}
-            {this.props.overlay && (
-              <CollapsibleOverlay
-                classParentString={this.props.classParentString}
+        {this.props.resizable ? (
+          <RndBox dragAxis="y" disableDragging={true}>
+            <div
+              className={outerClasses}
+              style={{ ...dropdownStyle }}
+              // style={{...dropdownStyle, paddingTop: 10}}
+              onTransitionEnd={this.handleTransitionEnd}
+            >
+              <div
+                className={innerClasses}
+                ref={this.setInnerRef}
+                style={{
+                  position: "relative",
+                }}
               >
-                {this.props.overlay}
-              </CollapsibleOverlay>
+                {children}
+                {this.props.overlay && (
+                  <CollapsibleOverlay
+                    classParentString={this.props.classParentString}
+                  >
+                    {this.props.overlay}
+                  </CollapsibleOverlay>
+                )}
+              </div>
+
+              {this.props.footer && (
+                <div
+                  className={`${this.props.classParentString}__footer__container`}
+                >
+                  {this.props.footer}
+                </div>
+              )}
+            </div>
+          </RndBox>
+        ) : (
+          <div
+            className={outerClasses}
+            style={{ ...dropdownStyle }}
+            // style={{...dropdownStyle, paddingTop: 10}}
+            onTransitionEnd={this.handleTransitionEnd}
+          >
+            <div
+              className={innerClasses}
+              ref={this.setInnerRef}
+              style={{
+                position: "relative",
+              }}
+            >
+              {children}
+              {this.props.overlay && (
+                <CollapsibleOverlay
+                  classParentString={this.props.classParentString}
+                >
+                  {this.props.overlay}
+                </CollapsibleOverlay>
+              )}
+            </div>
+
+            {this.props.footer && (
+              <div
+                className={`${this.props.classParentString}__footer__container`}
+              >
+                {this.props.footer}
+              </div>
             )}
           </div>
-
-          {this.props.footer && (
-            <div
-              className={`${this.props.classParentString}__footer__container`}
-            >
-              {this.props.footer}
-            </div>
-          )}
-        </div>
+        )}
       </div>
     );
   }
