@@ -1,7 +1,7 @@
 import { showModal } from "@/actions/app.actions";
 import { createNewOrderEntry } from "@/actions/order.actions";
 import { getSetting } from "@/selectors/ui-setting.selectors";
-import { Dropdown, DropdownPosition, Icon, Menu } from "@/ui-components";
+import { Dropdown, DropdownPosition, Icon, Menu, toast } from "@/ui-components";
 import React from "react";
 import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -19,8 +19,8 @@ const HeaderMenuSectionProvider = ({ showModal }) => {
   const handleAcceptNewTab = () => {
     const tabCount = sessionStorage.getItem("tabCount");
 
-    if (tabCount === "5") {
-      alert("The maximum tab count is 5");
+    if (tabCount === "1") {
+      toast.error("The maximum tab count is 5");
       return;
     }
     if (tabCount) {
