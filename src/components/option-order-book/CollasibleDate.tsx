@@ -28,16 +28,15 @@ class CollasibleDate extends React.PureComponent<
   }
 
   handleOrderTableClick() {
-    // this.props.showModal("order-tabel-modal-popup", OrderFormModal, {
-    //   popupId: "order-tabel-modal-popup",
-    //   typeId: OrderType.LIMIT,
-    // });
+    this.props.showModal("order-tabel-modal-popup", OrderFormModal, {
+      popupId: "order-tabel-modal-popup",
+      typeId: OrderType.LIMIT,
+    });
   }
 
   render() {
     return (
       <>
-        {/* <Collapsible title="01 Feb 2022" open={false}> */}
         {new Array(10).fill(0).map((item, index) => (
           <div className={`${this.state.className}__body`} key={index}>
             <div
