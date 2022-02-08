@@ -1,11 +1,12 @@
 import { showModal } from "@/actions/app.actions";
 import { createNewOrderEntry } from "@/actions/order.actions";
-import { getSetting } from "@/selectors/ui-setting.selectors";
 import { Dropdown, DropdownPosition, Icon, Menu, toast } from "@/ui-components";
 import React from "react";
 import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import HeaderModal from "./Header.modal";
+
+import { useBeforeunload } from "react-beforeunload";
 
 const HeaderMenuSectionProvider = ({ showModal }) => {
   const dispatch = useDispatch();
@@ -16,17 +17,27 @@ const HeaderMenuSectionProvider = ({ showModal }) => {
     </div>
   );
 
+  useBeforeunload((ev) => {
+    const tabCount = sessionStorage.getItem("tabCount");
+
+    if (tabCount && parseInt(tabCount) > 0) {
+      sessionStorage.setItem("tabCount", (parseInt(tabCount) - 1).toString());
+    } else {
+      sessionStorage.setItem("tabCount", "0");
+    }
+  });
+
   const handleAcceptNewTab = () => {
     const tabCount = sessionStorage.getItem("tabCount");
 
-    if (tabCount === "1") {
+    if (tabCount === "5") {
       toast.error("The maximum tab count is 5");
       return;
     }
-    if (tabCount) {
-      sessionStorage.setItem("tabCount", (parseInt(tabCount) + 1).toString());
+    if (!tabCount || tabCount === "0") {
+      sessionStorage.setItem("tabCount", "2");
     } else {
-      sessionStorage.setItem("tabCount", "1");
+      sessionStorage.setItem("tabCount", (parseInt(tabCount) + 1).toString());
     }
     window.open(window.location.pathname, "_blank");
   };

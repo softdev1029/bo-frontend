@@ -1,7 +1,13 @@
 import { selectOption } from "@/actions/ui-setting.actions";
 import { Symbols } from "@/models/order.model";
 import { getSetting } from "@/selectors/ui-setting.selectors";
-import { ConfirmModal, Menu, MenuItem, SelectDropdown } from "@/ui-components";
+import {
+  ConfirmModal,
+  Menu,
+  MenuItem,
+  SelectDropdown,
+  toast,
+} from "@/ui-components";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 
@@ -85,11 +91,14 @@ const HeaderModal = ({ popupId, onAccept, selectOption }: HeaderModalProps) => {
   };
 
   const handleAccept = () => {
-    if (onAccept) {
-      onAccept();
+    if (selected && date) {
+      if (onAccept) {
+        onAccept();
+      }
+      selectOption({ selected, date });
+    } else {
+      toast.error("We need to select Option & Expiration Date as well");
     }
-
-    selectOption({ selected, date });
   };
 
   return (
