@@ -30,16 +30,33 @@ class CollasibleDateList extends React.PureComponent<
           title="01 Feb 2022"
           open={true}
           triggerDisabled={!this.props.fullscreenMode}
-          resizable={!this.props.fullscreenMode}
+          resizable={this.props.fullscreenMode}
         >
           <CollapibleDate className={this.state.className} />
         </Collapsible>
         {!!this.props.fullscreenMode && (
           <>
+<<<<<<< HEAD
             <Collapsible title="01 Feb 2022" open={true}>
               <CollapibleDate className={this.state.className} />
             </Collapsible>
             <Collapsible title="01 Feb 2022" open={true}>
+=======
+            <Collapsible
+              title="01 Feb 2022"
+              open={true}
+              triggerDisabled={false}
+              resizable={this.props.fullscreenMode}
+            >
+              <CollapibleDate className={this.state.className} />
+            </Collapsible>
+            <Collapsible
+              title="01 Feb 2022"
+              open={true}
+              resizable={this.props.fullscreenMode}
+              // triggerDisabled={!!this.props.fullscreenMode}
+            >
+>>>>>>> T41: Update the resizable table
               <CollapibleDate className={this.state.className} />
             </Collapsible>
           </>
