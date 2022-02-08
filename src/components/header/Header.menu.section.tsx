@@ -1,10 +1,13 @@
+import { showModal } from "@/actions/app.actions";
 import { createNewOrderEntry } from "@/actions/order.actions";
+import { getSetting } from "@/selectors/ui-setting.selectors";
 import { Dropdown, DropdownPosition, Icon, Menu } from "@/ui-components";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import HeaderModal from "./Header.modal";
 
-export const HeaderMenuSection = () => {
+const HeaderMenuSectionProvider = ({ showModal }) => {
   const dispatch = useDispatch();
 
   const title = (
@@ -12,6 +15,30 @@ export const HeaderMenuSection = () => {
       <div className="username">Main Menu</div>
     </div>
   );
+
+  const handleAcceptNewTab = () => {
+    const tabCount = sessionStorage.getItem("tabCount");
+
+    if (tabCount === "5") {
+      alert("The maximum tab count is 5");
+      return;
+    }
+    if (tabCount) {
+      sessionStorage.setItem("tabCount", (parseInt(tabCount) + 1).toString());
+    } else {
+      sessionStorage.setItem("tabCount", "1");
+    }
+    window.open(window.location.pathname, "_blank");
+  };
+
+  const handleDisplayModal = () => {
+    showModal("option-modal-menu-popup", HeaderModal, {
+      popupId: "option-modal-menu-popup",
+      onAccept: () => {
+        handleAcceptNewTab();
+      },
+    });
+  };
 
   return (
     <Dropdown
@@ -42,7 +69,30 @@ export const HeaderMenuSection = () => {
             <span className="font-bold">Chart</span>
           </Link>
         </div>
+        <div className="account__content_item">
+          <Link to="#">
+            <Icon id="external-link" cssmodule="fal" />
+            <span className="font-bold" onClick={handleDisplayModal}>
+              Open New Tab
+            </span>
+          </Link>
+        </div>
       </Menu>
     </Dropdown>
   );
 };
+
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    showModal: function (id, component, props) {
+      dispatch(showModal(id, component, props));
+    },
+  };
+};
+
+export const HeaderMenuSection = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HeaderMenuSectionProvider);
