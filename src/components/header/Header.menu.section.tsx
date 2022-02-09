@@ -1,10 +1,14 @@
+import { showModal } from "@/actions/app.actions";
 import { createNewOrderEntry } from "@/actions/order.actions";
-import { Dropdown, DropdownPosition, Icon, Menu } from "@/ui-components";
+import { Dropdown, DropdownPosition, Icon, Menu, toast } from "@/ui-components";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import HeaderModal from "./Header.modal";
 
-export const HeaderMenuSection = () => {
+import { useBeforeunload } from "react-beforeunload";
+
+const HeaderMenuSectionProvider = ({ showModal }) => {
   const dispatch = useDispatch();
 
   const title = (
@@ -12,6 +16,40 @@ export const HeaderMenuSection = () => {
       <div className="username">Main Menu</div>
     </div>
   );
+
+  useBeforeunload((ev) => {
+    const tabCount = sessionStorage.getItem("tabCount");
+
+    if (tabCount && parseInt(tabCount) > 0) {
+      sessionStorage.setItem("tabCount", (parseInt(tabCount) - 1).toString());
+    } else {
+      sessionStorage.setItem("tabCount", "0");
+    }
+  });
+
+  const handleAcceptNewTab = () => {
+    const tabCount = sessionStorage.getItem("tabCount");
+
+    if (tabCount === "5") {
+      toast.error("The maximum tab count is 5");
+      return;
+    }
+    if (!tabCount || tabCount === "0") {
+      sessionStorage.setItem("tabCount", "2");
+    } else {
+      sessionStorage.setItem("tabCount", (parseInt(tabCount) + 1).toString());
+    }
+    window.open(window.location.pathname, "_blank");
+  };
+
+  const handleDisplayModal = () => {
+    showModal("option-modal-menu-popup", HeaderModal, {
+      popupId: "option-modal-menu-popup",
+      onAccept: () => {
+        handleAcceptNewTab();
+      },
+    });
+  };
 
   return (
     <Dropdown
@@ -42,7 +80,30 @@ export const HeaderMenuSection = () => {
             <span className="font-bold">Chart</span>
           </Link>
         </div>
+        <div className="account__content_item">
+          <Link to="#">
+            <Icon id="external-link" cssmodule="fal" />
+            <span className="font-bold" onClick={handleDisplayModal}>
+              Open New Tab
+            </span>
+          </Link>
+        </div>
       </Menu>
     </Dropdown>
   );
 };
+
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    showModal: function (id, component, props) {
+      dispatch(showModal(id, component, props));
+    },
+  };
+};
+
+export const HeaderMenuSection = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HeaderMenuSectionProvider);
