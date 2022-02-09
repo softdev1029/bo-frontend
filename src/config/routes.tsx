@@ -42,7 +42,12 @@ export const routes = [
       {
         path: RoutePaths.ROOT,
         exact: true,
-        component: Home,
+        component: () => (
+          <Redirect
+            from={RoutePaths.EXCHANGE}
+            to={`${RoutePaths.EXCHANGE}/BTCUSDT`}
+          />
+        ),
       },
       {
         path: RoutePaths.LOGIN,
