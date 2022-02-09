@@ -15,6 +15,10 @@
     pointer-events: none;
   }
 
+  &.react-grid-placeholder {
+    background-color: lightgray;
+  }
+
   & > .react-resizable-handle {
     opacity: 0;
     z-index: 2;
