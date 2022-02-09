@@ -187,6 +187,10 @@
         z-index: 99;
         width: 100%;
 
+        &.collapsible__header__container--closed ~ div {
+          height: auto !important;
+        }
+
         & ~ div {
           position: relative !important;
           transform: translate(0px, 0px) !important;

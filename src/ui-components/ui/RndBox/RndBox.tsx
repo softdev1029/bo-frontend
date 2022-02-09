@@ -22,6 +22,12 @@ const RndBox = ({
       }}
       disableDragging={disableDragging}
       dragAxis={dragAxis}
+      enableResizing={{
+        right: false,
+        left: false,
+        top: true,
+        bottom: true,
+      }}
     >
       <div
         style={{
