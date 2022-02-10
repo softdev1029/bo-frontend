@@ -1,0 +1,20 @@
+name: Deploy to dev server
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install SSH key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DEV }}
+          username: ${{ secrets.USERNAME_DEV }}
+          key: ${{ secrets.SSH_KEY_DEV }}
+          script: |
+            bash /home/ubuntu/deploy2.sh
