@@ -13,7 +13,7 @@ import {
   getSessionId,
   isUserLoggedIn,
 } from "@/selectors/auth.selectors";
-import { Icon } from "@/ui-components";
+import { Icon, Card } from "@/ui-components";
 import { OrderForm } from "./OrderForm";
 import OrderFormInputControlsContainer from "./OrderForm.input-controls.container";
 import { orderValidationFn, submitOrderFn } from "./OrderForm.validators";
@@ -239,10 +239,12 @@ class OrderFormContainer extends React.PureComponent<
     };
 
     return (
-      <div className="card__title__ctn draggable">
-        <OrderFormInputControlsContainer {...orderFormProps}>
-          {this.renderForm}
-        </OrderFormInputControlsContainer>
+      <div className="react-grid-item__section">
+        <Card title="Order Entry" className="order-book">
+          <OrderFormInputControlsContainer {...orderFormProps}>
+            {this.renderForm}
+          </OrderFormInputControlsContainer>
+        </Card>
       </div>
     );
   }
