@@ -14,6 +14,7 @@ import { OrderBookModel } from "@/models/book.model";
 import { TabProps } from "@/ui-components/Tabs";
 import { OrderItem } from "@/models/order.model";
 import { ReactNode } from "react";
+import { WorkspaceSettingEnum } from "@/models/workspace-setting";
 
 export enum OrderFormErrorEnum {
   QTY = 1,
@@ -102,6 +103,7 @@ export interface OrderFormContainerProps {
   formId: number;
   expiryDate: Date;
   isDraggable: boolean;
+  rejectOrderEntry: (key: number) => void;
 }
 
 export interface OrderFormControlsState {
