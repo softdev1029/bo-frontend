@@ -1,7 +1,7 @@
 import { showModal } from "@/actions/app.actions";
 import { createNewOrderEntry } from "@/actions/order.actions";
 import { Dropdown, DropdownPosition, Icon, Menu, toast } from "@/ui-components";
-import React from "react";
+import React, { useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import HeaderModal from "./Header.modal";
@@ -10,6 +10,10 @@ import { useBeforeunload } from "react-beforeunload";
 
 const HeaderMenuSectionProvider = ({ showModal }) => {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(createNewOrderEntry());
+  }, []);
 
   const title = (
     <div className="d-flex d-align-items-center cpn-header__menu__button">

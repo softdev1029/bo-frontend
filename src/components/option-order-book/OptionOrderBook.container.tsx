@@ -3,7 +3,11 @@ import React from "react";
 import { connect } from "react-redux";
 import { OrderBookModel } from "@/models/book.model";
 import { AppTradeType } from "@/constants/trade-type";
-import { initBook } from "@/actions/book.action";
+import {
+  initBook,
+  sendMDInfoReq,
+  subscribeMarketData,
+} from "@/actions/book.action";
 import { Collapsible } from "@/ui-components";
 import OptionOrderBook from "./OptionOrderBook";
 
