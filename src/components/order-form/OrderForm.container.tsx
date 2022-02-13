@@ -240,7 +240,7 @@ class OrderFormContainer extends React.PureComponent<
 
     return (
       <div className="react-grid-item__section">
-        <Card title="Order Entry" className="order-book">
+        <Card title="Order Entry" className="order-entry-form order-book">
           <OrderFormInputControlsContainer {...orderFormProps}>
             {this.renderForm}
           </OrderFormInputControlsContainer>
