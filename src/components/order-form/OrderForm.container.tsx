@@ -27,6 +27,7 @@ import LinkTo from "@/components/LinkTo";
 import { RoutePaths } from "@/constants/route-paths";
 import { SymbolType } from "@/constants/symbol-enums";
 import { OrderType } from "@/constants/system-enums";
+import { rejectOrderEntry } from "@/actions/order.actions";
 
 class OrderFormContainer extends React.PureComponent<
   OrderFormContainerProps,
@@ -170,7 +171,14 @@ class OrderFormContainer extends React.PureComponent<
   }
 
   render() {
-    const { isLoggedIn, accountId, sessionId, order } = this.props;
+    const {
+      isLoggedIn,
+      accountId,
+      sessionId,
+      order,
+      formId,
+      rejectOrderEntry,
+    } = this.props;
 
     if (!isLoggedIn) {
       return (
@@ -240,7 +248,12 @@ class OrderFormContainer extends React.PureComponent<
 
     return (
       <div className="react-grid-item__section">
-        <Card title="Order Entry" className="order-entry-form order-book">
+        <Card
+          title="Order Entry"
+          className="order-book"
+          closable={true}
+          onClose={() => rejectOrderEntry(formId)}
+        >
           <OrderFormInputControlsContainer {...orderFormProps}>
             {this.renderForm}
           </OrderFormInputControlsContainer>
@@ -319,7 +332,9 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatch,
+  rejectOrderEntry: function (key: number, persist = false) {
+    dispatch(rejectOrderEntry({ key, persist }));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderFormContainer);

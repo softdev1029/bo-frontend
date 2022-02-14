@@ -29,6 +29,7 @@ export const ORDER_CANCELLED = "@order/ORDER_CANCELLED";
 
 export const ORDER_CREATE_NEW_ORDER_ENTRY =
   "@order/ORDER_CREATE_NEW_ORDER_ENTRY";
+export const ORDER_DELETE_ORDER_ENTRY = "@order/ORDER_DELETE_ORDER_ENTRY";
 export const ORDER_UPDATE_ORDER_ENTRY = "@order/ORDER_UPDATE_ORDER_ENTRY";
 
 export function orderUpdated(msgType: MessageType, newOrder: OrderItem) {
@@ -216,6 +217,13 @@ export function createNewOrderEntry() {
 export function updateOrderEntry(payload) {
   return {
     type: ORDER_UPDATE_ORDER_ENTRY,
+    payload,
+  };
+}
+
+export function rejectOrderEntry(payload) {
+  return {
+    type: ORDER_DELETE_ORDER_ENTRY,
     payload,
   };
 }
