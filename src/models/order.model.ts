@@ -69,3 +69,9 @@ export enum Symbols {
   FUTURES = "Futures",
   SPOT = "Spot",
 }
+
+export enum Options {
+  BTC = "BTC",
+  ETH = "ETH",
+  XRP = "XRP",
+}

@@ -9,7 +9,7 @@ import {
 } from "@/ui-components";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Symbols } from "@/models/order.model";
+import { Options, Symbols } from "@/models/order.model";
 
 interface OptionType {
   value: string;
@@ -18,16 +18,16 @@ interface OptionType {
 const OptionBookSetting = ({ selectedOption, selectOption }) => {
   const options = [
     {
-      value: Symbols.OPTION,
-      label: Symbols.OPTION,
+      value: Options.BTC,
+      label: Options.BTC,
     },
     {
-      value: Symbols.FUTURES,
-      label: Symbols.FUTURES,
+      value: Options.ETH,
+      label: Options.ETH,
     },
     {
-      value: Symbols.SPOT,
-      label: Symbols.SPOT,
+      value: Options.XRP,
+      label: Options.XRP,
     },
   ];
 
