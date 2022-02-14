@@ -250,7 +250,7 @@ class OrderFormContainer extends React.PureComponent<
       <div className="react-grid-item__section">
         <Card
           title="Order Entry"
-          className="order-book"
+          className="order-book order-entry-form"
           closable={true}
           onClose={() => rejectOrderEntry(formId)}
         >
