@@ -47,6 +47,29 @@
   height: calc(100% - 36px); // 36px = 28px (header's height) + 8px(margin)
   position: relative;
   &.card__content__padding {
-    margin: 0 rem(8) 4px rem(8);
+    & > div {
+      padding: 0 rem(8) 4px rem(8);
+    }
+    .order-form__wrapper {
+      padding-top: 20px;
+    }
+    // overflow-y: auto;
+  }
+}
+
+.order-entry-form .card__content {
+  &.card__content__padding {
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      background-color: #3c3d3c;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: white;
+      width: 6px;
+      border-radius: 2px;
+    }
   }
 }
