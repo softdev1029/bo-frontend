@@ -18,6 +18,22 @@
         padding-top: 4px;
         padding-bottom: 4px;
       }
+
+      &::-webkit-scrollbar {
+        width: 6px;
+        background-color: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #999;
+        width: 6px;
+        border-radius: 3px;
+        transition: all 0.4s ease;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background-color: #aaa;
+      }
     }
 
     &__body {
