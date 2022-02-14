@@ -214,23 +214,23 @@ class MainTradingGrid extends React.Component<
       }
     }
 
-    // for (let _i = 0; _i < orderEntries.length; _i++) {
-    //   const entry = orderEntries[_i];
-    //   layout.push(
-    //     <div
-    //       key={_i}
-    //       data-grid={{ x: 0, y: _i * 35, w: 5, h: 35, minH: 14, minW: 3 }}
-    //     >
-    //       <OrderForm
-    //         wallet={getWalletIdFromName(tradeType)}
-    //         formId={entry.formId}
-    //         pair={entry.symbol}
-    //         expiryDate={entry.expiryDate}
-    //         isDraggable={true}
-    //       />
-    //     </div>
-    //   );
-    // }
+    for (let _i = 0; _i < orderEntries.length; _i++) {
+      const entry = orderEntries[_i];
+      layout.push(
+        <div
+          key={_i}
+          data-grid={{ x: 0, y: _i * 35, w: 5, h: 35, minH: 14, minW: 3 }}
+        >
+          <OrderForm
+            wallet={getWalletIdFromName(tradeType)}
+            formId={entry.formId}
+            pair={entry.symbol}
+            expiryDate={entry.expiryDate}
+            isDraggable={true}
+          />
+        </div>
+      );
+    }
 
     return layout;
   }

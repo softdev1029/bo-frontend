@@ -19,11 +19,11 @@ const ExchangePage = ({ match }) => {
         <div className="trading-main-layout">
           {/* <TradingControlsCol tradeType={tradeType} symbol={symbol} /> */}
           <div className="trading-main-free-grid">
+            <div className="trading-main-order-grid">
+              {/* <OrderTradingGrid symbol={symbol} tradeType={tradeType} /> */}
+            </div>
             <div className="trading-main-other-grid">
               <MainTradingGrid symbol={symbol} tradeType={tradeType} />
-            </div>
-            <div className="trading-main-order-grid" style={{position: "absolute", top: 50, width: "100%"}}>
-              <OrderTradingGrid symbol={symbol} tradeType={tradeType}/>
             </div>
           </div>
         </div>
