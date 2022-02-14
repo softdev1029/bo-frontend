@@ -1,5 +1,6 @@
 import {
   ORDER_CREATE_NEW_ORDER_ENTRY,
+  ORDER_DELETE_ORDER_ENTRY,
   ORDER_NEW_ACCEPTED,
   ORDER_REJECTED,
   ORDER_UPDATED,
@@ -292,6 +293,17 @@ export const orderReducer = (state = initialState, action) => {
           ...orderEntries.filter((e) => e.formId !== formId),
           entry,
         ],
+      };
+    }
+    case ORDER_DELETE_ORDER_ENTRY: {
+      const { orderEntries } = state;
+      const { key } = action.payload;
+
+      return {
+        ...state,
+        orderEntries: orderEntries.filter(
+          (orderEntry) => orderEntry.formId !== key
+        ),
       };
     }
     default:
