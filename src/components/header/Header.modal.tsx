@@ -1,5 +1,5 @@
 import { selectOption } from "@/actions/ui-setting.actions";
-import { Symbols } from "@/models/order.model";
+import { Options, Symbols } from "@/models/order.model";
 import { getSetting } from "@/selectors/ui-setting.selectors";
 import {
   ConfirmModal,
@@ -26,16 +26,16 @@ interface OptionType {
 const HeaderModal = ({ popupId, onAccept, selectOption }: HeaderModalProps) => {
   const options = [
     {
-      value: Symbols.OPTION,
-      label: Symbols.OPTION,
+      value: Options.BTC,
+      label: Options.BTC,
     },
     {
-      value: Symbols.FUTURES,
-      label: Symbols.FUTURES,
+      value: Options.ETH,
+      label: Options.ETH,
     },
     {
-      value: Symbols.SPOT,
-      label: Symbols.SPOT,
+      value: Options.XRP,
+      label: Options.XRP,
     },
   ];
 
