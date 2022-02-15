@@ -44,7 +44,7 @@
   // margin: 0px 16px 8px 16px;
   // border-top: 1px solid var(--shark-500);
   overflow: hidden;
-  height: calc(100% - 36px); // 36px = 28px (header's height) + 8px(margin)
+  height: calc(100% - 28px); // 36px = 28px (header's height) + 8px(margin)
   position: relative;
   &.card__content__padding {
     & > div {
@@ -60,6 +60,7 @@
 .order-entry-form .card__content {
   &.card__content__padding {
     overflow-y: auto;
+    background-color: black;
 
     &::-webkit-scrollbar {
       width: 6px;
