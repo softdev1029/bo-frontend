@@ -6,6 +6,7 @@ import {
   ignoreElements,
   take,
   withLatestFrom,
+  delay,
 } from "rxjs/operators";
 import { EMPTY, of } from "rxjs";
 import { ActionsObservable, ofType } from "redux-observable";
@@ -300,7 +301,7 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
             });
           }
 
-          if (orderMessageType === MessageType.ORDER_ACK) {
+          if (orderMessageType === MessageType.ORDER_ACK || orderMessageType === MessageType.ORDER_NEW) {
             return of(newOrderAccepted(order));
           } else {
             return of(orderUpdated(orderMessageType, order));
@@ -339,7 +340,9 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
           return EMPTY;
         }
       }
-    })
+    }),
+    delay(1000),
+    tap(() => console.log('1= we can do 30s timer action here'))
   );
 
 let barSnapshotMessagesCache = [];
