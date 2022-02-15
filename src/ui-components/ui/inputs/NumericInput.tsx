@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { ReactComponent as SpinUp } from "../../../resources/img/spin-up.svg";
 import { ReactComponent as SpinDown } from "../../../resources/img/spin-down.svg";
-import { Icon } from "../Icon";
+// import { Icon } from "../Icon";
 
 enum KeyCode {
   BACKSPACE = 8,
@@ -920,10 +920,10 @@ class NumericInput extends React.Component<
                   className={`${prefixCls}-handler-up-inner`}
                   onClick={upHandler}
                 >
-                  {/* <SpinUp /> */}
+                  <SpinUp />
+                  {/* <Icon cssmodule="fas" id="angle-up" /> */}
                 </span>
               )}
-              <Icon cssmodule="fas" id="angle-up" />
             </span>
             <span
               unselectable="on"
@@ -939,10 +939,10 @@ class NumericInput extends React.Component<
                   className={`${prefixCls}-handler-down-inner`}
                   onClick={downHandler}
                 >
-                  {/* <SpinDown /> */}
+                  <SpinDown />
+                  {/* <Icon cssmodule="fas" id="angle-down" /> */}
                 </span>
               )}
-              <Icon cssmodule="fas" id="angle-down" />
             </span>
           </div>
         )}
