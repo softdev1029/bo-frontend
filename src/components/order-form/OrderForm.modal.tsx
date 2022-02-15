@@ -204,6 +204,8 @@ class OrderFormModal extends React.Component<OrderFormModalProps, any> {
               addonAfter={quote}
               addonBefore={"Strike Price"}
               step={step}
+              upHandler={true}
+              downHandler={true}
             />
           </div>
         )}

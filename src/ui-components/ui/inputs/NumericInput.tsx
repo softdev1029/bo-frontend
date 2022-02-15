@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { ReactComponent as SpinUp } from "../../../resources/img/spin-up.svg";
 import { ReactComponent as SpinDown } from "../../../resources/img/spin-down.svg";
+import { Icon } from "../Icon";
 
 enum KeyCode {
   BACKSPACE = 8,
@@ -463,6 +464,10 @@ class NumericInput extends React.Component<
     }
     if (changed) {
       this.props.onChange(newValue);
+      this.setState({
+        value: newValue,
+        inputValue: this.toPrecisionAsStep(v),
+      });
     }
 
     return newValue;
@@ -915,10 +920,10 @@ class NumericInput extends React.Component<
                   className={`${prefixCls}-handler-up-inner`}
                   onClick={upHandler}
                 >
-                  {/* <Icon cssmodule="fas" id="angle-up" /> */}
-                  <SpinUp />
+                  {/* <SpinUp /> */}
                 </span>
               )}
+              <Icon cssmodule="fas" id="angle-up" />
             </span>
             <span
               unselectable="on"
@@ -934,10 +939,10 @@ class NumericInput extends React.Component<
                   className={`${prefixCls}-handler-down-inner`}
                   onClick={downHandler}
                 >
-                  {/* <Icon cssmodule="fas" id="angle-down" /> */}
-                  <SpinDown />
+                  {/* <SpinDown /> */}
                 </span>
               )}
+              <Icon cssmodule="fas" id="angle-down" />
             </span>
           </div>
         )}
