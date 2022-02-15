@@ -16,6 +16,9 @@ import {
   WS_ON_MESSAGE,
 } from "@/actions/ws.actions";
 import {
+  ORDER_NEW_ACCEPTED,
+} from "@/actions/order.actions";
+import {
   PacketHeaderMessageType,
   WebSocketKindEnum,
 } from "@/constants/websocket.enums";
@@ -341,8 +344,25 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
         }
       }
     }),
-    delay(1000),
-    tap(() => console.log('1= we can do 30s timer action here'))
+    delay(3000), // it should be 30000 (30s), but for test, it is 3s
+    tap((action) => {
+      console.log('[wsOnOrderMessageEpic] we handle 30s timer', action);
+      const {type, payload} = action;
+      if (type === ORDER_NEW_ACCEPTED) {
+        const orderRaw = TransactionManner.read(payload);
+        const { ...order } = orderRaw;
+          const { orderMessageType } = orderRaw;
+        return of(
+          orderUpdated(
+            orderMessageType,
+            {
+              ...order,
+              isTimeout: true
+            }
+          )
+        );
+      }
+    })
   );
 
 let barSnapshotMessagesCache = [];
