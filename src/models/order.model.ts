@@ -44,6 +44,7 @@ export type OrderItem = {
   triggerType: StopTrigger;
   attributes?: string; // 12 character indexed by AttributeIndexEnum
   secondLegPrice: number;
+  isTimeout?: boolean;
 };
 
 export type TransactionModel = OrderItem & {
