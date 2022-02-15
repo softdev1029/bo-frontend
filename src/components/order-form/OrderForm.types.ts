@@ -59,7 +59,7 @@ export type SubmitOrderEntryData = Partial<OrderEntryInfo> & {
 export type OrderValidationData = Partial<OrderEntryInfo> & {
   lowestSellPrice: number;
   highestBuyPrice: number;
-  onError: () => void;
+  onError: (err?: any) => void;
   executedLongCash: number;
   executedLongPosition: number;
   leverage: number;
