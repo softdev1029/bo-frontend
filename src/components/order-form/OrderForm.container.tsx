@@ -13,7 +13,7 @@ import {
   getSessionId,
   isUserLoggedIn,
 } from "@/selectors/auth.selectors";
-import { Icon, Card } from "@/ui-components";
+import { Icon, Card, toast } from "@/ui-components";
 import { OrderForm } from "./OrderForm";
 import OrderFormInputControlsContainer from "./OrderForm.input-controls.container";
 import { orderValidationFn, submitOrderFn } from "./OrderForm.validators";
@@ -139,7 +139,10 @@ class OrderFormContainer extends React.PureComponent<
       ...generalParams,
       lowestSellPrice,
       highestBuyPrice,
-      onError,
+      onError: (a) => {
+        console.log(a)
+        toast.error(Object.values(a).join(", "))
+      },
       executedLongCash,
       executedLongPosition,
     };
@@ -332,6 +335,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
+  dispatch,
   rejectOrderEntry: function (key: number, persist = false) {
     dispatch(rejectOrderEntry({ key, persist }));
   },
