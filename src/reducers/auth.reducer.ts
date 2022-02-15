@@ -58,37 +58,17 @@ export const authReducer = (state = initialState, action) => {
       };
     }
     case USER_UPDATE: {
+      console.log('USER UPDATE', action.payload);
       const {
-        accountEquity,
-        MMR,
-        symbolEquity,
-        tradingDisabled,
-        availableMargin,
-        usedMargin,
-        leverage,
-        executedLongPosition,
-        executedShortPosition,
-        executedLongCash,
-        executedShortCash,
+        sessionId,
+        accountId
       } = action.payload;
-
-      const mmrPercent = +divide(MMR, 100);
 
       return {
         ...state,
-        // any data's here
-        accountEquity,
-        symbolEquity,
-        tradingDisabled: tradingDisabled === "Y",
-        availableMargin,
-        usedMargin,
-        leverage,
-        mmr: mmrPercent,
-        executedLongPosition,
-        executedShortPosition,
-        executedLongCash,
-        executedShortCash,
-      };
+        accountId,
+        sessionId
+      }
     }
     default:
       return state;
