@@ -6,14 +6,16 @@ import {
   ignoreElements,
   take,
   withLatestFrom,
+  delay,
 } from "rxjs/operators";
-import { EMPTY, of } from "rxjs";
+import { concat, EMPTY, of } from "rxjs";
 import { ActionsObservable, ofType } from "redux-observable";
 import {
   sendWsData,
   wsAuthenticated,
   WS_ON_MESSAGE,
 } from "@/actions/ws.actions";
+import { ORDER_NEW_ACCEPTED } from "@/actions/order.actions";
 import {
   PacketHeaderMessageType,
   WebSocketKindEnum,
@@ -283,14 +285,13 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
         }
         case PacketHeaderMessageType.TRANSACTION: {
           const orderRaw = TransactionManner.read(data);
+
+          orderRaw.isTimeout = false;
+
           const { rejectReason, ...order } = orderRaw;
           const { orderMessageType } = orderRaw;
-          console.warn(
-            "[TRANSACTION]",
-            orderRaw,
-            "ordermessageType",
-            orderMessageType
-          );
+
+          console.warn("[TRANSACTION]", orderRaw, "ordermessageType", order);
 
           if (rejectReason) {
             console.error("order rejected >>>>", rejectReason);
@@ -300,8 +301,17 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
             });
           }
 
-          if (orderMessageType === MessageType.ORDER_ACK) {
-            return of(newOrderAccepted(order));
+          if (
+            orderMessageType === MessageType.ORDER_ACK ||
+            orderMessageType === MessageType.ORDER_NEW
+          ) {
+            const timeoutOrder = { ...order };
+            timeoutOrder.isTimeout = true;
+
+            return concat(
+              of(newOrderAccepted(order)),
+              of(orderUpdated(orderMessageType, timeoutOrder)).pipe(delay(3000))
+            );
           } else {
             return of(orderUpdated(orderMessageType, order));
           }
