@@ -69,7 +69,6 @@ const getOrderColumns = function ({
       maxWidth: 20,
       title: "",
       renderCell: function ({ rowData }) {
-        console.log("rowData: ", rowData);
         const c = rowData.side === OrderSide.BUY ? greenText() : redText();
 
         return (

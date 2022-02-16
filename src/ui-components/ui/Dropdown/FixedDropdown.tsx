@@ -2,7 +2,13 @@
  * bring dropdown_content to fixed layer
  * used in overflow: hidden container (table virtualized, resizer sensor for example)
  */
-import React, { ReactNode, useCallback, useRef, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import classNames from "classnames";
 import _isString from "lodash/isString";
 import ReactDOM from "react-dom";
@@ -28,6 +34,7 @@ interface FixedDropdownProps {
   arrowClass: string;
   offsetLeft: number;
   alignContent: "left" | "right" | "center";
+  labelRef?: React.MutableRefObject<HTMLLabelElement>;
 }
 
 const stopPropagation = (e) => e.stopPropagation();
@@ -45,6 +52,7 @@ export const FixedDropdown = React.memo(
     arrowClass,
     offsetLeft = 0,
     alignContent,
+    labelRef = null,
   }: Partial<FixedDropdownProps>) => {
     const [isOpen, setOpen] = useState(defaultOpen);
     const [stylePos, setStylePos] = useState({ top: 0, left: 0 });
@@ -71,9 +79,18 @@ export const FixedDropdown = React.memo(
         //todo update content's dimension from ref, removed hardcoded value
         setOpen(!isOpen);
 
-        if (result.isNewState) {
-          setPlace(result.newState.place as FixedDropdownPosition);
+        if (isOpen) {
+          setStylePos({
+            top: 0,
+            left: 0,
+          });
+          return;
         }
+        console.log(result);
+
+        // if (result.isNewState) {
+        //   setPlace(result.newState.place as FixedDropdownPosition);
+        // }
         if (result.position) {
           const { left, top } = result.position;
 
@@ -125,6 +142,7 @@ export const FixedDropdown = React.memo(
       <div className="cpn-dropdown">
         <div className="cpn-dropdown__wrapper">
           <label
+            ref={labelRef}
             className={titleCls}
             onClick={toggleContent}
             onMouseDown={stopPropagation}
