@@ -349,18 +349,14 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
       console.log('[wsOnOrderMessageEpic] we handle 30s timer', action);
       const {type, payload} = action;
       if (type === ORDER_NEW_ACCEPTED) {
-        const orderRaw = TransactionManner.read(payload);
-        const { ...order } = orderRaw;
-          const { orderMessageType } = orderRaw;
-        return of(
-          orderUpdated(
+        const { orderMessageType } = payload;
+        payload.isTimeout = true;
+        
+        return of(orderUpdated(
             orderMessageType,
-            {
-              ...order,
-              isTimeout: true
-            }
+            payload
           )
-        );
+        )
       }
     })
   );
