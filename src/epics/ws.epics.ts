@@ -15,9 +15,7 @@ import {
   wsAuthenticated,
   WS_ON_MESSAGE,
 } from "@/actions/ws.actions";
-import {
-  ORDER_NEW_ACCEPTED,
-} from "@/actions/order.actions";
+import { ORDER_NEW_ACCEPTED } from "@/actions/order.actions";
 import {
   PacketHeaderMessageType,
   WebSocketKindEnum,
@@ -287,14 +285,13 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
         }
         case PacketHeaderMessageType.TRANSACTION: {
           const orderRaw = TransactionManner.read(data);
+
+          orderRaw.isTimeout = false;
+
           const { rejectReason, ...order } = orderRaw;
           const { orderMessageType } = orderRaw;
-          console.warn(
-            "[TRANSACTION]",
-            orderRaw,
-            "ordermessageType",
-            orderMessageType
-          );
+
+          console.warn("[TRANSACTION]", orderRaw, "ordermessageType", order);
 
           if (rejectReason) {
             console.error("order rejected >>>>", rejectReason);
@@ -304,7 +301,10 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
             });
           }
 
-          if (orderMessageType === MessageType.ORDER_ACK || orderMessageType === MessageType.ORDER_NEW) {
+          if (
+            orderMessageType === MessageType.ORDER_ACK ||
+            orderMessageType === MessageType.ORDER_NEW
+          ) {
             return of(newOrderAccepted(order));
           } else {
             return of(orderUpdated(orderMessageType, order));
@@ -346,17 +346,13 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
     }),
     delay(3000), // it should be 30000 (30s), but for test, it is 3s
     tap((action) => {
-      console.log('[wsOnOrderMessageEpic] we handle 30s timer', action);
-      const {type, payload} = action;
+      console.log("[wsOnOrderMessageEpic] we handle 30s timer", action);
+      const { type, payload } = action;
       if (type === ORDER_NEW_ACCEPTED) {
         const { orderMessageType } = payload;
         payload.isTimeout = true;
-        
-        return of(orderUpdated(
-            orderMessageType,
-            payload
-          )
-        )
+
+        return of(orderUpdated(orderMessageType, payload));
       }
     })
   );

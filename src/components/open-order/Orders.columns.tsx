@@ -69,6 +69,7 @@ const getOrderColumns = function ({
       maxWidth: 20,
       title: "",
       renderCell: function ({ rowData }) {
+        console.log("rowData: ", rowData);
         const c = rowData.side === OrderSide.BUY ? greenText() : redText();
 
         return (
@@ -216,7 +217,12 @@ const getOrderColumns = function ({
       renderCell: function ({ rowData }) {
         return (
           <div className="cpn-virtualized-table__cellwrapper text-right font-semi-bold">
-            {orderKind === OrderKind.OPEN ? "NEW" : "Untriggered"}
+            {orderKind === OrderKind.OPEN
+              ? rowData.isTimeout
+                ? "TIMEOUT"
+                : "NEW"
+              : "Untriggered"}
+            {/* {rowData.isTimeout ? "TIMEOUT" : "NEW"} */}
           </div>
         );
       },
