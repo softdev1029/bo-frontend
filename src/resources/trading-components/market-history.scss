@@ -108,7 +108,8 @@
   &.active {
     border-bottom: 0;
     border-top: 1px solid var(--dodger-blue);
-    background-color: var(--mine-shaft);
+    // background-color: var(--mine-shaft);
+    background-color: black;
     border-right: 1px solid #575757;
   }
 }
