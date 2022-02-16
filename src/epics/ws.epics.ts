@@ -8,7 +8,7 @@ import {
   withLatestFrom,
   delay,
 } from "rxjs/operators";
-import { EMPTY, of } from "rxjs";
+import { concat, EMPTY, of } from "rxjs";
 import { ActionsObservable, ofType } from "redux-observable";
 import {
   sendWsData,
@@ -305,7 +305,13 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
             orderMessageType === MessageType.ORDER_ACK ||
             orderMessageType === MessageType.ORDER_NEW
           ) {
-            return of(newOrderAccepted(order));
+            const timeoutOrder = { ...order };
+            timeoutOrder.isTimeout = true;
+
+            return concat(
+              of(newOrderAccepted(order)),
+              of(orderUpdated(orderMessageType, timeoutOrder)).pipe(delay(3000))
+            );
           } else {
             return of(orderUpdated(orderMessageType, order));
           }
@@ -342,17 +348,6 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
         default: {
           return EMPTY;
         }
-      }
-    }),
-    delay(3000), // it should be 30000 (30s), but for test, it is 3s
-    tap((action) => {
-      console.log("[wsOnOrderMessageEpic] we handle 30s timer", action);
-      const { type, payload } = action;
-      if (type === ORDER_NEW_ACCEPTED) {
-        const { orderMessageType } = payload;
-        payload.isTimeout = true;
-
-        return of(orderUpdated(orderMessageType, payload));
       }
     })
   );
