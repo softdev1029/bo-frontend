@@ -31,7 +31,7 @@ const RndBox = ({
     >
       <div
         style={{
-          overflow: "scroll",
+          overflowY: "scroll",
           height: "100%",
         }}
       >

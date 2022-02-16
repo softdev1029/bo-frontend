@@ -18,11 +18,13 @@
   font-size: rem(12);
   font-weight: bold;
   color: var(--white);
-  background-color: #3c3d3c;
+  background-color: black;
+  border-bottom: 1px solid #3c3d3c;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 28px;
+
   .card__title {
     flex: 1;
     padding-left: rem(8);
@@ -41,11 +43,11 @@
 }
 
 .card .card__content {
-  // margin: 0px 16px 8px 16px;
-  // border-top: 1px solid var(--shark-500);
   overflow: hidden;
   height: calc(100% - 28px); // 36px = 28px (header's height) + 8px(margin)
   position: relative;
+  background-color: black;
+
   &.card__content__padding {
     & > div {
       padding: 0 rem(8) 4px rem(8);
