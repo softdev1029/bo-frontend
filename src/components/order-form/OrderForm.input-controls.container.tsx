@@ -35,14 +35,7 @@ import { Subscription } from "rxjs";
 import _get from "lodash/get";
 
 import { connect } from "react-redux";
-import {
-  onAccept,
-  onAmountChange,
-  onOrderTypeChange,
-  onPriceChange,
-  onStopPriceChange,
-  onTotalChange,
-} from "@/actions/order-form.actions";
+import { onAccept } from "@/actions/order-form.actions";
 
 class OrderFormInputControlsContainer extends React.PureComponent<
   Partial<OrderFormControlsProps>,

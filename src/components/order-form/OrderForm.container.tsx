@@ -140,12 +140,17 @@ class OrderFormContainer extends React.PureComponent<
       lowestSellPrice,
       highestBuyPrice,
       onError: (a) => {
-        console.log(a)
-        toast.error(Object.values(a).join(", "))
+        console.log(a);
+        toast.error(Object.values(a).join(", "));
       },
       executedLongCash,
       executedLongPosition,
     };
+
+    console.log(
+      "order validation result: ",
+      orderValidationFn(validParams, this.props)
+    );
 
     if (orderValidationFn(validParams, this.props)) {
       const submitParams = {
@@ -157,7 +162,6 @@ class OrderFormContainer extends React.PureComponent<
         sessionId,
         dispatch,
       };
-
       submitOrderFn(submitParams, this.props, state, extraData);
       onSuccess && onSuccess();
     }
