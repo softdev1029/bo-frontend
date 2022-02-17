@@ -37,12 +37,12 @@ const OptionBookSetting = ({ selectedOption, selectOption }) => {
       label: "01 Feb 2022",
     },
     {
-      value: "01 Feb 2022",
-      label: "01 Feb 2022",
+      value: "02 Jan 2022",
+      label: "02 Jan 2022",
     },
     {
-      value: "01 Feb 2022",
-      label: "01 Feb 2022",
+      value: "01 Jan 2022",
+      label: "01 Jan 2022",
     },
   ];
 
@@ -51,11 +51,11 @@ const OptionBookSetting = ({ selectedOption, selectOption }) => {
 
   const labelRef = useRef<HTMLLabelElement>();
 
-  let titleText = "Order Book";
+  let titleText = "Option";
   if (selectedOption) {
     titleText = `${
       selectedOption.selected === undefined
-        ? "Order Book "
+        ? "Option "
         : selectedOption.selected?.value
     } - ${selectedOption.date === undefined ? "" : selectedOption.date.value}`;
   }

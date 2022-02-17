@@ -13,6 +13,11 @@ import classNames from "classnames";
 import _isString from "lodash/isString";
 import ReactDOM from "react-dom";
 import { getPosition } from "@/exports";
+import {
+  getCurrentOffset,
+  getDimensions,
+  getRelativeCoordinates,
+} from "@/exports/get-elm-position";
 import _isFunction from "lodash/isFunction";
 
 export enum FixedDropdownPosition {
@@ -60,14 +65,30 @@ export const FixedDropdown = React.memo(
 
     const contentRef = useRef<HTMLDivElement>();
 
+    const checkRefPosition = (e, node) => {
+      const { width, height, left, top } = node.getBoundingClientRect();
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      return (
+        (mouseX > left && mouseX < left + width) ||
+        (mouseY > top && mouseY < top + height)
+      );
+    };
+
     useEffect(() => {
       const checkIfClickedOutside = (e) => {
         // If the menu is open and the clicked target is not within the menu,
         // then close the menu
+
+        const isOutside = checkRefPosition(e, contentRef.current);
+        console.log(isOutside);
+
         if (
           isOpen &&
           contentRef.current &&
-          !contentRef.current.contains(e.target)
+          !contentRef.current.contains(e.target) &&
+          !isOutside
         ) {
           setOpen(false);
           setStylePos({
@@ -111,7 +132,6 @@ export const FixedDropdown = React.memo(
           });
           return;
         }
-        console.log(result);
 
         // if (result.isNewState) {
         //   setPlace(result.newState.place as FixedDropdownPosition);
