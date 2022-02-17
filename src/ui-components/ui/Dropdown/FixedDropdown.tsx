@@ -58,7 +58,32 @@ export const FixedDropdown = React.memo(
     const [stylePos, setStylePos] = useState({ top: 0, left: 0 });
     const [place, setPlace] = useState(position);
 
-    const contentRef = useRef();
+    const contentRef = useRef<HTMLDivElement>();
+
+    useEffect(() => {
+      const checkIfClickedOutside = (e) => {
+        // If the menu is open and the clicked target is not within the menu,
+        // then close the menu
+        if (
+          isOpen &&
+          contentRef.current &&
+          !contentRef.current.contains(e.target)
+        ) {
+          setOpen(false);
+          setStylePos({
+            top: 0,
+            left: 0,
+          });
+        }
+      };
+
+      document.addEventListener("mousedown", checkIfClickedOutside);
+
+      return () => {
+        // Cleanup the event listener
+        document.removeEventListener("mousedown", checkIfClickedOutside);
+      };
+    }, [isOpen]);
 
     const toggleContent = useCallback(
       (e) => {
