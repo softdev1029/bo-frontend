@@ -70,9 +70,25 @@ export const FixedDropdown = React.memo(
       const mouseX = e.clientX;
       const mouseY = e.clientY;
 
+      console.log(
+        "width: ",
+        width,
+        "height: ",
+        height,
+        "left: ",
+        left,
+        "top: ",
+        top,
+        "mouseX: ",
+        mouseX,
+        "mouseY: ",
+        mouseY
+      );
       return (
-        (mouseX > left && mouseX < left + width) ||
-        (mouseY > top && mouseY < top + height)
+        mouseX > left &&
+        mouseX < left + width &&
+        mouseY > top &&
+        mouseY < top + height + 30
       );
     };
 
