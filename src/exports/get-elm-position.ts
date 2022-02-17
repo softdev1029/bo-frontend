@@ -149,7 +149,7 @@ export function getPosition(
   };
 }
 
-const getDimensions = (node) => {
+export const getDimensions = (node) => {
   const { height, width } = node.getBoundingClientRect();
 
   return {
@@ -159,7 +159,7 @@ const getDimensions = (node) => {
 };
 
 // Get current mouse offset
-const getCurrentOffset = (e, currentTarget, effect) => {
+export const getCurrentOffset = (e, currentTarget, effect) => {
   const boundingClientRect = currentTarget.getBoundingClientRect();
   const targetTop = boundingClientRect.top;
   const targetLeft = boundingClientRect.left;

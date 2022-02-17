@@ -2,11 +2,22 @@
  * bring dropdown_content to fixed layer
  * used in overflow: hidden container (table virtualized, resizer sensor for example)
  */
-import React, { ReactNode, useCallback, useRef, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import classNames from "classnames";
 import _isString from "lodash/isString";
 import ReactDOM from "react-dom";
 import { getPosition } from "@/exports";
+import {
+  getCurrentOffset,
+  getDimensions,
+  getRelativeCoordinates,
+} from "@/exports/get-elm-position";
 import _isFunction from "lodash/isFunction";
 
 export enum FixedDropdownPosition {
@@ -28,6 +39,7 @@ interface FixedDropdownProps {
   arrowClass: string;
   offsetLeft: number;
   alignContent: "left" | "right" | "center";
+  labelRef?: React.MutableRefObject<HTMLLabelElement>;
 }
 
 const stopPropagation = (e) => e.stopPropagation();
@@ -45,12 +57,70 @@ export const FixedDropdown = React.memo(
     arrowClass,
     offsetLeft = 0,
     alignContent,
+    labelRef = null,
   }: Partial<FixedDropdownProps>) => {
     const [isOpen, setOpen] = useState(defaultOpen);
     const [stylePos, setStylePos] = useState({ top: 0, left: 0 });
     const [place, setPlace] = useState(position);
 
-    const contentRef = useRef();
+    const contentRef = useRef<HTMLDivElement>();
+
+    const checkRefPosition = (e, node) => {
+      const { width, height, left, top } = node.getBoundingClientRect();
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      console.log(
+        "width: ",
+        width,
+        "height: ",
+        height,
+        "left: ",
+        left,
+        "top: ",
+        top,
+        "mouseX: ",
+        mouseX,
+        "mouseY: ",
+        mouseY
+      );
+      return (
+        mouseX > left &&
+        mouseX < left + width &&
+        mouseY > top &&
+        mouseY < top + height + 30
+      );
+    };
+
+    useEffect(() => {
+      const checkIfClickedOutside = (e) => {
+        // If the menu is open and the clicked target is not within the menu,
+        // then close the menu
+
+        const isOutside = checkRefPosition(e, contentRef.current);
+        console.log(isOutside);
+
+        if (
+          isOpen &&
+          contentRef.current &&
+          !contentRef.current.contains(e.target) &&
+          !isOutside
+        ) {
+          setOpen(false);
+          setStylePos({
+            top: 0,
+            left: 0,
+          });
+        }
+      };
+
+      document.addEventListener("mousedown", checkIfClickedOutside);
+
+      return () => {
+        // Cleanup the event listener
+        document.removeEventListener("mousedown", checkIfClickedOutside);
+      };
+    }, [isOpen]);
 
     const toggleContent = useCallback(
       (e) => {
@@ -71,9 +141,17 @@ export const FixedDropdown = React.memo(
         //todo update content's dimension from ref, removed hardcoded value
         setOpen(!isOpen);
 
-        if (result.isNewState) {
-          setPlace(result.newState.place as FixedDropdownPosition);
+        if (isOpen) {
+          setStylePos({
+            top: 0,
+            left: 0,
+          });
+          return;
         }
+
+        // if (result.isNewState) {
+        //   setPlace(result.newState.place as FixedDropdownPosition);
+        // }
         if (result.position) {
           const { left, top } = result.position;
 
@@ -125,6 +203,7 @@ export const FixedDropdown = React.memo(
       <div className="cpn-dropdown">
         <div className="cpn-dropdown__wrapper">
           <label
+            ref={labelRef}
             className={titleCls}
             onClick={toggleContent}
             onMouseDown={stopPropagation}

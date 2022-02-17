@@ -7,7 +7,7 @@ import {
   SelectDropdown,
   Button,
 } from "@/ui-components";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { connect } from "react-redux";
 import { Options, Symbols } from "@/models/order.model";
 
@@ -37,23 +37,25 @@ const OptionBookSetting = ({ selectedOption, selectOption }) => {
       label: "01 Feb 2022",
     },
     {
-      value: "01 Feb 2022",
-      label: "01 Feb 2022",
+      value: "02 Jan 2022",
+      label: "02 Jan 2022",
     },
     {
-      value: "01 Feb 2022",
-      label: "01 Feb 2022",
+      value: "01 Jan 2022",
+      label: "01 Jan 2022",
     },
   ];
 
   const [selected, setSelected] = useState<OptionType | undefined>(undefined);
   const [date, setDate] = useState<OptionType | undefined>(undefined);
 
-  let titleText = "Order Book";
+  const labelRef = useRef<HTMLLabelElement>();
+
+  let titleText = "Option";
   if (selectedOption) {
     titleText = `${
       selectedOption.selected === undefined
-        ? "Order Book "
+        ? "Option "
         : selectedOption.selected?.value
     } - ${selectedOption.date === undefined ? "" : selectedOption.date.value}`;
   }
@@ -63,6 +65,7 @@ const OptionBookSetting = ({ selectedOption, selectOption }) => {
       title={titleText}
       contentClasses="order-book__setting-menu"
       alignContent="right"
+      labelRef={labelRef}
     >
       <Menu>
         <MenuItem
@@ -94,7 +97,10 @@ const OptionBookSetting = ({ selectedOption, selectOption }) => {
             <div className="d-flex d-justify-content-space-between w-100">
               <Button
                 classes="btn primary"
-                onClick={() => selectOption({ selected, date })}
+                onClick={() => {
+                  selectOption({ selected, date });
+                  if (labelRef) labelRef.current.click();
+                }}
               >
                 Ok
               </Button>

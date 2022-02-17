@@ -29,14 +29,7 @@ const RndBox = ({
         bottom: true,
       }}
     >
-      <div
-        style={{
-          overflowY: "scroll",
-          height: "100%",
-        }}
-      >
-        {children}
-      </div>
+      <div className="rndbox-wrapper">{children}</div>
     </Rnd>
   );
 };
