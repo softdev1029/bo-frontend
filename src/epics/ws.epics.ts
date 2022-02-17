@@ -111,6 +111,11 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
               `${config.protocol}://oes-dev.bit24.com`,
               WebSocketKindEnum.ORDERS
             );
+          } else {
+            SingletonWSManager.addWs(
+              `ws://localhost:8081`,
+              WebSocketKindEnum.ORDERS
+            );
           }
 
           if (
@@ -124,8 +129,8 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
             // SingletonWSManager.addWs(`ws://113.197.36.50:32028/`, WebSocketKindEnum.MARKET);
           } else {
             SingletonWSManager.addWs(
-              `ws://localhost:8081`,
-              WebSocketKindEnum.ORDERS
+              `ws://localhost:8082`,
+              WebSocketKindEnum.MARKET
             );
           }
 
