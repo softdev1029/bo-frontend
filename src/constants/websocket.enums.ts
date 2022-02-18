@@ -43,6 +43,6 @@ export enum PacketHeaderMessageType {
   BAR_SNAPSHOT = "c",
   BAR_MESSAGE = "b",
   BAR_REQUEST = "i",
-  MD_INFO_REQ = "s",
-  MD_INFO_RES = "E",
+  MD_INFO_REQ = "E",
+  MD_INFO_RES = "s",
 }
