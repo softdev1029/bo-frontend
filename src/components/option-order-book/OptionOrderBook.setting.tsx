@@ -84,13 +84,13 @@ const OptionBookSetting = ({
     titleText = `${
       selectedOption.selected === undefined
         ? "Option "
-        : selectedOption.selected?.value
+        : selectedOption.selectedSymbol?.value
     } - ${selectedOption.date === undefined ? "" : selectedOption.date.value}`;
   }
 
-  const onSymbolChangeHandler = (option) => {
-    setSelected(option);
-    console.log(option.value);
+  const onOrderAcceptHandler = () => {
+    selectOption({ selectedSymbol, date });
+    if (labelRef) labelRef.current.click();
   };
 
   useEffect(() => {
@@ -117,7 +117,7 @@ const OptionBookSetting = ({
     }; // called on unmount
   }, [
     isLoggedIn,
-    selectedSymbol,
+    onOrderAcceptHandler,
     accountId,
     subscribeType,
     sessionId,
@@ -140,7 +140,7 @@ const OptionBookSetting = ({
               <SelectDropdown
                 options={options}
                 value={selectedSymbol}
-                onChange={onSymbolChangeHandler}
+                onChange={(option) => setSelected(option as OptionType)}
               />
             </div>
           }
@@ -160,13 +160,7 @@ const OptionBookSetting = ({
         <MenuItem
           content={
             <div className="d-flex d-justify-content-space-between w-100">
-              <Button
-                classes="btn primary"
-                onClick={() => {
-                  selectOption({ selected: selectedSymbol, date });
-                  if (labelRef) labelRef.current.click();
-                }}
-              >
+              <Button classes="btn primary" onClick={onOrderAcceptHandler}>
                 Ok
               </Button>
             </div>
