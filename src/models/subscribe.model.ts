@@ -11,5 +11,6 @@ export interface ISubscribeRequest {
   sessionId?: number;
   sendingTime: number;
   seqNum?: number;
+  expirationDate?: string;
   subscribeType: SubscribeType;
 }

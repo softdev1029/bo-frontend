@@ -70,20 +70,6 @@ export const FixedDropdown = React.memo(
       const mouseX = e.clientX;
       const mouseY = e.clientY;
 
-      console.log(
-        "width: ",
-        width,
-        "height: ",
-        height,
-        "left: ",
-        left,
-        "top: ",
-        top,
-        "mouseX: ",
-        mouseX,
-        "mouseY: ",
-        mouseY
-      );
       return (
         mouseX > left &&
         mouseX < left + width &&
@@ -97,14 +83,13 @@ export const FixedDropdown = React.memo(
         // If the menu is open and the clicked target is not within the menu,
         // then close the menu
 
-        const isOutside = checkRefPosition(e, contentRef.current);
-        console.log(isOutside);
+        const isInside = checkRefPosition(e, contentRef.current);
 
         if (
-          isOpen &&
           contentRef.current &&
           !contentRef.current.contains(e.target) &&
-          !isOutside
+          !labelRef.current.contains(e.target) &&
+          !isInside
         ) {
           setOpen(false);
           setStylePos({
@@ -120,7 +105,7 @@ export const FixedDropdown = React.memo(
         // Cleanup the event listener
         document.removeEventListener("mousedown", checkIfClickedOutside);
       };
-    }, [isOpen]);
+    }, []);
 
     const toggleContent = useCallback(
       (e) => {

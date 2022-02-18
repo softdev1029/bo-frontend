@@ -40,6 +40,7 @@ const OptionBookSetting = ({
   sessionId,
   subscribeType = SubscribeType.THIRTYLAYERS,
   isSocketReady,
+  sendMdReq,
   sendSubscribe,
 }) => {
   const options = [
@@ -72,25 +73,32 @@ const OptionBookSetting = ({
     },
   ];
 
-  const [selectedSymbol, setSelected] = useState<OptionType | undefined>(
-    undefined
-  );
+  const [symbol, setSelected] = useState<OptionType | undefined>(undefined);
   const [date, setDate] = useState<OptionType | undefined>(undefined);
-
   const labelRef = useRef<HTMLLabelElement>();
+
+  const [subscribeData, setSubscribeData] = useState<ISubscribeRequest>({
+    accountId: 0,
+    sendingTime: Date.now(),
+    subscribeType: 6,
+    symbolEnum: 0,
+  });
 
   let titleText = "Option";
   if (selectedOption) {
     titleText = `${
-      selectedOption.selected === undefined
+      selectedOption.symbol === undefined
         ? "Option "
-        : selectedOption.selectedSymbol?.value
+        : selectedOption.symbol?.value
     } - ${selectedOption.date === undefined ? "" : selectedOption.date.value}`;
   }
 
   const onOrderAcceptHandler = () => {
-    selectOption({ selectedSymbol, date });
+    selectOption({ symbol, date });
     if (labelRef) labelRef.current.click();
+
+    console.log("MDInfoReq Data log before sending subscribe: ", subscribeData);
+    sendSubscribe(subscribeData);
   };
 
   useEffect(() => {
@@ -100,30 +108,21 @@ const OptionBookSetting = ({
       accountId,
       sessionId,
       subscribeType,
-      symbolEnum: getSymbolEnum(selectedSymbol?.value),
+      symbolEnum: getSymbolEnum(symbol?.value),
       sendingTime: Date.now(),
-      type: PacketHeaderMessageType.SUBSCRIBE,
+      expirationDate: date?.value,
+      type: PacketHeaderMessageType.MD_INFO_REQ,
     };
 
-    console.log("[subscriber orderrbook] >>>>> sub", data);
-    sendSubscribe(data);
+    console.log("MDInfoReq Data log before sending request: ", data);
 
-    return () => {
-      // @changelog Dec 11, 2021
-      // no longer have to request unsubscribe to MDS
-      // instead we have to create new instance of MDS socket when switching pair
-      // unsubscribeFunc(data)
-      console.log("un mount");
-    }; // called on unmount
-  }, [
-    isLoggedIn,
-    onOrderAcceptHandler,
-    accountId,
-    subscribeType,
-    sessionId,
-    isSocketReady,
-    sendSubscribe,
-  ]);
+    setSubscribeData({
+      ...data,
+      type: PacketHeaderMessageType.SUBSCRIBE,
+    });
+
+    sendMdReq(data);
+  }, [symbol, date]);
 
   return (
     <FixedDropdown
@@ -139,7 +138,7 @@ const OptionBookSetting = ({
               <label htmlFor="">Option</label>
               <SelectDropdown
                 options={options}
-                value={selectedSymbol}
+                value={symbol}
                 onChange={(option) => setSelected(option as OptionType)}
               />
             </div>
@@ -175,6 +174,13 @@ const mapStateToProps = (state) => {
   const wsId = WebSocketKindEnum.MARKET;
   const socketState = wsCollectionSelector(state)[wsId];
 
+  // console.log(
+  //   "***********~~~~~~~~~~~~: ",
+  //   SingletonWSManager.isMarketWsById(wsId) &&
+  //     socketState === WebSocketKindStateEnum.AUTHORIZED,
+  //   isUserLoggedIn(state)
+  // );
+
   return {
     selectedOption: getSetting(state)("option_ordersetting"),
     accountId: getAccountId(state),
@@ -196,11 +202,16 @@ const mapDispatchToProps = (dispatch) => ({
       })
     );
   },
-  sendSubscribe: function (data: ISubscribeRequest) {
-    console.log("[Orderbook subscribeFunc] >>>>> send", data);
+  sendMdReq: function (data: ISubscribeRequest) {
+    console.log("[Orderbook send MDInfoReq for MDS] >>>>> send", data);
 
     const payload = SubscribeManner.send(data);
     dispatch(sendWsData(WebSocketKindEnum.ADMIN_RISK, payload));
+  },
+  sendSubscribe: function (data: ISubscribeRequest) {
+    console.log("[Orderbook send Subscribe for MDS] >>>>> send", data);
+    const payload = SubscribeManner.send(data);
+    dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
   },
 });
 

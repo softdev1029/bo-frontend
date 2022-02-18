@@ -246,6 +246,7 @@ export class StreamingWS {
         takeUntil(this._stopStream(action$)),
         map((evt: any) => {
           // {result, id}
+          console.log("socket evt", WS_ON_MESSAGE, this._id, evt);
           return of({
             type: WS_ON_MESSAGE,
             payload: messageTransformer(evt),

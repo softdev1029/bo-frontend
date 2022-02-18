@@ -82,6 +82,7 @@ import { TradesManner, TRADE_MESSAGE_LENGTH } from "@/packets/trades.packet";
 import { BarManner, BarSnapshotManner } from "@/packets/chart.packet";
 import { MdInfoResManner } from "@/packets/md-info-res.packet";
 import { SubscribeManner } from "@/packets/subscribe.packet";
+import { MdInfoReqManner } from "@/packets/md-info-req.packet";
 
 export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
@@ -148,13 +149,16 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
             })
           );
         }
-        case PacketHeaderMessageType.SUBSCRIBE: {
-          const serverInfo = SubscribeManner.read(data);
+
+        case PacketHeaderMessageType.MD_INFO_REQ: {
+          const serverInfo = MdInfoReqManner.read(data);
           console.log(
-            "[wsOnAdminRiskMessageEpic] Received Logon reply via AES",
+            "%c [MdInfoReqManner] Received ",
+            "color: green",
             serverInfo
           );
-          break;
+
+          return of();
         }
         case PacketHeaderMessageType.MD_INFO_RES: {
           const serverInfo = MdInfoResManner.read(data);
@@ -386,14 +390,25 @@ export const wsOnMarketMessageEpic = (
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
+          const serverInfo = ClientLoginManner.read(data);
+
           console.log(
-            "ClientLoginManner.read(data);",
+            "[wsOnMarketMessageEpic] Received Logon reply via MDS",
             ClientLoginManner.read(data),
             "socketid",
             wsId
           );
 
           return of(wsAuthenticated(wsId));
+        }
+        case PacketHeaderMessageType.SUBSCRIBE: {
+          console.log(
+            "%c [wsOnMarketMessageEpic] Subscribe",
+            "color: green",
+            SubscribeManner.read(data)
+          );
+
+          return of();
         }
         // book, trades, chart returns automatically after logon
         case PacketHeaderMessageType.BOOK_30:
