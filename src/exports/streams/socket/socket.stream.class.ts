@@ -164,23 +164,25 @@ export class StreamingWS {
         this.isCreated = true;
       }),
       map(({ username, accountId }) => {
-        const isLoggedIn = !SingletonWSManager.isMarketWsById(this._id);
-        if (isLoggedIn) {
-          // sent auth
-          const loginData = {
-            accountId,
-            username,
-            sendingTime: Date.now(),
-          };
-          // const isLoggedIn = token && SingletonWSManager.isOrderWsById(this._id);
-          return of(
-            // socket opened already, just in order to update states
-            openWs({ id: this._id }),
-            requestAuthWs({ data: loginData, id: this._id })
-          );
-        } else {
-          return of(openWs({ id: this._id }));
-        }
+        // const isLoggedIn = !SingletonWSManager.isMarketWsById(this._id);
+        // if (isLoggedIn) {
+        // sent auth
+
+        const loginData = {
+          accountId,
+          username,
+          sendingTime: Date.now(),
+        };
+        // const isLoggedIn = token && SingletonWSManager.isOrderWsById(this._id);
+        return of(
+          // socket opened already, just in order to update states
+          openWs({ id: this._id }),
+          requestAuthWs({ data: loginData, id: this._id })
+        );
+
+        // } else {
+        //   return of(openWs({ id: this._id }));
+        // }
         // // console.log('[stream dataaaaaaa]>>>>>>>>>', isLoggedIn);
         // return !isLoggedIn ? of(
         //   openWs({ id: this._id })

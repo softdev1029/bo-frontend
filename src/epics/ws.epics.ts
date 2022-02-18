@@ -81,6 +81,7 @@ import { BookManner } from "@/packets/book.packet";
 import { TradesManner, TRADE_MESSAGE_LENGTH } from "@/packets/trades.packet";
 import { BarManner, BarSnapshotManner } from "@/packets/chart.packet";
 import { MdInfoResManner } from "@/packets/md-info-res.packet";
+import { SubscribeManner } from "@/packets/subscribe.packet";
 
 export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
@@ -93,6 +94,7 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
       console.log("[wsOnAdminRiskMessageEpic] msgType", msgType);
+      console.log("[wsOnAdminRiskMessageEpic] data", data);
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
@@ -145,6 +147,14 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
               accountId: serverInfo.accountId,
             })
           );
+        }
+        case PacketHeaderMessageType.SUBSCRIBE: {
+          const serverInfo = SubscribeManner.read(data);
+          console.log(
+            "[wsOnAdminRiskMessageEpic] Received Logon reply via AES",
+            serverInfo
+          );
+          break;
         }
         case PacketHeaderMessageType.MD_INFO_RES: {
           const serverInfo = MdInfoResManner.read(data);
