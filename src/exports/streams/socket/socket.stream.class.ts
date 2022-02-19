@@ -441,7 +441,13 @@ export class StreamingWS {
     return action$.pipe(
       ofType(WS_REQUEST_AUTH),
       filter(this._wsIdentify),
-      tap((action) => console.log("[socket class] create auth stream", action)),
+      tap((action) =>
+        console.log(
+          "%c [socket class] create auth stream ( Step 1 )",
+          "color: green",
+          action
+        )
+      ),
       takeUntil(this._stopStream(action$)),
       withLatestFrom(state$),
       filter(

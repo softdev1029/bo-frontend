@@ -101,7 +101,8 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
         case PacketHeaderMessageType.CLIENT_LOGIN: {
           const serverInfo = ClientLoginManner.read(data);
           console.log(
-            "[wsOnAdminRiskMessageEpic] Received Logon reply via AES",
+            "%c [wsOnAdminRiskMessageEpic] Received Logon reply via AES ( Step 2 )",
+            "color: green",
             serverInfo
           );
 
@@ -153,16 +154,20 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
         case PacketHeaderMessageType.MD_INFO_REQ: {
           const serverInfo = MdInfoReqManner.read(data);
           console.log(
-            "%c [MdInfoReqManner] Received ",
+            "%c [MdInfoReqManner] Received MdInfoReq via AES ( Step 3 )",
             "color: green",
             serverInfo
           );
+          console.log(wsId);
 
           return of();
         }
         case PacketHeaderMessageType.MD_INFO_RES: {
           const serverInfo = MdInfoResManner.read(data);
-          console.log("[ws.epcis] Received MdInfoRes via AES", serverInfo);
+          console.log(
+            "[ws.epcis] Received MdInfoRes via AES ( Step 4 )",
+            serverInfo
+          );
 
           const symbol = serverInfo.symbolEnum;
 
@@ -393,7 +398,8 @@ export const wsOnMarketMessageEpic = (
           const serverInfo = ClientLoginManner.read(data);
 
           console.log(
-            "[wsOnMarketMessageEpic] Received Logon reply via MDS",
+            "%c [wsOnMarketMessageEpic] Received Logon reply via MDS ( Step 6 )",
+            "color: green",
             ClientLoginManner.read(data),
             "socketid",
             wsId
@@ -403,7 +409,7 @@ export const wsOnMarketMessageEpic = (
         }
         case PacketHeaderMessageType.SUBSCRIBE: {
           console.log(
-            "%c [wsOnMarketMessageEpic] Subscribe",
+            "%c [wsOnMarketMessageEpic] Subscribe ( Step 7 )",
             "color: green",
             SubscribeManner.read(data)
           );
