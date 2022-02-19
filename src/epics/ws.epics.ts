@@ -122,21 +122,21 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
             );
           }
 
-          if (
-            serverInfo.marketEntryIp1 &&
-            serverInfo.marketEntryIp1.replace(/\s/g, "").length
-          ) {
-            SingletonWSManager.addWs(
-              `${config.protocol}://${serverInfo.marketEntryIp1}`,
-              WebSocketKindEnum.MARKET
-            );
-            // SingletonWSManager.addWs(`ws://113.197.36.50:32028/`, WebSocketKindEnum.MARKET);
-          } else {
-            SingletonWSManager.addWs(
-              `ws://localhost:8082`,
-              WebSocketKindEnum.MARKET
-            );
-          }
+          // if (
+          //   serverInfo.marketEntryIp1 &&
+          //   serverInfo.marketEntryIp1.replace(/\s/g, "").length
+          // ) {
+          //   SingletonWSManager.addWs(
+          //     `${config.protocol}://${serverInfo.marketEntryIp1}`,
+          //     WebSocketKindEnum.MARKET
+          //   );
+          //   // SingletonWSManager.addWs(`ws://113.197.36.50:32028/`, WebSocketKindEnum.MARKET);
+          // } else {
+          //   SingletonWSManager.addWs(
+          //     `ws://localhost:8082`,
+          //     WebSocketKindEnum.MARKET
+          //   );
+          // }
 
           const saveEntries = SingletonWSManager.getUrlEntries();
           SingletonWSManager.acceptEntries();
@@ -178,7 +178,7 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
             );
           } else {
             SingletonWSManager.addWs(
-              `ws://localhost:8081`,
+              `ws://localhost:8082`,
               WebSocketKindEnum.MARKET
             );
           }
@@ -409,7 +409,7 @@ export const wsOnMarketMessageEpic = (
         }
         case PacketHeaderMessageType.SUBSCRIBE: {
           console.log(
-            "%c [wsOnMarketMessageEpic] Subscribe ( Step 7 )",
+            "%c [wsOnMarketMessageEpic] Subscribe",
             "color: green",
             SubscribeManner.read(data)
           );

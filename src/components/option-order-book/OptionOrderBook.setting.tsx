@@ -206,13 +206,17 @@ const mapDispatchToProps = (dispatch) => ({
     );
   },
   sendMdReq: function (data: ISubscribeRequest) {
-    console.log("[Orderbook send MDInfoReq for MDS] >>>>> send", data);
+    console.log("[Send MDInfoReq for MDS] >>>>> send", data);
 
     const payload = SubscribeManner.send(data);
     dispatch(sendWsData(WebSocketKindEnum.ADMIN_RISK, payload));
   },
   sendSubscribe: function (data: ISubscribeRequest) {
-    console.log("[Orderbook send Subscribe for MDS] >>>>> send", data);
+    console.log(
+      "%c [Send Subscribe for MDS] >>>>> send Subscribe ( Step 7 )",
+      "color: green",
+      data
+    );
     const payload = SubscribeManner.send(data);
     dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
   },
