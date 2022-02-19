@@ -73,7 +73,7 @@ const OptionBookSetting = ({
     },
   ];
 
-  const [symbol, setSelected] = useState<OptionType | undefined>(undefined);
+  const [symbol, setSymbol] = useState<OptionType | undefined>(undefined);
   const [date, setDate] = useState<OptionType | undefined>(undefined);
   const labelRef = useRef<HTMLLabelElement>();
 
@@ -139,7 +139,10 @@ const OptionBookSetting = ({
               <SelectDropdown
                 options={options}
                 value={symbol}
-                onChange={(option) => setSelected(option as OptionType)}
+                onChange={(option) =>
+                  (option as OptionType).value !== symbol?.value &&
+                  setSymbol(option as OptionType)
+                }
               />
             </div>
           }
