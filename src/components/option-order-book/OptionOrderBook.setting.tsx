@@ -96,13 +96,14 @@ const OptionBookSetting = ({
   const onOrderAcceptHandler = () => {
     selectOption({ symbol, date });
     if (labelRef) labelRef.current.click();
+    if (!isSocketReady || !isLoggedIn) return;
 
     console.log("MDInfoReq Data log before sending subscribe: ", subscribeData);
     sendSubscribe(subscribeData);
   };
 
   useEffect(() => {
-    if (!isSocketReady || !isLoggedIn) return;
+    if (/*!isSocketReady ||*/ !isLoggedIn) return;
 
     const data = {
       accountId,
@@ -122,7 +123,7 @@ const OptionBookSetting = ({
     });
 
     sendMdReq(data);
-  }, [symbol, date]);
+  }, [symbol]);
 
   return (
     <FixedDropdown

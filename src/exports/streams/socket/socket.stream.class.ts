@@ -306,13 +306,19 @@ export class StreamingWS {
       action$.pipe(
         ofType(WS_REQUEST_UNSUBSCRIBE),
         filter(this._wsIdentify),
-        map((action: Action<SubscribeParams>) =>
-          of({
+        map((action: Action<SubscribeParams>) => {
+          console.log(
+            "%c unSubscribe action: ",
+            "color:red",
+            action.payload,
+            this._id
+          );
+          return of({
             type: WS_SEND,
             payload: unsubTransformer(action.payload),
             id: this._id,
-          })
-        )
+          });
+        })
       );
   }
 

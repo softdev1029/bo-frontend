@@ -160,7 +160,25 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
           );
           console.log(wsId);
 
-          return of();
+          if (
+            serverInfo.marketEntryIp1 &&
+            serverInfo.marketEntryIp1.replace(/\s/g, "").length
+          ) {
+            SingletonWSManager.addWs(
+              `${config.protocol}://${serverInfo.marketEntryIp1}`,
+              WebSocketKindEnum.MARKET
+            );
+            // SingletonWSManager.addWs(`ws://113.197.36.50:32028/`, WebSocketKindEnum.MARKET);
+          } else {
+            SingletonWSManager.addWs(
+              `ws://localhost:8082`,
+              WebSocketKindEnum.MARKET
+            );
+          }
+
+          const saveEntries = SingletonWSManager.getUrlEntries();
+
+          return of(updateSocketUrlEntries(saveEntries));
         }
         case PacketHeaderMessageType.MD_INFO_RES: {
           const serverInfo = MdInfoResManner.read(data);
