@@ -28,6 +28,7 @@ import { SubscribeType } from "@/constants/system-enums";
 import { getSymbolEnum } from "@/exports/ticker.utils";
 import { SubscribeManner } from "@/packets/subscribe.packet";
 import { MdInfoReqManner } from "@/packets/md-info-req.packet";
+import { IMDInfoRequest } from "@/models/md-req.model";
 
 interface OptionType {
   value: string;
@@ -204,7 +205,7 @@ const mapDispatchToProps = (dispatch) => ({
       })
     );
   },
-  sendMdReq: function (data: ISubscribeRequest) {
+  sendMdReq: function (data: IMDInfoRequest) {
     console.log("%c [Send MDInfoReq for MDS to AES]", "color: green", data);
 
     const payload = MdInfoReqManner.send(data);
