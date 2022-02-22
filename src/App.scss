@@ -56,3 +56,11 @@
     padding: 1px;
   }
 }
+
+.order-entry-form-container .react-grid-item {
+  width: 250px !important;
+
+  .react-grid-layout {
+    width: 100vw;
+  }
+}
