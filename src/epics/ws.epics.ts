@@ -81,6 +81,8 @@ import { BookManner } from "@/packets/book.packet";
 import { TradesManner, TRADE_MESSAGE_LENGTH } from "@/packets/trades.packet";
 import { BarManner, BarSnapshotManner } from "@/packets/chart.packet";
 import { MdInfoResManner } from "@/packets/md-info-res.packet";
+import { SubscribeManner } from "@/packets/subscribe.packet";
+import { MdInfoReqManner } from "@/packets/md-info-req.packet";
 
 export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
@@ -93,12 +95,14 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
       console.log("[wsOnAdminRiskMessageEpic] msgType", msgType);
+      console.log("[wsOnAdminRiskMessageEpic] data", data);
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
           const serverInfo = ClientLoginManner.read(data);
           console.log(
-            "[wsOnAdminRiskMessageEpic] Received Logon reply via AES",
+            "%c [wsOnAdminRiskMessageEpic] Received Logon reply via AES ( Step 2 )",
+            "color: green",
             serverInfo
           );
 
@@ -111,23 +115,28 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
               `${config.protocol}://oes-dev.bit24.com`,
               WebSocketKindEnum.ORDERS
             );
-          }
-
-          if (
-            serverInfo.marketEntryIp1 &&
-            serverInfo.marketEntryIp1.replace(/\s/g, "").length
-          ) {
-            SingletonWSManager.addWs(
-              `${config.protocol}://${serverInfo.marketEntryIp1}`,
-              WebSocketKindEnum.MARKET
-            );
-            // SingletonWSManager.addWs(`ws://113.197.36.50:32028/`, WebSocketKindEnum.MARKET);
           } else {
             SingletonWSManager.addWs(
               `ws://localhost:8081`,
               WebSocketKindEnum.ORDERS
             );
           }
+
+          // if (
+          //   serverInfo.marketEntryIp1 &&
+          //   serverInfo.marketEntryIp1.replace(/\s/g, "").length
+          // ) {
+          //   SingletonWSManager.addWs(
+          //     `${config.protocol}://${serverInfo.marketEntryIp1}`,
+          //     WebSocketKindEnum.MARKET
+          //   );
+          //   // SingletonWSManager.addWs(`ws://113.197.36.50:32028/`, WebSocketKindEnum.MARKET);
+          // } else {
+          //   SingletonWSManager.addWs(
+          //     `ws://localhost:8082`,
+          //     WebSocketKindEnum.MARKET
+          //   );
+          // }
 
           const saveEntries = SingletonWSManager.getUrlEntries();
           SingletonWSManager.acceptEntries();
@@ -141,9 +150,42 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
             })
           );
         }
+
+        case PacketHeaderMessageType.MD_INFO_REQ: {
+          const serverInfo = MdInfoReqManner.read(data);
+          console.log(
+            "%c [MdInfoReqManner] Received MdInfoReq via AES ( Step 3 )",
+            "color: green",
+            serverInfo
+          );
+          console.log(wsId);
+
+          if (
+            serverInfo.marketEntryIp1 &&
+            serverInfo.marketEntryIp1.replace(/\s/g, "").length
+          ) {
+            SingletonWSManager.addWs(
+              `${config.protocol}://${serverInfo.marketEntryIp1}`,
+              WebSocketKindEnum.MARKET
+            );
+            // SingletonWSManager.addWs(`ws://113.197.36.50:32028/`, WebSocketKindEnum.MARKET);
+          } else {
+            SingletonWSManager.addWs(
+              `ws://localhost:8082`,
+              WebSocketKindEnum.MARKET
+            );
+          }
+
+          const saveEntries = SingletonWSManager.getUrlEntries();
+
+          return of(updateSocketUrlEntries(saveEntries));
+        }
         case PacketHeaderMessageType.MD_INFO_RES: {
           const serverInfo = MdInfoResManner.read(data);
-          console.log("[ws.epcis] Received MdInfoRes via AES", serverInfo);
+          console.log(
+            "[ws.epcis] Received MdInfoRes via AES ( Step 4 )",
+            serverInfo
+          );
 
           const symbol = serverInfo.symbolEnum;
 
@@ -154,7 +196,7 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
             );
           } else {
             SingletonWSManager.addWs(
-              `ws://localhost:8081`,
+              `ws://localhost:8082`,
               WebSocketKindEnum.MARKET
             );
           }
@@ -371,14 +413,26 @@ export const wsOnMarketMessageEpic = (
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
+          const serverInfo = ClientLoginManner.read(data);
+
           console.log(
-            "ClientLoginManner.read(data);",
+            "%c [wsOnMarketMessageEpic] Received Logon reply via MDS ( Step 6 )",
+            "color: green",
             ClientLoginManner.read(data),
             "socketid",
             wsId
           );
 
           return of(wsAuthenticated(wsId));
+        }
+        case PacketHeaderMessageType.SUBSCRIBE: {
+          console.log(
+            "%c [wsOnMarketMessageEpic] Subscribe",
+            "color: green",
+            SubscribeManner.read(data)
+          );
+
+          return of();
         }
         // book, trades, chart returns automatically after logon
         case PacketHeaderMessageType.BOOK_30:

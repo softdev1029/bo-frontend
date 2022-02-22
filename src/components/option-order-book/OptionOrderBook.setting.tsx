@@ -7,15 +7,42 @@ import {
   SelectDropdown,
   Button,
 } from "@/ui-components";
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
 import { Options, Symbols } from "@/models/order.model";
+import { sendWsData } from "@/actions/ws.actions";
+import { ISubscribeRequest } from "@/models/subscribe.model";
+import {
+  PacketHeaderMessageType,
+  WebSocketKindEnum,
+  WebSocketKindStateEnum,
+} from "@/constants/websocket.enums";
+import { wsCollectionSelector } from "@/selectors/ws.selectors";
+import {
+  getAccountId,
+  getSessionId,
+  isUserLoggedIn,
+} from "@/selectors/auth.selectors";
+import { SingletonWSManager } from "@/internals";
+import { SubscribeType } from "@/constants/system-enums";
+import { getSymbolEnum } from "@/exports/ticker.utils";
+import { SubscribeManner } from "@/packets/subscribe.packet";
 
 interface OptionType {
   value: string;
   label: string;
 }
-const OptionBookSetting = ({ selectedOption, selectOption }) => {
+const OptionBookSetting = ({
+  selectedOption,
+  selectOption,
+  isLoggedIn,
+  accountId,
+  sessionId,
+  subscribeType = SubscribeType.THIRTYLAYERS,
+  isSocketReady,
+  sendMdReq,
+  sendSubscribe,
+}) => {
   const options = [
     {
       value: Options.BTC,
@@ -46,19 +73,57 @@ const OptionBookSetting = ({ selectedOption, selectOption }) => {
     },
   ];
 
-  const [selected, setSelected] = useState<OptionType | undefined>(undefined);
+  const [symbol, setSymbol] = useState<OptionType | undefined>(undefined);
   const [date, setDate] = useState<OptionType | undefined>(undefined);
-
   const labelRef = useRef<HTMLLabelElement>();
+
+  const [subscribeData, setSubscribeData] = useState<ISubscribeRequest>({
+    accountId: 0,
+    sendingTime: Date.now(),
+    subscribeType: 6,
+    symbolEnum: 0,
+  });
 
   let titleText = "Option";
   if (selectedOption) {
     titleText = `${
-      selectedOption.selected === undefined
+      selectedOption.symbol === undefined
         ? "Option "
-        : selectedOption.selected?.value
+        : selectedOption.symbol?.value
     } - ${selectedOption.date === undefined ? "" : selectedOption.date.value}`;
   }
+
+  const onOrderAcceptHandler = () => {
+    selectOption({ symbol, date });
+    if (labelRef) labelRef.current.click();
+    if (!isSocketReady || !isLoggedIn) return;
+
+    console.log("MDInfoReq Data log before sending subscribe: ", subscribeData);
+    sendSubscribe(subscribeData);
+  };
+
+  useEffect(() => {
+    if (/*!isSocketReady ||*/ !isLoggedIn) return;
+
+    const data = {
+      accountId,
+      sessionId,
+      subscribeType,
+      symbolEnum: getSymbolEnum(symbol?.value),
+      sendingTime: Date.now(),
+      expirationDate: date?.value,
+      type: PacketHeaderMessageType.MD_INFO_REQ,
+    };
+
+    console.log("MDInfoReq Data log before sending request: ", data);
+
+    setSubscribeData({
+      ...data,
+      type: PacketHeaderMessageType.SUBSCRIBE,
+    });
+
+    sendMdReq(data);
+  }, [symbol]);
 
   return (
     <FixedDropdown
@@ -74,8 +139,11 @@ const OptionBookSetting = ({ selectedOption, selectOption }) => {
               <label htmlFor="">Option</label>
               <SelectDropdown
                 options={options}
-                value={selected}
-                onChange={(option) => setSelected(option as OptionType)}
+                value={symbol}
+                onChange={(option) =>
+                  (option as OptionType).value !== symbol?.value &&
+                  setSymbol(option as OptionType)
+                }
               />
             </div>
           }
@@ -95,13 +163,7 @@ const OptionBookSetting = ({ selectedOption, selectOption }) => {
         <MenuItem
           content={
             <div className="d-flex d-justify-content-space-between w-100">
-              <Button
-                classes="btn primary"
-                onClick={() => {
-                  selectOption({ selected, date });
-                  if (labelRef) labelRef.current.click();
-                }}
-              >
+              <Button classes="btn primary" onClick={onOrderAcceptHandler}>
                 Ok
               </Button>
             </div>
@@ -112,9 +174,27 @@ const OptionBookSetting = ({ selectedOption, selectOption }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  selectedOption: getSetting(state)("option_ordersetting"),
-});
+const mapStateToProps = (state) => {
+  const wsId = WebSocketKindEnum.MARKET;
+  const socketState = wsCollectionSelector(state)[wsId];
+
+  // console.log(
+  //   "***********~~~~~~~~~~~~: ",
+  //   SingletonWSManager.isMarketWsById(wsId) &&
+  //     socketState === WebSocketKindStateEnum.AUTHORIZED,
+  //   isUserLoggedIn(state)
+  // );
+
+  return {
+    selectedOption: getSetting(state)("option_ordersetting"),
+    accountId: getAccountId(state),
+    sessionId: getSessionId(state),
+    isLoggedIn: isUserLoggedIn(state),
+    isSocketReady:
+      SingletonWSManager.isMarketWsById(wsId) &&
+      socketState === WebSocketKindStateEnum.AUTHORIZED,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   selectOption: function (option, persist?: boolean) {
@@ -125,6 +205,21 @@ const mapDispatchToProps = (dispatch) => ({
         persist: false,
       })
     );
+  },
+  sendMdReq: function (data: ISubscribeRequest) {
+    console.log("[Send MDInfoReq for MDS] >>>>> send", data);
+
+    const payload = SubscribeManner.send(data);
+    dispatch(sendWsData(WebSocketKindEnum.ADMIN_RISK, payload));
+  },
+  sendSubscribe: function (data: ISubscribeRequest) {
+    console.log(
+      "%c [Send Subscribe for MDS] >>>>> send Subscribe ( Step 7 )",
+      "color: green",
+      data
+    );
+    const payload = SubscribeManner.send(data);
+    dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
   },
 });
 

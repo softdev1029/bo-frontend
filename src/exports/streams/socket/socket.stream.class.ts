@@ -164,23 +164,25 @@ export class StreamingWS {
         this.isCreated = true;
       }),
       map(({ username, accountId }) => {
-        const isLoggedIn = !SingletonWSManager.isMarketWsById(this._id);
-        if (isLoggedIn) {
-          // sent auth
-          const loginData = {
-            accountId,
-            username,
-            sendingTime: Date.now(),
-          };
-          // const isLoggedIn = token && SingletonWSManager.isOrderWsById(this._id);
-          return of(
-            // socket opened already, just in order to update states
-            openWs({ id: this._id }),
-            requestAuthWs({ data: loginData, id: this._id })
-          );
-        } else {
-          return of(openWs({ id: this._id }));
-        }
+        // const isLoggedIn = !SingletonWSManager.isMarketWsById(this._id);
+        // if (isLoggedIn) {
+        // sent auth
+
+        const loginData = {
+          accountId,
+          username,
+          sendingTime: Date.now(),
+        };
+        // const isLoggedIn = token && SingletonWSManager.isOrderWsById(this._id);
+        return of(
+          // socket opened already, just in order to update states
+          openWs({ id: this._id }),
+          requestAuthWs({ data: loginData, id: this._id })
+        );
+
+        // } else {
+        //   return of(openWs({ id: this._id }));
+        // }
         // // console.log('[stream dataaaaaaa]>>>>>>>>>', isLoggedIn);
         // return !isLoggedIn ? of(
         //   openWs({ id: this._id })
@@ -244,6 +246,7 @@ export class StreamingWS {
         takeUntil(this._stopStream(action$)),
         map((evt: any) => {
           // {result, id}
+          console.log("socket evt", WS_ON_MESSAGE, this._id, evt);
           return of({
             type: WS_ON_MESSAGE,
             payload: messageTransformer(evt),
@@ -303,13 +306,19 @@ export class StreamingWS {
       action$.pipe(
         ofType(WS_REQUEST_UNSUBSCRIBE),
         filter(this._wsIdentify),
-        map((action: Action<SubscribeParams>) =>
-          of({
+        map((action: Action<SubscribeParams>) => {
+          console.log(
+            "%c unSubscribe action: ",
+            "color:red",
+            action.payload,
+            this._id
+          );
+          return of({
             type: WS_SEND,
             payload: unsubTransformer(action.payload),
             id: this._id,
-          })
-        )
+          });
+        })
       );
   }
 
@@ -438,7 +447,13 @@ export class StreamingWS {
     return action$.pipe(
       ofType(WS_REQUEST_AUTH),
       filter(this._wsIdentify),
-      tap((action) => console.log("[socket class] create auth stream", action)),
+      tap((action) =>
+        console.log(
+          "%c [socket class] create auth stream ( Step 1 )",
+          "color: green",
+          action
+        )
+      ),
       takeUntil(this._stopStream(action$)),
       withLatestFrom(state$),
       filter(

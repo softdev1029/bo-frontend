@@ -7,13 +7,57 @@ import { Link } from "react-router-dom";
 import HeaderModal from "./Header.modal";
 
 import { useBeforeunload } from "react-beforeunload";
+import { ISubscribeRequest } from "@/models/subscribe.model";
+import { SubscribeManner } from "@/packets/subscribe.packet";
+import {
+  PacketHeaderMessageType,
+  WebSocketKindEnum,
+  WebSocketKindStateEnum,
+} from "@/constants/websocket.enums";
+import { sendUnsubscribe, sendWsData } from "@/actions/ws.actions";
+import { wsCollectionSelector } from "@/selectors/ws.selectors";
+import { getSetting } from "@/selectors/ui-setting.selectors";
+import {
+  getAccountId,
+  getSessionId,
+  isUserLoggedIn,
+} from "@/selectors/auth.selectors";
+import { SingletonWSManager } from "@/internals";
+import { getSymbolEnum } from "@/exports/ticker.utils";
+import { SubscribeType } from "@/constants/system-enums";
 
-const HeaderMenuSectionProvider = ({ showModal }) => {
+const HeaderMenuSectionProvider = ({
+  showModal,
+  isLoggedIn,
+  accountId,
+  sessionId,
+  subscribeType = SubscribeType.THIRTYLAYERS,
+  isSocketReady,
+  sendUnsubscribe,
+  sendSubscribe,
+}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(createNewOrderEntry());
   }, []);
+
+  const handleNewOrderEntry = () => {
+    dispatch(createNewOrderEntry());
+
+    if (/* !isSocketReady ||*/ !isLoggedIn) return;
+    const data = {
+      accountId,
+      sessionId,
+      subscribeType,
+      symbolEnum: getSymbolEnum("BTC"),
+      sendingTime: Date.now(),
+      type: PacketHeaderMessageType.SUBSCRIBE,
+    };
+
+    console.log("SUBSCRIBE Data log before sending request: ", data);
+    sendSubscribe(data);
+  };
 
   const title = (
     <div className="d-flex d-align-items-center cpn-header__menu__button">
@@ -26,6 +70,7 @@ const HeaderMenuSectionProvider = ({ showModal }) => {
 
     if (tabCount && parseInt(tabCount) > 0) {
       sessionStorage.setItem("tabCount", (parseInt(tabCount) - 1).toString());
+      sendUnsubscribe();
     } else {
       sessionStorage.setItem("tabCount", "0");
     }
@@ -68,12 +113,7 @@ const HeaderMenuSectionProvider = ({ showModal }) => {
         <div className="account__content_item">
           <Link to="#">
             <Icon id="wallet" cssmodule="fal" />
-            <span
-              className="font-bold"
-              onClick={() => {
-                dispatch(createNewOrderEntry());
-              }}
-            >
+            <span className="font-bold" onClick={handleNewOrderEntry}>
               Order Entry
             </span>
           </Link>
@@ -97,12 +137,47 @@ const HeaderMenuSectionProvider = ({ showModal }) => {
   );
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => {
+  const wsId = WebSocketKindEnum.MARKET;
+  const socketState = wsCollectionSelector(state)[wsId];
+
+  // console.log(
+  //   "***********~~~~~~~~~~~~: ",
+  //   SingletonWSManager.isMarketWsById(wsId) &&
+  //     socketState === WebSocketKindStateEnum.AUTHORIZED,
+  //   isUserLoggedIn(state)
+  // );
+
+  return {
+    selectedOption: getSetting(state)("option_ordersetting"),
+    accountId: getAccountId(state),
+    sessionId: getSessionId(state),
+    isLoggedIn: isUserLoggedIn(state),
+    isSocketReady:
+      SingletonWSManager.isMarketWsById(wsId) &&
+      socketState === WebSocketKindStateEnum.AUTHORIZED,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
     showModal: function (id, component, props) {
       dispatch(showModal(id, component, props));
+    },
+    sendSubscribe: function (data: ISubscribeRequest) {
+      console.log("[Send MDInfoReq for MDS] >>>>> send", data);
+
+      const payload = SubscribeManner.send(data);
+      dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
+    },
+    sendUnsubscribe: function () {
+      dispatch(
+        sendUnsubscribe({
+          params: "BTC",
+          id: 1,
+          requestId: 0x42544355534454,
+        })
+      );
     },
   };
 };
