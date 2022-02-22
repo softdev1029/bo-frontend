@@ -12,8 +12,9 @@ const MD_INFO_RES_MESSAGE_STRUCTURE = [
   new DataByte("account", TypedData.INT), // 60
   new DataByte("key", TypedData.INT), // 64
   new DataByte("sessionId", TypedData.INT), // 68
-  new DataByte("sendingTime", TypedData.LONG), // 72
-  new DataByte("MsgSeqNum", TypedData.INT), // 80
+  new DataByte("expirationDate", TypedData.CHAR, 24), // 72
+  new DataByte("sendingTime", TypedData.LONG), // 96
+  new DataByte("MsgSeqNum", TypedData.INT), // 104
 ];
 
 export const MdInfoResManner = new PacketManner(
