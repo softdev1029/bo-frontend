@@ -34,13 +34,12 @@ import {
   sendWsData,
   establishWsConn,
   WS_REQUEST_CLOSE,
-  WS_REQUEST_SUBSCRIBE,
-  WS_REQUEST_UNSUBSCRIBE,
   WS_UNAUTH,
   requestAuthWs,
-  sendSubscribe,
   openWs,
   wsDisconnected,
+  WS_MDS_SUBSCRIBE,
+  WS_MDS_UNSUBSCRIBE,
 } from "@/actions/ws.actions";
 import { Action } from "@/models/action";
 import {
@@ -287,7 +286,7 @@ export class StreamingWS {
   private _createSubscribeStream(subTransformer): ReduxObservableStreamType {
     return (action$) =>
       action$.pipe(
-        ofType(WS_REQUEST_SUBSCRIBE),
+        ofType(WS_MDS_SUBSCRIBE),
         filter(this._wsIdentify),
         map((action: Action<SubscribeParams>) =>
           of({
@@ -304,7 +303,7 @@ export class StreamingWS {
   ): ReduxObservableStreamType {
     return (action$) =>
       action$.pipe(
-        ofType(WS_REQUEST_UNSUBSCRIBE),
+        ofType(WS_MDS_UNSUBSCRIBE),
         filter(this._wsIdentify),
         map((action: Action<SubscribeParams>) => {
           console.log(

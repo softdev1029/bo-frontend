@@ -6,7 +6,6 @@ import {
   TRADE_RECEIVED_UPDATE,
 } from "@/actions/trade.actions";
 import { EMPTY_ARRAY } from "@/exports";
-import { WS_REQUEST_UNSUBSCRIBE } from "@/actions/ws.actions";
 
 const LIMIT_ITEMS = 150;
 

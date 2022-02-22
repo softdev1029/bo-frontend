@@ -163,6 +163,11 @@ export enum TakeProfitStopLossType {
   VALUE,
 }
 
+export enum SubscribeUnsubscribeType {
+  SUBSCRIBE = 1,
+  UNSUBSCRIBE,
+}
+
 export enum SubscribeType {
   TOB = 1,
   THREELAYERS,

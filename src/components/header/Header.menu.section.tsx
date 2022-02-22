@@ -14,7 +14,7 @@ import {
   WebSocketKindEnum,
   WebSocketKindStateEnum,
 } from "@/constants/websocket.enums";
-import { sendUnsubscribe, sendWsData } from "@/actions/ws.actions";
+import { sendWsData } from "@/actions/ws.actions";
 import { wsCollectionSelector } from "@/selectors/ws.selectors";
 import { getSetting } from "@/selectors/ui-setting.selectors";
 import {
@@ -24,7 +24,10 @@ import {
 } from "@/selectors/auth.selectors";
 import { SingletonWSManager } from "@/internals";
 import { getSymbolEnum } from "@/exports/ticker.utils";
-import { SubscribeType } from "@/constants/system-enums";
+import {
+  SubscribeType,
+  SubscribeUnsubscribeType,
+} from "@/constants/system-enums";
 
 const HeaderMenuSectionProvider = ({
   showModal,
@@ -169,14 +172,12 @@ const mapDispatchToProps = (dispatch) => {
       const payload = SubscribeManner.send(data);
       dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
     },
-    sendUnsubscribe: function () {
-      dispatch(
-        sendUnsubscribe({
-          params: "BTC",
-          id: 1,
-          requestId: 0x42544355534454,
-        })
-      );
+    sendUnsubscribe: function (data: ISubscribeRequest) {
+      console.log("[Sending unsubscribe to MDS]", data);
+      data.subscribeUnsubscribe = SubscribeUnsubscribeType.UNSUBSCRIBE;
+
+      const payload = SubscribeManner.send(data);
+      dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
     },
   };
 };

@@ -24,7 +24,10 @@ import {
   isUserLoggedIn,
 } from "@/selectors/auth.selectors";
 import { SingletonWSManager } from "@/internals";
-import { SubscribeType } from "@/constants/system-enums";
+import {
+  SubscribeType,
+  SubscribeUnsubscribeType,
+} from "@/constants/system-enums";
 import { getSymbolEnum } from "@/exports/ticker.utils";
 import { SubscribeManner } from "@/packets/subscribe.packet";
 import { MdInfoReqManner } from "@/packets/md-info-req.packet";
@@ -84,6 +87,7 @@ const OptionBookSetting = ({
     sendingTime: Date.now(),
     subscribeType: 6,
     symbolEnum: 0,
+    subscribeUnsubscribe: SubscribeUnsubscribeType.SUBSCRIBE,
   });
 
   let titleText = "Option";
@@ -114,6 +118,7 @@ const OptionBookSetting = ({
       sendingTime: Date.now(),
       expirationDate: date?.value,
       type: PacketHeaderMessageType.MD_INFO_REQ,
+      subscribeUnsubscribe: SubscribeUnsubscribeType.SUBSCRIBE,
     };
 
     setSubscribeData({
