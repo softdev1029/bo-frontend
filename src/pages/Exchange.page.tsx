@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MainTradingGrid } from "@/components/grids";
 import InstrumentRequester from "@/components/Instrument-requester";
 import OrdersNotifier from "@/components/open-order/Orders.notifier";
@@ -12,6 +12,11 @@ import OrderTradingGrid from "@/components/grids/OrderTradingGrid";
 const ExchangePage = ({ match }) => {
   const tradeType = AppTradeType.SPOT;
   const symbol = match.params.symbol || "BTCUSDT";
+  const [width, setWidth] = useState("100%");
+
+  useEffect(() => {
+    setWidth("unset");
+  }, []);
 
   return (
     <>
@@ -24,6 +29,12 @@ const ExchangePage = ({ match }) => {
             </div>
             <div className="trading-main-other-grid">
               <MainTradingGrid symbol={symbol} tradeType={tradeType} />
+            </div>
+            <div
+              className="trading-main-order-grid order-entry-form-container"
+              style={{ position: "absolute", top: 50, width: width }}
+            >
+              <OrderTradingGrid symbol={symbol} tradeType={tradeType} />
             </div>
           </div>
         </div>

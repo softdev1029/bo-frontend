@@ -189,7 +189,7 @@ class OrderTradingGrid extends React.Component<
       layout.push(
         <div
           key={_i}
-          data-grid={{ x: _i * 5, y: 0, w: 5, h: 30, minH: 14, minW: 3 }}
+          data-grid={{ x: 0, y: _i * 30, w: 4, h: 30, minH: 14, minW: 3 }}
         >
           <OrderForm
             wallet={getWalletIdFromName(tradeType)}
