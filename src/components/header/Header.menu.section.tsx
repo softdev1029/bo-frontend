@@ -55,7 +55,6 @@ const HeaderMenuSectionProvider = ({
       type: PacketHeaderMessageType.SUBSCRIBE,
     };
 
-    console.log("SUBSCRIBE Data log before sending request: ", data);
     sendSubscribe(data);
   };
 
@@ -165,7 +164,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(showModal(id, component, props));
     },
     sendSubscribe: function (data: ISubscribeRequest) {
-      console.log("[Send MDInfoReq for MDS] >>>>> send", data);
+      console.log("[Sending subscribe to MDS]", data);
 
       const payload = SubscribeManner.send(data);
       dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));

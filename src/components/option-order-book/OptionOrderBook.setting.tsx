@@ -27,6 +27,7 @@ import { SingletonWSManager } from "@/internals";
 import { SubscribeType } from "@/constants/system-enums";
 import { getSymbolEnum } from "@/exports/ticker.utils";
 import { SubscribeManner } from "@/packets/subscribe.packet";
+import { MdInfoReqManner } from "@/packets/md-info-req.packet";
 
 interface OptionType {
   value: string;
@@ -98,7 +99,6 @@ const OptionBookSetting = ({
     if (labelRef) labelRef.current.click();
     if (!isSocketReady || !isLoggedIn) return;
 
-    console.log("MDInfoReq Data log before sending subscribe: ", subscribeData);
     sendSubscribe(subscribeData);
   };
 
@@ -114,8 +114,6 @@ const OptionBookSetting = ({
       expirationDate: date?.value,
       type: PacketHeaderMessageType.MD_INFO_REQ,
     };
-
-    console.log("MDInfoReq Data log before sending request: ", data);
 
     setSubscribeData({
       ...data,
@@ -207,17 +205,13 @@ const mapDispatchToProps = (dispatch) => ({
     );
   },
   sendMdReq: function (data: ISubscribeRequest) {
-    console.log("[Send MDInfoReq for MDS] >>>>> send", data);
+    console.log("%c [Send MDInfoReq for MDS to AES]", "color: green", data);
 
-    const payload = SubscribeManner.send(data);
+    const payload = MdInfoReqManner.send(data);
     dispatch(sendWsData(WebSocketKindEnum.ADMIN_RISK, payload));
   },
   sendSubscribe: function (data: ISubscribeRequest) {
-    console.log(
-      "%c [Send Subscribe for MDS] >>>>> send Subscribe ( Step 7 )",
-      "color: green",
-      data
-    );
+    console.log("%c [Send Subscribe to MDS]", "color: green", data);
     const payload = SubscribeManner.send(data);
     dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
   },
