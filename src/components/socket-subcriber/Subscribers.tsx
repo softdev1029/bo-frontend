@@ -38,7 +38,7 @@ const Subscribers = React.memo(
 
 const mapDispatchToProps = (dispatch) => ({
   sendSubscribe: function (data: ISubscribeRequest) {
-    console.log("[subscribeFunc] >>>>> send", data);
+    console.log("%c [subscribeFunc] >>>>> send (Step 7)", "color: green", data);
 
     const payload = SubscribeManner.send(data);
     dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));

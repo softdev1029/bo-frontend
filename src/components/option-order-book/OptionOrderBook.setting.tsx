@@ -211,7 +211,11 @@ const mapDispatchToProps = (dispatch) => ({
     );
   },
   sendMdReq: function (data: IMDInfoRequest) {
-    console.log("%c [Send MDInfoReq for MDS to AES]", "color: green", data);
+    console.log(
+      "%c [Send MDInfoReq for MDS to AES] (Step 3)",
+      "color: green",
+      data
+    );
 
     const payload = MdInfoReqManner.send(data);
     dispatch(sendWsData(WebSocketKindEnum.ADMIN_RISK, payload));

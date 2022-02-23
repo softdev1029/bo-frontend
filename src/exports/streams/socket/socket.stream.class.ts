@@ -448,7 +448,7 @@ export class StreamingWS {
       filter(this._wsIdentify),
       tap((action) =>
         console.log(
-          "%c [socket class] create auth stream ( Step 1 )",
+          "%c [socket class] create auth stream ( Step 1 or Step 5)",
           "color: green",
           action
         )

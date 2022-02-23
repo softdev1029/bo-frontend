@@ -154,7 +154,7 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
         case PacketHeaderMessageType.MD_INFO_REQ: {
           const serverInfo = MdInfoReqManner.read(data);
           console.log(
-            "%c [MdInfoReqManner] Received MdInfoReq via AES ( Step 3 )",
+            "%c [MdInfoReqManner] Received MdInfoReq via AES ( Step 4 )",
             "color: green",
             serverInfo
           );
