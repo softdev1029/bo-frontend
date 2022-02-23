@@ -69,22 +69,16 @@ export const sendWsData = (id, payload: any) => ({
   payload,
 });
 
-export const sendSubscribeToMDS = ({
-  params,
-  id,
-}: SubscribeParams): WsActionType<SubscribeParams> => ({
+export const sendSubscribeToMDS = (id, payload: any) => ({
   type: WS_MDS_SUBSCRIBE,
   id,
-  payload: { params },
+  payload,
 });
 
-export const sendUnsubscribeToMDS = ({
-  params,
-  id,
-}: SubscribeParams): WsActionType<SubscribeParams> => ({
+export const sendUnsubscribeToMDS = (id, payload: any) => ({
   type: WS_MDS_UNSUBSCRIBE,
-  payload: { params },
   id,
+  payload,
 });
 
 export const requestAuthWs = ({

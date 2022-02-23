@@ -14,7 +14,7 @@ import {
   WebSocketKindEnum,
   WebSocketKindStateEnum,
 } from "@/constants/websocket.enums";
-import { sendWsData } from "@/actions/ws.actions";
+import { sendSubscribeToMDS, sendUnsubscribeToMDS } from "@/actions/ws.actions";
 import { wsCollectionSelector } from "@/selectors/ws.selectors";
 import { getSetting } from "@/selectors/ui-setting.selectors";
 import {
@@ -170,14 +170,14 @@ const mapDispatchToProps = (dispatch) => {
       console.log("[Sending subscribe to MDS]", data);
 
       const payload = SubscribeManner.send(data);
-      dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
+      dispatch(sendSubscribeToMDS(WebSocketKindEnum.MARKET, payload));
     },
     sendUnsubscribe: function (data: ISubscribeRequest) {
       console.log("[Sending unsubscribe to MDS]", data);
       data.subscribeUnsubscribe = SubscribeUnsubscribeType.UNSUBSCRIBE;
 
       const payload = SubscribeManner.send(data);
-      dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
+      dispatch(sendUnsubscribeToMDS(WebSocketKindEnum.MARKET, payload));
     },
   };
 };

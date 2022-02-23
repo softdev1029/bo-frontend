@@ -97,7 +97,7 @@ export const wsReducer = (state = initialState, action) => {
       };
     }
     case WS_MDS_SUBSCRIBE: {
-      const { id } = action.payload;
+      const { id } = action;
       console.log("WS_MDS_SUBSCRIBE", id, { ...state.wsCollection });
 
       return {
