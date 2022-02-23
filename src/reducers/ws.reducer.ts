@@ -4,6 +4,8 @@ import {
   WS_AUTH,
   WS_UNAUTH,
   WS_CONNECT,
+  WS_MDS_SUBSCRIBE,
+  WS_MDS_UNSUBSCRIBE,
 } from "@/actions/ws.actions";
 import { WebSocketKindStateEnum } from "@/constants/websocket.enums";
 import { WSReducerState } from "@/models/ws-reducer-state";
@@ -91,6 +93,32 @@ export const wsReducer = (state = initialState, action) => {
           state.wsCollection,
           [id],
           WebSocketKindStateEnum.OPENED
+        ),
+      };
+    }
+    case WS_MDS_SUBSCRIBE: {
+      const { id } = action.payload;
+      console.log("WS_MDS_SUBSCRIBE", id, { ...state.wsCollection });
+
+      return {
+        ...state,
+        wsCollection: _set(
+          state.wsCollection,
+          [id],
+          WebSocketKindStateEnum.SUBSCRIBED
+        ),
+      };
+    }
+    case WS_MDS_UNSUBSCRIBE: {
+      const { id } = action;
+      console.log("WS_MDS_UNSUBSCRIBE", id, { ...state.wsCollection });
+
+      return {
+        ...state,
+        wsCollection: _set(
+          state.wsCollection,
+          [id],
+          WebSocketKindStateEnum.AUTHORIZED
         ),
       };
     }
