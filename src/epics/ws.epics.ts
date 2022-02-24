@@ -95,7 +95,6 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
       console.log("[wsOnAdminRiskMessageEpic] msgType", msgType);
-      console.log("[wsOnAdminRiskMessageEpic] data", data);
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
