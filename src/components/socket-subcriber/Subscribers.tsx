@@ -4,7 +4,7 @@
  * + remove the sub/unsub feature, if you want to unsubscribe -> close MDS (note: only closing MDS when switch to another symbol)
  * + MDS returns only 1 minute bar, so we don't have to renew the subscription when interval changed
  */
-import { sendWsData } from "@/actions/ws.actions";
+import { sendSubscribeToMDS } from "@/actions/ws.actions";
 import { SubscribeType } from "@/constants/system-enums";
 import { WebSocketKindEnum } from "@/constants/websocket.enums";
 import { ISubscribeRequest } from "@/models/subscribe.model";
@@ -41,7 +41,7 @@ const mapDispatchToProps = (dispatch) => ({
     console.log("%c [subscribeFunc] >>>>> send (Step 7)", "color: green", data);
 
     const payload = SubscribeManner.send(data);
-    dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
+    dispatch(sendSubscribeToMDS(WebSocketKindEnum.MARKET, payload));
   },
   closeWs: function (data) {
     console.log("close socket....");

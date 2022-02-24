@@ -57,7 +57,6 @@ const Subscriber = React.memo(
         subscribeUnsubscribe: SubscribeUnsubscribeType.SUBSCRIBE,
       };
 
-      console.log("[subscriber] >>>>> sub", data);
       subscribeFunc(data);
 
       return () => {
