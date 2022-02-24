@@ -260,20 +260,19 @@ export class StreamingWS {
   private _createWriteStream(wsSubject): ReduxObservableStreamType {
     return (action$) =>
       action$.ofType(WS_SEND).pipe(
-        tap((action: WsActionType<any>) =>
-          console.log(
-            "[socket class] writing stream ...",
-            action,
-            this._id,
-            wsSubject
-          )
-        ),
         takeUntil(this._stopStream(action$)),
         filter((action: WsActionType<any>) => {
           const { id } = action;
           return id === this._id && !!wsSubject;
         }),
         tap((action: WsActionType<any>) => {
+          console.log(
+            "[socket class] writing stream ...",
+            action,
+            this._id,
+            wsSubject
+          )
+
           // otherwise send next message to server
           wsSubject.next(this._sendMessageTransformer(action.payload));
         }),
