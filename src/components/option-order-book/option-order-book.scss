@@ -42,18 +42,18 @@
       &:nth-child(odd) {
         & .oob__date__table__body__left,
         & .oob__date__table__body__right {
-          background-color: rgba(16, 40, 49, 0.8);
-          border-top: 1px solid #1a3b49;
-          border-left: 1px solid #1a3b49;
+          background-color: rgba(34, 32, 32, 0.8);
+          border-top: 1px solid #091114;
+          border-left: 1px solid #091114;
         }
       }
 
       &:nth-child(even) {
         & .oob__date__table__body__left,
         & .oob__date__table__body__right {
-          background-color: rgba(12, 27, 33, 0.8);
-          border-top: 1px solid #1a3b49;
-          border-left: 1px solid #1a3b49;
+          background-color: rgba(23, 24, 24, 0.8);
+          border-top: 1px solid #091114;
+          border-left: 1px solid #091114;
         }
       }
 
@@ -71,8 +71,8 @@
           position: relative;
 
           & .oob__date__table__body__item {
-            border-right: 1px solid #1a3b49;
-            border-bottom: 1px solid #1a3b49;
+            border-right: 1px solid #091114;
+            border-bottom: 1px solid #091114;
           }
         }
       }
