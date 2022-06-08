@@ -37,7 +37,7 @@ class CollasibleDate extends React.PureComponent<
   render() {
     return (
       <>
-        {new Array(10).fill(0).map((item, index) => (
+        {new Array(1).fill(0).map((item, index) => (
           <div className={`${this.state.className}__body`} key={index}>
             <div
               className={`${this.state.className}__body__left`}
