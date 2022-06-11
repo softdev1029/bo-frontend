@@ -2,14 +2,17 @@ import { OrderBookStartLayer } from "@/constants/order-book-enums";
 import { SymbolType, SymbolValue } from "@/constants/symbol-enums";
 import { OrderSide } from "@/constants/system-enums";
 import { PacketHeaderMessageType } from "@/constants/websocket.enums";
+import { CallPutOption } from "./order.model";
 
 export interface OrderBookRaw {
   price: number;
   size: number;
+  expiryDate?: string;
+  callPut?: CallPutOption;
 }
 
 export interface OrderBookModel extends OrderBookRaw {
-  sumSize: number;
+  sumSize?: number;
 }
 
 /**
@@ -48,3 +51,14 @@ export interface IBookResponse {
   markOfferPrice?: number;
   orderbooks?: OrderBookStruct[];
 }
+
+export type OptionsBookDataItem = {
+  putBid: OrderBookModel;
+  putAsk: OrderBookModel;
+  callBid: OrderBookModel;
+  callAsk: OrderBookModel;
+};
+
+export type OptionsBookData = {
+  [expirtyDate: string]: OptionsBookDataItem[];
+};

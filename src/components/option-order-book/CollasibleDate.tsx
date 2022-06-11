@@ -4,9 +4,11 @@ import { Collapsible } from "@/ui-components";
 import { showModal } from "@/actions/app.actions";
 import { OrderType } from "@/constants/system-enums";
 import OrderFormModal from "../order-form/OrderForm.modal";
+import { OptionsBookDataItem } from "@/models/book.model";
 
 interface CollasibleDateProps {
   className?: string;
+  data: OptionsBookDataItem[];
   showModal: (mid: string, component: ReactNode, props) => void;
 }
 
@@ -35,9 +37,10 @@ class CollasibleDate extends React.PureComponent<
   }
 
   render() {
+    const { data } = this.props;
     return (
       <>
-        {new Array(1).fill(0).map((item, index) => (
+        {data.map((item, index) => (
           <div className={`${this.state.className}__body`} key={index}>
             <div
               className={`${this.state.className}__body__left`}
@@ -55,18 +58,24 @@ class CollasibleDate extends React.PureComponent<
                   <span>68.1%</span>
                 </div>
                 <div className={`${this.state.className}__body__item size`}>
-                  <span>-</span>
+                  <span>{item.putBid?.size ? item.putBid?.size : "-"}</span>
                 </div>
                 <div className={`${this.state.className}__body__item bid`}>
-                  <span className="up">0.0010</span>
-                  <span>$38.90</span>
+                  <span className="up">{item.putBid?.price ? "0.1" : "-"}</span>
+                  <span>
+                    {item.putBid?.price ? `$${item.putBid?.price}` : "-"}
+                  </span>
                 </div>
                 <div className={`${this.state.className}__body__item ask`}>
-                  <span className="down">0.0605</span>
-                  <span>$2351.70</span>
+                  <span className="down">
+                    {item.putAsk?.price ? "0.1" : "-"}
+                  </span>
+                  <span>
+                    {item.putAsk?.price ? `$${item.putAsk?.price}` : "-"}
+                  </span>
                 </div>
                 <div className={`${this.state.className}__body__item size`}>
-                  <span>-</span>
+                  <span>{item.putAsk?.size ? item.putAsk?.size : "-"}</span>
                 </div>
                 <div className={`${this.state.className}__body__item iv_ask`}>
                   <span>-</span>
@@ -87,18 +96,26 @@ class CollasibleDate extends React.PureComponent<
                   <span>68.1%</span>
                 </div>
                 <div className={`${this.state.className}__body__item size`}>
-                  <span>-</span>
+                  <span>{item.callBid?.size ? item.callBid?.size : "-"}</span>
                 </div>
                 <div className={`${this.state.className}__body__item bid`}>
-                  <span className="up">0.0010</span>
-                  <span>$38.90</span>
+                  <span className="up">
+                    {item.callBid?.price ? "0.0010" : "-"}
+                  </span>
+                  <span>
+                    {item.callBid?.price ? `$${item.callBid?.price}` : "-"}
+                  </span>
                 </div>
                 <div className={`${this.state.className}__body__item ask`}>
-                  <span className="down">0.0605</span>
-                  <span>$2351.70</span>
+                  <span className="down">
+                    {item.callAsk?.price ? "0.0605" : "-"}
+                  </span>
+                  <span>
+                    {item.callAsk?.price ? `$${item.callAsk?.price}` : "-"}
+                  </span>
                 </div>
                 <div className={`${this.state.className}__body__item size`}>
-                  <span>-</span>
+                  <span>{item.callAsk?.size ? item.callAsk?.size : "-"}</span>
                 </div>
                 <div className={`${this.state.className}__body__item iv_ask`}>
                   <span>-</span>

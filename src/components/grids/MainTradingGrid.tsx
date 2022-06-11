@@ -307,7 +307,6 @@ class MainTradingGrid extends React.Component<
 
   componentDidMount() {
     const { setFullScreenMode } = this.props;
-    console.log(this.props.orderEntries.length);
     document.addEventListener("fullscreenchange", function () {
       var full_screen_ele = document.fullscreenElement;
 

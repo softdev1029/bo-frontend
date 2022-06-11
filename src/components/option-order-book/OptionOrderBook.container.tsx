@@ -1,6 +1,7 @@
 import ResizeSensor from "@/ui-components/ResizeSensor";
 import React from "react";
 import { connect } from "react-redux";
+
 import { OrderBookModel } from "@/models/book.model";
 import { AppTradeType } from "@/constants/trade-type";
 import {
@@ -8,6 +9,12 @@ import {
   sendMDInfoReq,
   subscribeMarketData,
 } from "@/actions/book.action";
+import {
+  getOptionsAsksSelector,
+  getOptionsBidsSelector,
+} from "@/selectors/book.selectors";
+import { getLastPriceBySymbol } from "@/selectors/ticker.selectors";
+
 import { Collapsible } from "@/ui-components";
 import OptionOrderBook from "./OptionOrderBook";
 
@@ -63,39 +70,10 @@ class OptionOrderBookContainer extends React.PureComponent<
   }
 
   render() {
-    const {
-      symbol,
-      lastPrice,
-      dualColumn,
-      showDepth,
-      maxSumSize,
-      bids: b,
-      asks: a,
-      windowOpen,
-      enabled1Click,
-      tradeType,
-    } = this.props;
-
-    const { width, height } = this.state;
-
-    const bookProps = {
-      symbol,
-      lastPrice,
-      dualColumn,
-      showDepth,
-      // bids,
-      // asks,
-      maxSumSize,
-      width,
-      windowOpen,
-      enabled1Click,
-      tradeType,
-    };
-
     return (
       <ResizeSensor onResize={this.onResize}>
         <div className="oob__container" id="oob__container">
-          <OptionOrderBook className="oob__date__table" />
+          <OptionOrderBook className="oob__date__table" {...this.props} />
         </div>
       </ResizeSensor>
     );
@@ -106,7 +84,11 @@ const mapStateToProps = (
   state,
   props: Partial<OptionOrderBookContainerProps>
 ) => {
-  return {};
+  return {
+    lastPrice: getLastPriceBySymbol(state)(props.symbol),
+    bids: getOptionsBidsSelector(state),
+    asks: getOptionsAsksSelector(state),
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({

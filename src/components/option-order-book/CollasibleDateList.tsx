@@ -3,10 +3,14 @@ import { connect } from "react-redux";
 import { Collapsible } from "@/ui-components";
 import CollapibleDate from "./CollasibleDate";
 import { getSetting } from "@/selectors/ui-setting.selectors";
+import { getOptionOrderBookDataByDate } from "./OptionOrderBook.helpers";
+import { OrderBookModel } from "@/models/book.model";
 
 interface CollasibleDateListProps {
   className: string;
   fullscreenMode: boolean;
+  bids: OrderBookModel[];
+  asks: OrderBookModel[];
 }
 
 interface CollasibleDateListState {
@@ -24,41 +28,30 @@ class CollasibleDateList extends React.PureComponent<
     };
   }
 
-  
-
   render() {
-    return (
-      <div className={`${this.state.className}__wrapper`}>
+    const { bids, asks } = this.props;
+    const optionsBookDataByDate = getOptionOrderBookDataByDate({ bids, asks });
+    const compList = Object.keys(optionsBookDataByDate).reduce((acc, cur) => {
+      const optionsBookData = optionsBookDataByDate[cur];
+      const comp = (
         <Collapsible
-          title={!this.props.fullscreenMode ? "" : "01 Feb 2022"}
+          key={cur}
+          title={cur}
           open={true}
           triggerDisabled={!this.props.fullscreenMode}
           resizable={this.props.fullscreenMode}
         >
-          <CollapibleDate className={this.state.className} />
+          <CollapibleDate
+            className={this.state.className}
+            data={optionsBookData}
+          />
         </Collapsible>
-        {!!this.props.fullscreenMode && (
-          <>
-            <Collapsible
-              title="01 Feb 2022"
-              open={true}
-              triggerDisabled={false}
-              resizable={this.props.fullscreenMode}
-            >
-              <CollapibleDate className={this.state.className} />
-            </Collapsible>
-            <Collapsible
-              title="01 Feb 2022"
-              open={true}
-              resizable={this.props.fullscreenMode}
-              // triggerDisabled={!!this.props.fullscreenMode}
-            >
-              <CollapibleDate className={this.state.className} />
-            </Collapsible>
-          </>
-        )}
-      </div>
-    );
+      );
+      acc.push(comp);
+      return acc;
+    }, []);
+
+    return <div className={`${this.state.className}__wrapper`}>{compList}</div>;
   }
 }
 

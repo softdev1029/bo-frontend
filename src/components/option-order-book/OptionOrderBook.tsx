@@ -27,16 +27,10 @@ class OptionOrderBook extends React.PureComponent<
     return (
       <div className={`${this.state.className}`}>
         <CollasibleDateHeader className={this.state.className} />
-        <CollasibleDateList className={this.state.className} />
+        <CollasibleDateList className={this.state.className} {...this.props} />
       </div>
     );
   }
 }
 
-const mapStateToProps = (state, props: Partial<OptionOrderBookProps>) => {
-  return {};
-};
-
-const mapDispatchToProps = (dispatch) => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(OptionOrderBook);
+export default OptionOrderBook;
