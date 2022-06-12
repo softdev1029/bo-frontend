@@ -21,15 +21,11 @@ export const WS_SEND = "@ws/SEND";
 // no long use ws anymore
 export const WS_REQUEST_CLOSE = "@ws/REQUEST_CLOSE";
 
-export const WS_REQUEST_SUBSCRIBE = "@ws/REQUEST_SUBSCRIBE";
-// export const WS_SUBSCRIBED = '@ws/SUBSCRIBED';
-
-export const WS_REQUEST_UNSUBSCRIBE = "@ws/REQUEST_UNSUBSCRIBE";
-// export const WS_UNSUBSCRIBED = '@ws/UNSUBSCRIBED';
-
 export const WS_REQUEST_AUTH = "@ws/REQUEST_AUTH";
 export const WS_AUTH = "@ws/AUTH";
 export const WS_UNAUTH = "@ws/UNAUTH";
+export const WS_MDS_SUBSCRIBE = "@ws/mds/SUBSCRIBE";
+export const WS_MDS_UNSUBSCRIBE = "@ws/mds/UNSUBSCRIBE";
 
 export const establishWsConn = ({
   id,
@@ -73,24 +69,16 @@ export const sendWsData = (id, payload: any) => ({
   payload,
 });
 
-export const sendSubscribe = ({
-  params,
+export const sendSubscribeToMDS = (id, payload: any) => ({
+  type: WS_MDS_SUBSCRIBE,
   id,
-  requestId,
-}: SubscribeParams): WsActionType<SubscribeParams> => ({
-  type: WS_REQUEST_SUBSCRIBE,
-  id,
-  payload: { params, requestId },
+  payload,
 });
 
-export const sendUnsubscribe = ({
-  params,
+export const sendUnsubscribeToMDS = (id, payload: any) => ({
+  type: WS_MDS_UNSUBSCRIBE,
   id,
-  requestId,
-}: SubscribeParams): WsActionType<SubscribeParams> => ({
-  type: WS_REQUEST_UNSUBSCRIBE,
-  payload: { params, requestId },
-  id,
+  payload,
 });
 
 export const requestAuthWs = ({

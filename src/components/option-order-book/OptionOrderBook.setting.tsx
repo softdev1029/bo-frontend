@@ -24,9 +24,14 @@ import {
   isUserLoggedIn,
 } from "@/selectors/auth.selectors";
 import { SingletonWSManager } from "@/internals";
-import { SubscribeType } from "@/constants/system-enums";
+import {
+  SubscribeType,
+  SubscribeUnsubscribeType,
+} from "@/constants/system-enums";
 import { getSymbolEnum } from "@/exports/ticker.utils";
 import { SubscribeManner } from "@/packets/subscribe.packet";
+import { MdInfoReqManner } from "@/packets/md-info-req.packet";
+import { IMDInfoRequest } from "@/models/md-req.model";
 
 interface OptionType {
   value: string;
@@ -82,6 +87,7 @@ const OptionBookSetting = ({
     sendingTime: Date.now(),
     subscribeType: 6,
     symbolEnum: 0,
+    subscribeUnsubscribe: SubscribeUnsubscribeType.SUBSCRIBE,
   });
 
   let titleText = "Option";
@@ -98,7 +104,6 @@ const OptionBookSetting = ({
     if (labelRef) labelRef.current.click();
     if (!isSocketReady || !isLoggedIn) return;
 
-    console.log("MDInfoReq Data log before sending subscribe: ", subscribeData);
     sendSubscribe(subscribeData);
   };
 
@@ -113,9 +118,8 @@ const OptionBookSetting = ({
       sendingTime: Date.now(),
       expirationDate: date?.value,
       type: PacketHeaderMessageType.MD_INFO_REQ,
+      subscribeUnsubscribe: SubscribeUnsubscribeType.SUBSCRIBE,
     };
-
-    console.log("MDInfoReq Data log before sending request: ", data);
 
     setSubscribeData({
       ...data,
@@ -206,18 +210,18 @@ const mapDispatchToProps = (dispatch) => ({
       })
     );
   },
-  sendMdReq: function (data: ISubscribeRequest) {
-    console.log("[Send MDInfoReq for MDS] >>>>> send", data);
-
-    const payload = SubscribeManner.send(data);
-    dispatch(sendWsData(WebSocketKindEnum.ADMIN_RISK, payload));
-  },
-  sendSubscribe: function (data: ISubscribeRequest) {
+  sendMdReq: function (data: IMDInfoRequest) {
     console.log(
-      "%c [Send Subscribe for MDS] >>>>> send Subscribe ( Step 7 )",
+      "%c [Send MDInfoReq for MDS to AES] (Step 3)",
       "color: green",
       data
     );
+
+    const payload = MdInfoReqManner.send(data);
+    dispatch(sendWsData(WebSocketKindEnum.ADMIN_RISK, payload));
+  },
+  sendSubscribe: function (data: ISubscribeRequest) {
+    console.log("%c [Send Subscribe to MDS]", "color: green", data);
     const payload = SubscribeManner.send(data);
     dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
   },

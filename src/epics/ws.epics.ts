@@ -95,7 +95,6 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
       console.log("[wsOnAdminRiskMessageEpic] msgType", msgType);
-      console.log("[wsOnAdminRiskMessageEpic] data", data);
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
@@ -154,31 +153,31 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
         case PacketHeaderMessageType.MD_INFO_REQ: {
           const serverInfo = MdInfoReqManner.read(data);
           console.log(
-            "%c [MdInfoReqManner] Received MdInfoReq via AES ( Step 3 )",
+            "%c [MdInfoReqManner] Received MdInfoReq via AES ( Step 4 )",
             "color: green",
-            serverInfo
+            serverInfo,
+            wsId
           );
-          console.log(wsId);
 
+          let mdsUrl = `${config.protocol}://localhost:8082`;
           if (
             serverInfo.marketEntryIp1 &&
             serverInfo.marketEntryIp1.replace(/\s/g, "").length
           ) {
-            SingletonWSManager.addWs(
-              `${config.protocol}://${serverInfo.marketEntryIp1}`,
-              WebSocketKindEnum.MARKET
-            );
-            // SingletonWSManager.addWs(`ws://113.197.36.50:32028/`, WebSocketKindEnum.MARKET);
-          } else {
-            SingletonWSManager.addWs(
-              `ws://localhost:8082`,
-              WebSocketKindEnum.MARKET
-            );
+            mdsUrl = `${config.protocol}://${serverInfo.marketEntryIp1}`;
           }
 
-          const saveEntries = SingletonWSManager.getUrlEntries();
+          // T63-1, if a new MDS url is already used in a running MDS socket,
+          // we don't need to re-open it again
+          if (!SingletonWSManager.isMarketWsByUrl(mdsUrl)) {
+            SingletonWSManager.addWs(mdsUrl, WebSocketKindEnum.MARKET);
 
-          return of(updateSocketUrlEntries(saveEntries));
+            const saveEntries = SingletonWSManager.getUrlEntries();
+
+            return of(updateSocketUrlEntries(saveEntries));
+          } else {
+            return EMPTY;
+          }
         }
         case PacketHeaderMessageType.MD_INFO_RES: {
           const serverInfo = MdInfoResManner.read(data);

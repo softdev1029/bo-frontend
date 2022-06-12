@@ -1,5 +1,8 @@
 import { SymbolValue } from "@/constants/symbol-enums";
-import { SubscribeType } from "@/constants/system-enums";
+import {
+  SubscribeType,
+  SubscribeUnsubscribeType,
+} from "@/constants/system-enums";
 import { PacketHeaderMessageType } from "@/constants/websocket.enums";
 
 export interface ISubscribeRequest {
@@ -13,4 +16,5 @@ export interface ISubscribeRequest {
   seqNum?: number;
   expirationDate?: string;
   subscribeType: SubscribeType;
+  subscribeUnsubscribe: SubscribeUnsubscribeType;
 }

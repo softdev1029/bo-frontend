@@ -34,13 +34,12 @@ import {
   sendWsData,
   establishWsConn,
   WS_REQUEST_CLOSE,
-  WS_REQUEST_SUBSCRIBE,
-  WS_REQUEST_UNSUBSCRIBE,
   WS_UNAUTH,
   requestAuthWs,
-  sendSubscribe,
   openWs,
   wsDisconnected,
+  WS_MDS_SUBSCRIBE,
+  WS_MDS_UNSUBSCRIBE,
 } from "@/actions/ws.actions";
 import { Action } from "@/models/action";
 import {
@@ -211,9 +210,7 @@ export class StreamingWS {
       this.websocketSubject,
       this._onMessageTransformer
     )(action$);
-    const subscribers$ = this._createSubscribeStream(this._subTransformer)(
-      action$
-    );
+    const subscribers$ = this._createSubscribeStream(action$, state$);
     const unsubscribers$ = this._createUnsubscribeStream(
       this._unsubTransformer
     )(action$);
@@ -263,20 +260,19 @@ export class StreamingWS {
   private _createWriteStream(wsSubject): ReduxObservableStreamType {
     return (action$) =>
       action$.ofType(WS_SEND).pipe(
-        tap((action: WsActionType<any>) =>
-          console.log(
-            "[socket class] writing stream ...",
-            action,
-            this._id,
-            wsSubject
-          )
-        ),
         takeUntil(this._stopStream(action$)),
         filter((action: WsActionType<any>) => {
           const { id } = action;
           return id === this._id && !!wsSubject;
         }),
         tap((action: WsActionType<any>) => {
+          console.log(
+            "[socket class] writing stream ...",
+            action,
+            this._id,
+            wsSubject
+          )
+
           // otherwise send next message to server
           wsSubject.next(this._sendMessageTransformer(action.payload));
         }),
@@ -284,19 +280,28 @@ export class StreamingWS {
       );
   }
 
-  private _createSubscribeStream(subTransformer): ReduxObservableStreamType {
-    return (action$) =>
-      action$.pipe(
-        ofType(WS_REQUEST_SUBSCRIBE),
-        filter(this._wsIdentify),
-        map((action: Action<SubscribeParams>) =>
-          of({
-            type: WS_SEND,
-            payload: subTransformer(action.payload),
-            id: this._id,
-          })
+  private _createSubscribeStream(
+    action$: ActionsObservable<any>,
+    state$: StateObservable<any>
+  ) {
+    return action$.pipe(
+      ofType(WS_MDS_SUBSCRIBE),
+      filter(this._wsIdentify),
+      tap((action) =>
+        console.log(
+          "%c [socket.stream.class] handling WS_MDS_SUBSCRIBE ...",
+          "color: green",
+          action
         )
-      );
+      ),
+      map((action: Action<SubscribeParams>) =>
+        of({
+          type: WS_SEND,
+          payload: action.payload,
+          id: this._id,
+        })
+      )
+    );
   }
 
   private _createUnsubscribeStream(
@@ -304,7 +309,7 @@ export class StreamingWS {
   ): ReduxObservableStreamType {
     return (action$) =>
       action$.pipe(
-        ofType(WS_REQUEST_UNSUBSCRIBE),
+        ofType(WS_MDS_UNSUBSCRIBE),
         filter(this._wsIdentify),
         map((action: Action<SubscribeParams>) => {
           console.log(
@@ -315,7 +320,7 @@ export class StreamingWS {
           );
           return of({
             type: WS_SEND,
-            payload: unsubTransformer(action.payload),
+            payload: action.payload,
             id: this._id,
           });
         })
@@ -449,7 +454,7 @@ export class StreamingWS {
       filter(this._wsIdentify),
       tap((action) =>
         console.log(
-          "%c [socket class] create auth stream ( Step 1 )",
+          "%c [socket class] create auth stream ( Step 1 or Step 5)",
           "color: green",
           action
         )
