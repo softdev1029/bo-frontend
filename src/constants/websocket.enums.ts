@@ -9,6 +9,7 @@ export enum WebSocketKindStateEnum {
   CONNECTING = 1,
   OPENED = 2,
   AUTHORIZED = 3,
+  SUBSCRIBED = 4, // only for MDS
 }
 
 export enum WebSocketChannelEnum {

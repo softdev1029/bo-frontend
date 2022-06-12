@@ -4,7 +4,6 @@ import {
   OPTIONS_BOOK_INITIALIZED,
   OPTIONS_BOOK_RECEIVED_UPDATE,
 } from "@/actions/book.action";
-import { WS_REQUEST_UNSUBSCRIBE } from "@/actions/ws.actions";
 import { EMPTY_OBJ } from "@/exports";
 import { BookData, OrderBookModel } from "@/models/book.model";
 

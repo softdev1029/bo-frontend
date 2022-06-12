@@ -44,11 +44,11 @@ const SocketProviderMemo = ({
   }, [openWsConnection, closeWs, marketUrls]);
 
   useEffect(() => {
-    console.log("[SocketProvider] opening admin risk ...");
+    console.log("[SocketProvider] opening AES connection ...", adminRiskUrl);
     openWsConnection(adminRiskUrl);
 
     return () => {
-      console.log("[SocketProvider] closing admin risk ...");
+      console.log("[SocketProvider] closing AES connection ...", adminRiskUrl);
       closeWs(adminRiskUrl);
     };
   }, [openWsConnection, closeWs, adminRiskUrl]);

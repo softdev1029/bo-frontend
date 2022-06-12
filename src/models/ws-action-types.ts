@@ -9,7 +9,6 @@ export interface BaseWsParams {
 
 export interface SubscribeParams extends BaseWsParams {
   params: string;
-  requestId: number;
 }
 
 export interface DisonnectedParams extends BaseWsParams {
@@ -21,6 +20,6 @@ export interface WsAuthenticatedParams extends BaseWsParams {
 }
 
 export interface WsConnectParams extends BaseWsParams {
-  reconn: boolean; 
-  url: string
+  reconn: boolean;
+  url: string;
 }

@@ -51,7 +51,7 @@ export const initWSStream =
   (action$: ActionsObservable<any>, state$: StateObservable<any>) =>
     action$.pipe(
       ofType(WS_CONNECT),
-      tap((action) => console.log("[connect] init stream" + wsId)),
+      tap((action) => console.log("[connect] init stream", wsId)),
       filter(
         (action) => action.id === wsId && !SingletonWSManager.hasInstance(wsId)
       ),

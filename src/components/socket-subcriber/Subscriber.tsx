@@ -8,7 +8,10 @@ import { connect } from "react-redux";
 import { wsCollectionSelector } from "@/selectors/ws.selectors";
 import { SingletonWSManager } from "@/internals";
 import { getSymbolEnum } from "@/exports/ticker.utils";
-import { SubscribeType } from "@/constants/system-enums";
+import {
+  SubscribeType,
+  SubscribeUnsubscribeType,
+} from "@/constants/system-enums";
 import {
   getAccountId,
   getSessionId,
@@ -51,9 +54,9 @@ const Subscriber = React.memo(
         symbolEnum: getSymbolEnum(symbol),
         sendingTime: Date.now(),
         type: PacketHeaderMessageType.SUBSCRIBE,
+        subscribeUnsubscribe: SubscribeUnsubscribeType.SUBSCRIBE,
       };
 
-      console.log("[subscriber] >>>>> sub", data);
       subscribeFunc(data);
 
       return () => {
