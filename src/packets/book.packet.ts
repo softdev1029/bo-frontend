@@ -1,6 +1,6 @@
 // trades = MDExecReport
 import { PacketHeaderMessageType } from "@/constants/websocket.enums";
-import { PacketReader } from "@/internals";
+import { PacketReader, PacketSender } from "@/internals";
 import {
   DataByte,
   IReadCustomData,
@@ -10,11 +10,22 @@ import { getPackLength, PacketManner } from "./packet-manner";
 
 const BOOK_PRICE_STRUCTURE = [
   new DataByte("price", TypedData.DOUBLE), // 0
-  new DataByte("volume", TypedData.DOUBLE), // 8
+  new DataByte("size", TypedData.DOUBLE), // 8
   new DataByte("side", TypedData.CHAR, 1), // 16
 ];
 
 class BookPrice10LevelDataByte extends DataByte implements IReadCustomData {
+  putCustomValue(values: Object | Object[], sender: PacketSender) {
+    const maxLoop = this.length() / getPackLength(BOOK_PRICE_STRUCTURE);
+    for (let i = 0; i < maxLoop; i++) {
+      BOOK_PRICE_STRUCTURE.forEach((dataByte) => {
+        dataByte.putValue(
+          values[i] ? values[i][dataByte.name] : undefined,
+          sender
+        );
+      });
+    }
+  }
   getCustomValue(reader: PacketReader) {
     const prices = [];
     const maxLoop = this.length() / getPackLength(BOOK_PRICE_STRUCTURE);

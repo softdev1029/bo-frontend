@@ -84,6 +84,7 @@ import {
   LOG_COLOR_RECV_MDS,
   LOG_COLOR_RECV_OES,
 } from "@/constants/app.constants";
+import { CallPutOption } from "@/models/order.model";
 
 export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
@@ -452,18 +453,27 @@ export const wsOnMarketMessageEpic = (
         case PacketHeaderMessageType.BOOK_10: {
           // wsOnMessageSrc$.next(data);
           const bookData = BookManner(msgType).read(data);
-          const bids = {};
-          const asks = {};
-          bookData.orderbooks.forEach((book) => {
-            if (book.volume) {
-              if (book.side === "B") {
-                bids[book.price] = book.volume;
-              } else {
-                asks[book.price] = book.volume;
-              }
+          const bids = [];
+          const asks = [];
+          console.log(
+            "%c [wsOnMarketMessageEpic] Received Book Level reply via MDS",
+            LOG_COLOR_RECV_MDS,
+            bookData
+          );
+          bookData.price.forEach((book) => {
+            const item = {
+              price: book.price,
+              size: book.size,
+              expiryDate: "-",
+              callPut: CallPutOption.PUT,
+            };
+            if (book.side === "B") {
+              bids.push(item);
+            } else {
+              asks.push(item);
             }
           });
-
+          console.log("bids,asks", bids, asks);
           return of(
             optionsBookUpdate({
               lastUpdateId: bookData.sendingTime,

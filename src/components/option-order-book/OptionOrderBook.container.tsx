@@ -93,9 +93,8 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch) => ({
   loadBook: function ({ symbol, limit }: { symbol: string; limit?: number }) {
-    dispatch(initBook({ symbol, limit }));
-    // dispatch(subscribeMarketData({ symbol, limit }));
-    // dispatch(sendMDInfoReq({ symbol }));
+    // we don't need `initBook` (it's only for binance or test)
+    // dispatch(initBook({ symbol, limit }));
   },
 });
 
