@@ -22,11 +22,7 @@ import {
 } from "@/constants/websocket.enums";
 import { tickerUpdate, updateInstrument } from "@/actions/ticker.actions";
 import { tradeUpdate2 } from "@/actions/trade.actions";
-import {
-  bookUpdate,
-  bookUpdate2,
-  subscribeMarketData,
-} from "@/actions/book.action";
+import { optionsBookUpdate, subscribeMarketData } from "@/actions/book.action";
 import {
   ChartSnapshotSubject,
   ChartUpdateSubject,
@@ -452,7 +448,7 @@ export const wsOnMarketMessageEpic = (
           });
 
           return of(
-            bookUpdate2({
+            optionsBookUpdate({
               lastUpdateId: bookData.sendingTime,
               asks,
               bids,
@@ -547,13 +543,14 @@ export const onWebWorkerEpic = (action$, state$) =>
     // map((batch) => batch[0]),
     switchMap((data: any) => {
       const { bookPayload } = data;
+      console.log("[onWebWorkerEpic]", bookPayload);
 
       const streams = [
         // tickerUpdate(marketData),
         // tradeUpdate2(tradesData)
       ];
       if (bookPayload) {
-        streams.push(bookUpdate2(bookPayload));
+        streams.push(optionsBookUpdate(bookPayload));
       }
 
       // charts.map(payload => ChartSubject.next(payload));

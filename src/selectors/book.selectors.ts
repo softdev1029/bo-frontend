@@ -44,3 +44,15 @@ export const isBookLoaded = createSelector(
   _getBookState,
   (book) => book.initialized
 );
+
+export const getOptionsBidsSelector = createSelector<
+  any,
+  any,
+  OrderBookModel[]
+>(_getBookState, (book) => book.optionsBids);
+
+export const getOptionsAsksSelector = createSelector<
+  any,
+  any,
+  OrderBookModel[]
+>(_getBookState, (book) => book.optionsAsks);
