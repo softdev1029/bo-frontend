@@ -79,6 +79,11 @@ import { BarManner, BarSnapshotManner } from "@/packets/chart.packet";
 import { MdInfoResManner } from "@/packets/md-info-res.packet";
 import { SubscribeManner } from "@/packets/subscribe.packet";
 import { MdInfoReqManner } from "@/packets/md-info-req.packet";
+import {
+  LOG_COLOR_RECV_AES,
+  LOG_COLOR_RECV_MDS,
+  LOG_COLOR_RECV_OES,
+} from "@/constants/app.constants";
 
 export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
   action$.pipe(
@@ -90,14 +95,18 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
 
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
-      console.log("[wsOnAdminRiskMessageEpic] msgType", msgType);
+      const msgLen = reader.getMessageLength();
+      console.log(
+        `%c [wsOnAdminRiskMessageEpic epic] >>>> type=${msgType}, len=${msgLen}`,
+        LOG_COLOR_RECV_AES
+      );
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
           const serverInfo = ClientLoginManner.read(data);
           console.log(
             "%c [wsOnAdminRiskMessageEpic] Received Logon reply via AES ( Step 2 )",
-            "color: green",
+            LOG_COLOR_RECV_AES,
             serverInfo
           );
 
@@ -150,7 +159,7 @@ export const wsOnAdminRiskMessageEpic = (action$: ActionsObservable<any>) =>
           const serverInfo = MdInfoReqManner.read(data);
           console.log(
             "%c [MdInfoReqManner] Received MdInfoReq via AES ( Step 4 )",
-            "color: green",
+            LOG_COLOR_RECV_AES,
             serverInfo,
             wsId
           );
@@ -295,7 +304,11 @@ export const wsOnOrderMessageEpic = (action$: ActionsObservable<any>, state$) =>
       const wsId = action._id;
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
-      console.log("[wsOnOrderMessageEpic] msgType", msgType);
+      const msgLen = reader.getMessageLength();
+      console.log(
+        `%c [wsOnOrderMessageEpic epic] >>>> type=${msgType}, len=${msgLen}`,
+        LOG_COLOR_RECV_OES
+      );
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
@@ -404,7 +417,11 @@ export const wsOnMarketMessageEpic = (
 
       const reader = new PacketReader(data);
       const msgType = reader.getMessageType();
-      // console.log('[wsOnMarketMessageEpic epic] >>>> msgType', msgType);
+      const msgLen = reader.getMessageLength();
+      console.log(
+        `%c [wsOnMarketMessageEpic epic] >>>> type=${msgType}, len=${msgLen}`,
+        LOG_COLOR_RECV_MDS
+      );
 
       switch (msgType) {
         case PacketHeaderMessageType.CLIENT_LOGIN: {
@@ -412,7 +429,7 @@ export const wsOnMarketMessageEpic = (
 
           console.log(
             "%c [wsOnMarketMessageEpic] Received Logon reply via MDS ( Step 6 )",
-            "color: green",
+            LOG_COLOR_RECV_MDS,
             ClientLoginManner.read(data),
             "socketid",
             wsId
@@ -423,7 +440,7 @@ export const wsOnMarketMessageEpic = (
         case PacketHeaderMessageType.SUBSCRIBE: {
           console.log(
             "%c [wsOnMarketMessageEpic] Subscribe",
-            "color: green",
+            LOG_COLOR_RECV_MDS,
             SubscribeManner.read(data)
           );
 

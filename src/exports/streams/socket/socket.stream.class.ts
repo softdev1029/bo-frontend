@@ -52,6 +52,7 @@ import { SingletonWSManager } from "@/internals";
 import { ClientLoginManner } from "@/packets/client-login.packet";
 import { WebSocketKindStateEnum } from "@/constants/websocket.enums";
 import { wsCollectionSelector } from "@/selectors/ws.selectors";
+import { LOG_COLOR_SEND } from "@/constants/app.constants";
 
 type ReduxObservableStreamType = (action$) => Observable<any>;
 interface StreamingParams {
@@ -267,11 +268,12 @@ export class StreamingWS {
         }),
         tap((action: WsActionType<any>) => {
           console.log(
-            "[socket class] writing stream ...",
+            "%c [socket class] writing stream ...",
+            LOG_COLOR_SEND,
             action,
             this._id,
             wsSubject
-          )
+          );
 
           // otherwise send next message to server
           wsSubject.next(this._sendMessageTransformer(action.payload));
@@ -290,7 +292,7 @@ export class StreamingWS {
       tap((action) =>
         console.log(
           "%c [socket.stream.class] handling WS_MDS_SUBSCRIBE ...",
-          "color: green",
+          LOG_COLOR_SEND,
           action
         )
       ),
@@ -455,7 +457,7 @@ export class StreamingWS {
       tap((action) =>
         console.log(
           "%c [socket class] create auth stream ( Step 1 or Step 5)",
-          "color: green",
+          LOG_COLOR_SEND,
           action
         )
       ),
