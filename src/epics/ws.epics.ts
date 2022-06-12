@@ -461,16 +461,19 @@ export const wsOnMarketMessageEpic = (
             bookData
           );
           bookData.price.forEach((book) => {
-            const item = {
-              price: book.price,
-              size: book.size,
-              expiryDate: "-",
-              callPut: CallPutOption.PUT,
-            };
-            if (book.side === "B") {
-              bids.push(item);
-            } else {
-              asks.push(item);
+            if (book.size && book.price) {
+              const item = {
+                price: book.price,
+                size: book.size,
+                expiryDate: book.expiryDate,
+                callPut:
+                  book.callPut === "P" ? CallPutOption.PUT : CallPutOption.CALL,
+              };
+              if (book.side === "B") {
+                bids.push(item);
+              } else {
+                asks.push(item);
+              }
             }
           });
           console.log("bids,asks", bids, asks);
