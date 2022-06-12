@@ -5,8 +5,9 @@ import { BookData, OrderBookStruct, OrderBookModel } from "@/models/book.model";
 
 export const BOOK_INIT = "@book/INIT";
 export const BOOK_INITIALIZED = "@book/INITIALIZED";
-export const OPTIONS_BOOK_INITIALIZED = "@book/options/INITIALIZED";
 export const BOOK_RECEIVED_UPDATE = "@book/RECEIVED_UPDATE";
+export const OPTIONS_BOOK_INITIALIZED = "@book/options/INITIALIZED";
+export const OPTIONS_BOOK_RECEIVED_UPDATE = "@book/options/RECEIVED_UPDATE";
 
 export function initBook({ symbol, limit = OrderBookDepthLimitEnum.LVL3 }) {
   return {
@@ -115,17 +116,6 @@ interface OptionsBookInitializedParams {
   lastUpdateId: number;
 }
 
-export function optionsBookInitialized({
-  bids,
-  asks,
-  lastUpdateId,
-}: OptionsBookInitializedParams) {
-  return {
-    type: OPTIONS_BOOK_INITIALIZED,
-    payload: { bids, asks, lastUpdateId },
-  };
-}
-
 type BookUpdateParams = {
   data: OrderBookStruct[];
   side: OrderSide;
@@ -146,6 +136,28 @@ export function bookUpdate({ data, side, lastUpdateId }: BookUpdateParams) {
 export function bookUpdate2({ bids, asks, lastUpdateId }) {
   return {
     type: BOOK_RECEIVED_UPDATE,
+    payload: {
+      asks,
+      bids,
+      lastUpdateId,
+    },
+  };
+}
+
+export function optionsBookInitialized({
+  bids,
+  asks,
+  lastUpdateId,
+}: OptionsBookInitializedParams) {
+  return {
+    type: OPTIONS_BOOK_INITIALIZED,
+    payload: { bids, asks, lastUpdateId },
+  };
+}
+
+export function optionsBookUpdate({ bids, asks, lastUpdateId }) {
+  return {
+    type: OPTIONS_BOOK_RECEIVED_UPDATE,
     payload: {
       asks,
       bids,

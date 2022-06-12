@@ -2,6 +2,7 @@ import {
   BOOK_INITIALIZED,
   BOOK_RECEIVED_UPDATE,
   OPTIONS_BOOK_INITIALIZED,
+  OPTIONS_BOOK_RECEIVED_UPDATE,
 } from "@/actions/book.action";
 import { WS_REQUEST_UNSUBSCRIBE } from "@/actions/ws.actions";
 import { EMPTY_OBJ } from "@/exports";
@@ -55,6 +56,20 @@ export function bookReducer(state: BookReducerState = initialState, action) {
     }
     case OPTIONS_BOOK_INITIALIZED: {
       const { bids, asks, lastUpdateId } = action.payload;
+
+      return {
+        ...state,
+        optionsBids: bids,
+        optionsAsks: asks,
+        lastUpdateId,
+      };
+    }
+    case OPTIONS_BOOK_RECEIVED_UPDATE: {
+      const { lastUpdateId } = action.payload;
+
+      if (lastUpdateId < state.lastUpdateId) return state;
+
+      const { bids, asks } = action.payload;
 
       return {
         ...state,
