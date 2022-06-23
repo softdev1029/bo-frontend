@@ -32,6 +32,7 @@ import { getSymbolEnum } from "@/exports/ticker.utils";
 import { SubscribeManner } from "@/packets/subscribe.packet";
 import { MdInfoReqManner } from "@/packets/md-info-req.packet";
 import { IMDInfoRequest } from "@/models/md-req.model";
+import { LOG_COLOR_SEND } from "@/constants/app.constants";
 
 interface OptionType {
   value: string;
@@ -213,7 +214,7 @@ const mapDispatchToProps = (dispatch) => ({
   sendMdReq: function (data: IMDInfoRequest) {
     console.log(
       "%c [Send MDInfoReq for MDS to AES] (Step 3)",
-      "color: green",
+      LOG_COLOR_SEND,
       data
     );
 
@@ -221,7 +222,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(sendWsData(WebSocketKindEnum.ADMIN_RISK, payload));
   },
   sendSubscribe: function (data: ISubscribeRequest) {
-    console.log("%c [Send Subscribe to MDS]", "color: green", data);
+    console.log("%c [Send Subscribe to MDS]", LOG_COLOR_SEND, data);
     const payload = SubscribeManner.send(data);
     dispatch(sendWsData(WebSocketKindEnum.MARKET, payload));
   },

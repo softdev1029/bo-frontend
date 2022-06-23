@@ -1,6 +1,6 @@
 // trades = MDExecReport
 import { PacketHeaderMessageType } from "@/constants/websocket.enums";
-import { PacketReader } from "@/internals";
+import { PacketReader, PacketSender } from "@/internals";
 import {
   DataByte,
   IReadCustomData,
@@ -10,11 +10,24 @@ import { getPackLength, PacketManner } from "./packet-manner";
 
 const BOOK_PRICE_STRUCTURE = [
   new DataByte("price", TypedData.DOUBLE), // 0
-  new DataByte("volume", TypedData.DOUBLE), // 8
+  new DataByte("size", TypedData.DOUBLE), // 8
   new DataByte("side", TypedData.CHAR, 1), // 16
+  new DataByte("expiryDate", TypedData.CHAR, 24), // 17
+  new DataByte("callPut", TypedData.CHAR, 1), // 41
 ];
 
 class BookPrice10LevelDataByte extends DataByte implements IReadCustomData {
+  putCustomValue(values: Object | Object[], sender: PacketSender) {
+    const maxLoop = this.length() / getPackLength(BOOK_PRICE_STRUCTURE);
+    for (let i = 0; i < maxLoop; i++) {
+      BOOK_PRICE_STRUCTURE.forEach((dataByte) => {
+        dataByte.putValue(
+          values[i] ? values[i][dataByte.name] : undefined,
+          sender
+        );
+      });
+    }
+  }
   getCustomValue(reader: PacketReader) {
     const prices = [];
     const maxLoop = this.length() / getPackLength(BOOK_PRICE_STRUCTURE);
@@ -47,3 +60,72 @@ const BOOK_MESSAGE_STRUCTURE = [
 
 export const BookManner = (type) =>
   new PacketManner(type, BOOK_MESSAGE_STRUCTURE);
+
+export const TEST_LEVEL_DATA = {
+  price: {
+    // 2022-07-01
+    // 2 Put Bid
+    "0": {
+      price: "28901.01",
+      size: "1.1",
+      side: "B",
+      expiryDate: "2022-07-01",
+      callPut: "P",
+    },
+    "1": {
+      price: "28902.01",
+      size: "1.1",
+      side: "B",
+      expiryDate: "2022-07-01",
+      callPut: "P",
+    },
+    // 1 put ask
+    "2": {
+      price: "28903.01",
+      size: "1.1",
+      side: "A",
+      expiryDate: "2022-07-01",
+      callPut: "P",
+    },
+    // 1 call bid
+    "3": {
+      price: "27901.01",
+      size: "1.1",
+      side: "B",
+      expiryDate: "2022-07-01",
+      callPut: "C",
+    },
+    // 2022-09-01
+    // 1 Put Bid
+    "4": {
+      price: "28901.01",
+      size: "1.1",
+      side: "B",
+      expiryDate: "2022-09-01",
+      callPut: "P",
+    },
+    // 2 put ask
+    "5": {
+      price: "28902.01",
+      size: "1.1",
+      side: "A",
+      expiryDate: "2022-09-01",
+      callPut: "P",
+    },
+    "6": {
+      price: "28903.01",
+      size: "1.1",
+      side: "A",
+      expiryDate: "2022-09-01",
+      callPut: "P",
+    },
+    // 1 call bid
+    "7": {
+      price: "27901.01",
+      size: "1.1",
+      side: "B",
+      expiryDate: "2022-09-01",
+      callPut: "C",
+    },
+  },
+};
