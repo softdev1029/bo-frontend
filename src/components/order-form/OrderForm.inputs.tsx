@@ -84,7 +84,6 @@ class OrderFormInputs extends React.Component<
     this.handleShowAdvancedChange = this.handleShowAdvancedChange.bind(this);
     this.onLayerChange = this.onLayerChange.bind(this);
     this.onChangeExpiryDate = this.onChangeExpiryDate.bind(this);
-    this.onCallPutChange = this.onCallPutChange.bind(this);
   }
 
   onLayerChange({ value }) {
@@ -96,12 +95,6 @@ class OrderFormInputs extends React.Component<
   onChangeExpiryDate(value) {
     this.setState((state) => {
       return { ...state, expiryDate: value };
-    });
-  }
-
-  onCallPutChange(value: CallPutOption) {
-    this.setState((state) => {
-      return { ...state, selectedCallPutOption: value };
     });
   }
 
@@ -172,7 +165,11 @@ class OrderFormInputs extends React.Component<
       hideBalanceSlider,
       // limitCross,
       onLimitCrossChange,
+      onPutCallChange,
+      onStrikePriceChange,
       errors,
+      putCall,
+      strikePrice,
     } = this.props;
 
     const {
@@ -255,14 +252,23 @@ class OrderFormInputs extends React.Component<
           <RadioGroup
             className="call-put-group"
             name="callPutOptions"
-            selectedValue={this.state.selectedCallPutOption}
-            onChange={this.onCallPutChange}
+            selectedValue={putCall}
+            onChange={onPutCallChange}
           >
             <RadioButton label="Call" value={CallPutOption.CALL} />
             <div>{getLabelOrderType(typeId)}</div>
             <RadioButton label="Put" value={CallPutOption.PUT} />
           </RadioGroup>
         </div>
+
+        {/* <div className="mb-10">
+          <SelectDropdown
+            options={availablePrices}
+            value={strikePrice}
+            placeholder="Strike Price"
+            onChange={(price) => onStrikePriceChange(price.value)}
+          />
+        </div> */}
 
         {!shouldHidePriceField(typeId) && (
           <div className="mb-10">

@@ -90,6 +90,8 @@ class OrderFormContainer extends React.PureComponent<
       offset,
       secondLegPrice,
       limitCross,
+      putCall,
+      strikePrice,
     },
     onError,
     state,
@@ -133,6 +135,8 @@ class OrderFormContainer extends React.PureComponent<
       offset,
       secondLegPrice,
       limitCross,
+      putCall,
+      strikePrice,
     };
 
     const validParams = {

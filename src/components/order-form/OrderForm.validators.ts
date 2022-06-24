@@ -124,6 +124,8 @@ export function submitOrderFn(
     selectedLayer,
     secondLegPrice,
     limitCross,
+    putCall,
+    strikePrice,
     ...state
   },
   props
@@ -151,6 +153,8 @@ export function submitOrderFn(
       layers: selectedLayer,
       secondLegPrice: secondLegPrice,
       limitCross,
+      putCall,
+      strikePrice,
     })
   );
 }
