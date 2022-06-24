@@ -6,6 +6,7 @@ import {
   getPriceDecimals,
   getSymbols,
   getMinPrice,
+  getStrikePriceIncrement,
 } from "@/exports/ticker.utils";
 import {
   Tabs,
@@ -105,6 +106,17 @@ class OrderFormInputs extends React.Component<
     }
 
     this.setState({ showAdvanced: !this.state.showAdvanced });
+  }
+
+  calcAvailableStrikePrices(maxPrice, strikePriceStep) {
+    const availablePrices = [];
+    for (let i = 1; i < maxPrice / strikePriceStep; i++) {
+      availablePrices.push({
+        value: i * strikePriceStep,
+        label: i * strikePriceStep,
+      });
+    }
+    return availablePrices;
   }
 
   render() {
@@ -219,8 +231,15 @@ class OrderFormInputs extends React.Component<
       ? floatingPointRegex
       : numberRegex;
     const priceStep = getMinPrice(pair);
+    const strikePriceStep = getStrikePriceIncrement(pair);
     const amountStep = getMinAmount(pair);
     const totalStep = price * amountStep;
+
+    const availablePrices = this.calcAvailableStrikePrices(
+      // maxPrice > 100000 ? 10000 : maxPrice,
+      101000,
+      strikePriceStep < 100 ? 1000 : strikePriceStep
+    );
 
     return (
       <div>
@@ -261,15 +280,6 @@ class OrderFormInputs extends React.Component<
           </RadioGroup>
         </div>
 
-        {/* <div className="mb-10">
-          <SelectDropdown
-            options={availablePrices}
-            value={strikePrice}
-            placeholder="Strike Price"
-            onChange={(price) => onStrikePriceChange(price.value)}
-          />
-        </div> */}
-
         {!shouldHidePriceField(typeId) && (
           <div className="mb-10">
             <GroupInput
@@ -288,6 +298,15 @@ class OrderFormInputs extends React.Component<
             />
           </div>
         )}
+
+        <div className="mb-10">
+          <SelectDropdown
+            options={availablePrices}
+            value={strikePrice}
+            placeholder="Strike Price"
+            onChange={(price) => onStrikePriceChange(price.value)}
+          />
+        </div>
 
         <div className="mb-10">
           <GroupInput

@@ -183,3 +183,11 @@ export function getDerivativeCcy(): Partial<ITickerConfig>[] {
     ({ symbolType }) => symbolType === SymbolType.DERIVATIVE
   );
 }
+
+export function getStrikePriceIncrement(ccy: string): number {
+  return _get(
+    SYMBOLENUM_TO_INSTRUMENT_MAP,
+    [getSymbolEnum(ccy), "strikePriceIncrement"],
+    0.1
+  );
+}
