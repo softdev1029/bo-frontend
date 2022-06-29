@@ -6,6 +6,7 @@ import {
   getPriceDecimals,
   getSymbols,
   getMinPrice,
+  getStrikePriceIncrement,
 } from "@/exports/ticker.utils";
 import {
   Tabs,
@@ -84,7 +85,6 @@ class OrderFormInputs extends React.Component<
     this.handleShowAdvancedChange = this.handleShowAdvancedChange.bind(this);
     this.onLayerChange = this.onLayerChange.bind(this);
     this.onChangeExpiryDate = this.onChangeExpiryDate.bind(this);
-    this.onCallPutChange = this.onCallPutChange.bind(this);
   }
 
   onLayerChange({ value }) {
@@ -99,12 +99,6 @@ class OrderFormInputs extends React.Component<
     });
   }
 
-  onCallPutChange(value: CallPutOption) {
-    this.setState((state) => {
-      return { ...state, selectedCallPutOption: value };
-    });
-  }
-
   handleShowAdvancedChange() {
     if (this.state.showAdvanced) {
       this.props.onDisplaySizeChange(0);
@@ -112,6 +106,17 @@ class OrderFormInputs extends React.Component<
     }
 
     this.setState({ showAdvanced: !this.state.showAdvanced });
+  }
+
+  calcAvailableStrikePrices(maxPrice, strikePriceStep) {
+    const availablePrices = [];
+    for (let i = 1; i < maxPrice / strikePriceStep; i++) {
+      availablePrices.push({
+        value: i * strikePriceStep,
+        label: i * strikePriceStep,
+      });
+    }
+    return availablePrices;
   }
 
   render() {
@@ -172,7 +177,11 @@ class OrderFormInputs extends React.Component<
       hideBalanceSlider,
       // limitCross,
       onLimitCrossChange,
+      onPutCallChange,
+      onStrikePriceChange,
       errors,
+      putCall,
+      strikePrice,
     } = this.props;
 
     const {
@@ -222,8 +231,15 @@ class OrderFormInputs extends React.Component<
       ? floatingPointRegex
       : numberRegex;
     const priceStep = getMinPrice(pair);
+    const strikePriceStep = getStrikePriceIncrement(pair);
     const amountStep = getMinAmount(pair);
     const totalStep = price * amountStep;
+
+    const availablePrices = this.calcAvailableStrikePrices(
+      // maxPrice > 100000 ? 10000 : maxPrice,
+      101000,
+      strikePriceStep < 100 ? 1000 : strikePriceStep
+    );
 
     return (
       <div>
@@ -255,8 +271,8 @@ class OrderFormInputs extends React.Component<
           <RadioGroup
             className="call-put-group"
             name="callPutOptions"
-            selectedValue={this.state.selectedCallPutOption}
-            onChange={this.onCallPutChange}
+            selectedValue={putCall}
+            onChange={onPutCallChange}
           >
             <RadioButton label="Call" value={CallPutOption.CALL} />
             <div>{getLabelOrderType(typeId)}</div>
@@ -282,6 +298,15 @@ class OrderFormInputs extends React.Component<
             />
           </div>
         )}
+
+        <div className="mb-10">
+          <SelectDropdown
+            options={availablePrices}
+            value={strikePrice}
+            placeholder="Strike Price"
+            onChange={(price) => onStrikePriceChange(price.value)}
+          />
+        </div>
 
         <div className="mb-10">
           <GroupInput

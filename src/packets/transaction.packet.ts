@@ -47,6 +47,8 @@ const TRANSACTION_MESSAGE_STRUCTURE = [
   new DataByte("routeEnum", TypedData.SHORT), // 234
   new DataByte("modifyType", TypedData.SHORT), // 236
   new DataByte("attributes", TypedData.CHAR, TRANSACTION_ATTRIBUTE_LENGTH), // 238
+  new DataByte("putCall", TypedData.CHAR, 1), // 250
+  new DataByte("strikePrice", TypedData.DOUBLE), // 251
 ];
 
 export const TransactionManner = new PacketManner<TransactionModel>(

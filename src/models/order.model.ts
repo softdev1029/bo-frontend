@@ -43,6 +43,8 @@ export type OrderItem = {
   takeProfitPrice: number;
   triggerType: StopTrigger;
   attributes?: string; // 12 character indexed by AttributeIndexEnum
+  putCall?: CallPutOption;
+  strikePrice: number;
   secondLegPrice: number;
   isTimeout?: boolean;
 };
@@ -61,8 +63,8 @@ export type OrderEntry = {
 };
 
 export enum CallPutOption {
-  CALL = 1,
-  PUT = 2,
+  CALL = "C",
+  PUT = "P",
 }
 
 export enum Symbols {

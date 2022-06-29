@@ -12,7 +12,7 @@ import {
 import { SymbolType } from "@/constants/symbol-enums";
 import { OrderBookModel } from "@/models/book.model";
 import { TabProps } from "@/ui-components/Tabs";
-import { OrderItem } from "@/models/order.model";
+import { CallPutOption, OrderItem } from "@/models/order.model";
 import { ReactNode } from "react";
 import { WorkspaceSettingEnum } from "@/models/workspace-setting";
 
@@ -50,6 +50,8 @@ export interface OrderEntryInfo {
   selectedLayer: number;
   secondLegPrice: number;
   limitCross: number;
+  putCall: CallPutOption;
+  strikePrice: number;
 }
 
 export type SubmitOrderEntryData = Partial<OrderEntryInfo> & {
@@ -136,6 +138,8 @@ export interface OrderFormControlsState {
   layers?: number;
   secondLegPrice?: number;
   limitCross?: number;
+  putCall?: CallPutOption;
+  strikePrice: number;
 }
 
 export interface OrderFormControlsProps {
@@ -236,6 +240,8 @@ export type OrderFormInputDataFlows = OrderFormControlsState & {
   onQtyIncrementChange: (n: number) => void;
   onSecondLegPriceChange: (n: number) => void;
   onLimitCrossChange: (n: number) => void;
+  onPutCallChange: (n: number) => void;
+  onStrikePriceChange: (n: number) => void;
   validationRules: OrderFormValidationRules;
   hideBalanceSlider?: boolean;
 };

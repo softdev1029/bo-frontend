@@ -8,7 +8,11 @@ import {
 } from "@/constants/system-enums";
 import { SymbolType, SymbolValue } from "@/constants/symbol-enums";
 import { WebSocketKindEnum } from "@/constants/websocket.enums";
-import { OrderItem, TransactionModel } from "@/models/order.model";
+import {
+  CallPutOption,
+  OrderItem,
+  TransactionModel,
+} from "@/models/order.model";
 import {
   TransactionManner,
   TRANSACTION_ATTRIBUTE_LENGTH,
@@ -73,6 +77,8 @@ interface NewOrderParams {
   layers?: number;
   secondLegPrice?: number;
   limitCross?: number;
+  putCall?: CallPutOption;
+  strikePrice: number;
 }
 
 export interface ReplaceOrderParams {
@@ -103,6 +109,8 @@ export function submitNewOrder({
   layers = 2,
   secondLegPrice = 0,
   limitCross = 0,
+  putCall = CallPutOption.CALL,
+  strikePrice = 0,
 }: NewOrderParams) {
   const symbolEnum = getSymbolEnum(pair) || SymbolValue.BTCUSD;
   let attributesArray = new Array(TRANSACTION_ATTRIBUTE_LENGTH).fill("N");
@@ -151,6 +159,8 @@ export function submitNewOrder({
     layers,
     secondLegPrice,
     limitCross,
+    putCall,
+    strikePrice,
   };
 
   const order = TransactionManner.send(params);

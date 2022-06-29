@@ -1,12 +1,12 @@
 const http = "https://api.binance.com/api/v3";
 const fhttp = "https://fapi.binance.com/fapi/v1";
 const ws = "wss://testnet.binance.vision/ws";
-const protocol = "wss";
+const protocol = "ws";
 const api = "https://api-dev.bit24.com/";
 
 // wss://api.binance.com:9443/ws/$all@allTickers
 export const testurl1 = "wss://stream.binance.com:9443/ws";
-export const oesWsUrl = `${protocol}://oes-dev.bit24.com`;
+export const oesWsUrl = `${protocol}://localhost:8080`;
 // export const riskWsUrl = `${protocol}://aes-dev.bit24.com`;
 export const riskWsUrl = oesWsUrl;
 

@@ -36,6 +36,7 @@ import _get from "lodash/get";
 
 import { connect } from "react-redux";
 import { onAccept } from "@/actions/order-form.actions";
+import { CallPutOption } from "@/models/order.model";
 
 class OrderFormInputControlsContainer extends React.PureComponent<
   Partial<OrderFormControlsProps>,
@@ -87,6 +88,8 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       qtyIncrement: _get(this.props.order, "sizeIncrement", undefined),
       secondLegPrice: _get(this.props.order, "secondLegPrice", undefined),
       limitCross: _get(this.props.order, "limitCross", undefined),
+      putCall: _get(this.props.order, "putCall", CallPutOption.CALL),
+      strikePrice: _get(this.props.order, "strikePrice", 0),
     };
 
     this.tickerPrice = this.props.initialPrice;
@@ -124,6 +127,8 @@ class OrderFormInputControlsContainer extends React.PureComponent<
     this.onQtyIncrementChange = this.onQtyIncrementChange.bind(this);
     this.onSecondLegPriceChange = this.onSecondLegPriceChange.bind(this);
     this.onLimitCrossChange = this.onLimitCrossChange.bind(this);
+    this.onPutCallChange = this.onPutCallChange.bind(this);
+    this.onStrikePriceChange = this.onStrikePriceChange.bind(this);
     this.handleConfirmOrderForm = this.handleConfirmOrderForm.bind(this);
   }
 
@@ -145,6 +150,18 @@ class OrderFormInputControlsContainer extends React.PureComponent<
   onLimitCrossChange(value: number) {
     this.setState({
       limitCross: value,
+    });
+  }
+
+  onPutCallChange(value: CallPutOption) {
+    this.setState({
+      putCall: value,
+    });
+  }
+
+  onStrikePriceChange(value: number) {
+    this.setState({
+      strikePrice: value,
     });
   }
 
@@ -336,6 +353,8 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       selectedLayer,
       secondLegPrice,
       limitCross,
+      putCall,
+      strikePrice,
     } = this.state;
 
     this.props.onClickHandler(
@@ -363,6 +382,8 @@ class OrderFormInputControlsContainer extends React.PureComponent<
         selectedLayer,
         secondLegPrice,
         limitCross,
+        putCall,
+        strikePrice,
       },
       cb,
       this.state,
@@ -414,6 +435,8 @@ class OrderFormInputControlsContainer extends React.PureComponent<
         selectedLayer: 2,
         secondLegPrice: undefined,
         limitCross: undefined,
+        putCall: CallPutOption.CALL,
+        strikePrice: 0,
       };
     }
 
@@ -662,6 +685,8 @@ class OrderFormInputControlsContainer extends React.PureComponent<
       onQtyIncrementChange: this.onQtyIncrementChange,
       onSecondLegPriceChange: this.onSecondLegPriceChange,
       onLimitCrossChange: this.onLimitCrossChange,
+      onPutCallChange: this.onPutCallChange,
+      onStrikePriceChange: this.onStrikePriceChange,
     };
     return _isFunction(this.props.children) ? this.props.children(props) : null;
   }
